@@ -1,6 +1,7 @@
 class Const {
   static const String emptyString = "";
   static const double edgeInsets = 8.0;
+  static const int refreshDelay = 1;
 }
 
 class AppBarConst {

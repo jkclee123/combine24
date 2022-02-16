@@ -18,7 +18,8 @@ class HomeView extends StatelessWidget {
       appBar: _buildAppBar(context),
       body: SafeArea(
         child: RefreshIndicator(
-            onRefresh: (() => Future.sync(
+            onRefresh: (() => Future.delayed(
+                const Duration(seconds: Const.refreshDelay),
                 () => context.read<HomeBloc>().add(HomeResetEvent()))),
             child: BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
               return ListView(
