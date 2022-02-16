@@ -51,6 +51,12 @@ class HomeView extends StatelessWidget {
               : AppBarConst.lightModeTooltip,
         ),
         IconButton(
+          onPressed: (() =>
+              context.read<HomeBloc>().add(HomeRandomDrawEvent())),
+          icon: const Icon(Icons.copy_rounded),
+          tooltip: AppBarConst.randomDrawTooltip,
+        ),
+        IconButton(
           onPressed: (() => context.read<HomeBloc>().add(HomeResetEvent())),
           icon: const Icon(Icons.refresh_rounded),
           tooltip: AppBarConst.resetTooltip,

@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 
+import 'package:combine24/config/const.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:combine24/pages/home/home_event.dart';
 import 'package:combine24/pages/home/home_state.dart';
@@ -8,8 +11,11 @@ import 'package:combine24/services/solution_service.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final Completer _completer = Completer();
+  final SolutionService _solutionService = DefaultSolutionService();
+
   HomeBloc() : super(HomeDrawState()) {
     on<HomeDrawEvent>(_drawCard);
+    on<HomeRandomDrawEvent>(_randomDraw);
     on<HomeRemoveEvent>(_removeCard);
     on<HomeResetEvent>(_reset);
   }
@@ -23,9 +29,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           emit(HomeDrawState(cardList: cardList));
         } else {
           emit(HomeLoadingState(cardList: cardList));
-          SolutionService solutionService = DefaultSolutionService();
-          List<String> solutionList = solutionService.findSolutions(cardList);
-          List<String> hintList = solutionService.extractHint(solutionList);
+          List<String> solutionList = _solutionService.findSolutions(cardList);
+          List<String> hintList = _solutionService.extractHint(solutionList);
           emit(HomeSolutionState(
               cardList: cardList,
               solutionList: solutionList,
@@ -38,11 +43,38 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
+  void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) {
+    List<String> cardList = List<String>.from(state.cardList);
+    try {
+      emit(HomeLoadingState(cardList: cardList));
+      Random rng = Random();
+      List<String> solutionList = <String>[];
+      while (solutionList.isEmpty) {
+        cardList.clear();
+        for (int index = 0; index < 4; index++) {
+          cardList.add(DeckConst.deckList[rng.nextInt(13)]);
+        }
+        solutionList = _solutionService.findSolutions(cardList);
+      }
+      List<String> hintList = _solutionService.extractHint(solutionList);
+      emit(HomeSolutionState(
+          cardList: cardList, solutionList: solutionList, hintList: hintList));
+    } catch (e, stacktrace) {
+      emit(HomeErrorState(cardList: cardList));
+      _completer.completeError(e, stacktrace);
+    }
+  }
+
   void _removeCard(HomeRemoveEvent event, Emitter<HomeState> emit) {
     List<String> cardList = List<String>.from(state.cardList);
-    if (cardList.length > event.index) {
-      cardList.removeAt(event.index);
-      emit(HomeDrawState(cardList: cardList));
+    try {
+      if (cardList.length > event.index) {
+        cardList.removeAt(event.index);
+        emit(HomeDrawState(cardList: cardList));
+      }
+    } catch (e, stacktrace) {
+      emit(HomeErrorState(cardList: cardList));
+      _completer.completeError(e, stacktrace);
     }
   }
 

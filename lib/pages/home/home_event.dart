@@ -14,6 +14,9 @@ class HomeDrawEvent extends HomeEvent {
 }
 
 @immutable
+class HomeRandomDrawEvent extends HomeEvent {}
+
+@immutable
 class HomeRemoveEvent extends HomeEvent {
   final int index;
   HomeRemoveEvent({required this.index});

@@ -8,6 +8,7 @@ class AppBarConst {
   static const String title = "合廿四";
   static const String lightModeTooltip = "眼盲模式";
   static const String dartModeTooltip = "正常模式";
+  static const String randomDrawTooltip = "出題";
   static const String resetTooltip = "重置";
 }
 
