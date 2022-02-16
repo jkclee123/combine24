@@ -16,23 +16,22 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
-        return SafeArea(
-          child: RefreshIndicator(
+      body: SafeArea(
+        child: RefreshIndicator(
             onRefresh: (() => Future.sync(
                 () => context.read<HomeBloc>().add(HomeResetEvent()))),
-            child: ListView(
-              padding: const EdgeInsets.all(Const.edgeInsets),
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: <Widget>[
-                _buildHandView(context),
-                _buildDeckView(context),
-                _buildSolutionView(context),
-              ],
-            ),
-          ),
-        );
-      }),
+            child: BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
+              return ListView(
+                padding: const EdgeInsets.all(Const.edgeInsets),
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: <Widget>[
+                  _buildHandView(context),
+                  _buildDeckView(context),
+                  _buildSolutionView(context),
+                ],
+              );
+            })),
+      ),
     );
   }
 
