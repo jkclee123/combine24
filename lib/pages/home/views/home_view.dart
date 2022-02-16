@@ -17,13 +17,20 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: _buildAppBar(context),
       body: BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
-        return ListView(
-          padding: const EdgeInsets.all(Const.edgeInsets),
-          children: <Widget>[
-            _buildHandView(context),
-            _buildDeckView(context),
-            _buildSolutionView(context),
-          ],
+        return SafeArea(
+          child: RefreshIndicator(
+            onRefresh: (() => Future.sync(
+                () => context.read<HomeBloc>().add(HomeResetEvent()))),
+            child: ListView(
+              padding: const EdgeInsets.all(Const.edgeInsets),
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: <Widget>[
+                _buildHandView(context),
+                _buildDeckView(context),
+                _buildSolutionView(context),
+              ],
+            ),
+          ),
         );
       }),
     );
@@ -35,9 +42,7 @@ class HomeView extends StatelessWidget {
       centerTitle: true,
       actions: <Widget>[
         IconButton(
-          onPressed: () {
-            context.read<ThemeCubit>().toggleTheme();
-          },
+          onPressed: (() => context.read<ThemeCubit>().toggleTheme()),
           icon: Theme.of(context).brightness == Brightness.light
               ? const Icon(Icons.dark_mode_outlined)
               : const Icon(Icons.light_mode_outlined),
