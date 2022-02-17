@@ -24,7 +24,8 @@ class HomeView extends StatelessWidget {
             child: BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
               return ListView(
                 padding: const EdgeInsets.all(Const.edgeInsets),
-                physics: const AlwaysScrollableScrollPhysics(),
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
                 children: <Widget>[
                   _buildHandView(context),
                   _buildDeckView(context),
