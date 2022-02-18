@@ -16,6 +16,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeDrawEvent>(_drawCard);
     on<HomeRandomDrawEvent>(_randomDraw);
     on<HomeRemoveEvent>(_removeCard);
+    on<HomeOpenHintEvent>(_openHint);
+    on<HomeOpenSolutionEvent>(_openSolution);
     on<HomeResetEvent>(_reset);
   }
 
@@ -74,6 +76,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e, stacktrace) {
       emit(HomeErrorState(cardList: cardList));
       _completer.completeError(e, stacktrace);
+    }
+  }
+
+  void _openHint(HomeOpenHintEvent event, Emitter<HomeState> emit) {
+    if (state is HomeSolutionState) {
+      HomeSolutionState oldState = (state as HomeSolutionState);
+      List<bool> hintMaskList = List<bool>.from(oldState.hintMaskList);
+      hintMaskList[event.index] = true;
+      emit(oldState.copyWith(hintMaskList: hintMaskList));
+    }
+  }
+
+  void _openSolution(HomeOpenSolutionEvent event, Emitter<HomeState> emit) {
+    if (state is HomeSolutionState) {
+      HomeSolutionState oldState = (state as HomeSolutionState);
+      List<bool> solutionMaskList = List<bool>.from(oldState.solutionMaskList);
+      solutionMaskList[event.index] = true;
+      emit(oldState.copyWith(solutionMaskList: solutionMaskList));
     }
   }
 

@@ -23,4 +23,16 @@ class HomeRemoveEvent extends HomeEvent {
 }
 
 @immutable
+class HomeOpenHintEvent extends HomeEvent {
+  final int index;
+  HomeOpenHintEvent({required this.index});
+}
+
+@immutable
+class HomeOpenSolutionEvent extends HomeEvent {
+  final int index;
+  HomeOpenSolutionEvent({required this.index});
+}
+
+@immutable
 class HomeResetEvent extends HomeEvent {}

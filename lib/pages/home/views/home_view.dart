@@ -20,7 +20,8 @@ class HomeView extends StatelessWidget {
         child: RefreshIndicator(
             onRefresh: (() => Future.delayed(
                 const Duration(seconds: Const.refreshDelay),
-                () => context.read<HomeBloc>().add(HomeResetEvent()))),
+                () =>
+                    BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()))),
             child: BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
               return ListView(
                 padding: const EdgeInsets.all(Const.edgeInsets),
@@ -29,6 +30,7 @@ class HomeView extends StatelessWidget {
                 children: <Widget>[
                   _buildHandView(context),
                   _buildDeckView(context),
+                  const Divider(),
                   _buildSolutionView(context),
                 ],
               );
@@ -53,12 +55,13 @@ class HomeView extends StatelessWidget {
         ),
         IconButton(
           onPressed: (() =>
-              context.read<HomeBloc>().add(HomeRandomDrawEvent())),
+              BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent())),
           icon: const Icon(Icons.copy_rounded),
           tooltip: AppBarConst.randomDrawTooltip,
         ),
         IconButton(
-          onPressed: (() => context.read<HomeBloc>().add(HomeResetEvent())),
+          onPressed: (() =>
+              BlocProvider.of<HomeBloc>(context).add(HomeResetEvent())),
           icon: const Icon(Icons.refresh_rounded),
           tooltip: AppBarConst.resetTooltip,
         ),
@@ -67,7 +70,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildHandView(BuildContext context) {
-    HomeState state = context.watch<HomeBloc>().state;
+    HomeState state = BlocProvider.of<HomeBloc>(context).state;
     double width = MediaQuery.of(context).size.width;
     return ResponsiveGridList(
       desiredItemWidth: min(width / HandConst.desiredItemWidthDivisor,
@@ -79,8 +82,8 @@ class HomeView extends StatelessWidget {
       children: <Widget>[
         for (int index in List.generate(4, (index) => index))
           GestureDetector(
-            onTap: (() =>
-                context.read<HomeBloc>().add(HomeRemoveEvent(index: index))),
+            onTap: (() => BlocProvider.of<HomeBloc>(context)
+                .add(HomeRemoveEvent(index: index))),
             child: Card(
               elevation: HandConst.elevation,
               child: FittedBox(
@@ -96,7 +99,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildDeckView(BuildContext context) {
-    HomeState state = context.watch<HomeBloc>().state;
+    HomeState state = BlocProvider.of<HomeBloc>(context).state;
     double width = MediaQuery.of(context).size.width;
     return ResponsiveGridList(
       desiredItemWidth: min(width / DeckConst.desiredItemWidthDivisor,
@@ -109,8 +112,8 @@ class HomeView extends StatelessWidget {
         for (String card in DeckConst.deckList)
           ElevatedButton(
             onPressed: state is HomeDrawState
-                ? (() =>
-                    context.read<HomeBloc>().add(HomeDrawEvent(card: card)))
+                ? (() => BlocProvider.of<HomeBloc>(context)
+                    .add(HomeDrawEvent(card: card)))
                 : null,
             child: Text(card),
           ),
@@ -119,7 +122,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildSolutionView(BuildContext context) {
-    HomeState state = context.watch<HomeBloc>().state;
+    HomeState state = BlocProvider.of<HomeBloc>(context).state;
     if (state is HomeLoadingState) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -130,16 +133,97 @@ class HomeView extends StatelessWidget {
       );
     } else if (state is HomeSolutionState) {
       List<String> solutionList = state.solutionList;
-      return ListView.separated(
-        itemBuilder: (_, index) {
-          return ListTile(title: Text(solutionList.elementAt(index)));
-        },
-        separatorBuilder: (_, index) => const Divider(),
-        itemCount: solutionList.length,
-        shrinkWrap: true,
+      if (solutionList.isEmpty) {
+        return const Center(
+          child: Text("No solution"),
+        );
+      }
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: _buildSolutionColumnView(context),
       );
     } else {
       return const SizedBox.shrink();
     }
+  }
+
+  List<Widget> _buildSolutionColumnView(
+    BuildContext context,
+  ) {
+    HomeSolutionState state =
+        context.watch<HomeBloc>().state as HomeSolutionState;
+    List<String> solutionList = state.solutionList;
+    List<String> hintList = state.hintList;
+    List<bool> solutionMaskList = state.solutionMaskList;
+    List<bool> hintMaskList = state.hintMaskList;
+    int solutionLength = solutionList.length;
+    double width = MediaQuery.of(context).size.width;
+    return [
+      for (int index = 0; index < solutionLength; index++)
+        SizedBox(
+          width: width / 4 + 200,
+          child: solutionMaskList[index]
+              ? Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  color: Colors.blue,
+                  elevation: 8.0,
+                  child: ListTile(
+                    title: Center(
+                      child: Text(solutionList[index]),
+                    ),
+                    trailing: const IconButton(
+                      icon: Icon(
+                        Icons.check,
+                        color: Colors.green,
+                      ),
+                      onPressed: null,
+                    ),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: (() => BlocProvider.of<HomeBloc>(context)
+                      .add(HomeOpenSolutionEvent(index: index))),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 8.0,
+                    child: hintMaskList[index]
+                        ? ListTile(
+                            title: Center(
+                              child: Text(hintList[index]),
+                            ),
+                            trailing: const IconButton(
+                              icon: Icon(
+                                Icons.lightbulb_outline_rounded,
+                              ),
+                              onPressed: null,
+                            ),
+                          )
+                        : ListTile(
+                            title: Center(
+                              child: Opacity(
+                                opacity: 0.5,
+                                child: Text("${index + 1}"),
+                              ),
+                            ),
+                            trailing: IconButton(
+                              tooltip: "提示",
+                              icon: Icon(
+                                Icons.lightbulb_outline_rounded,
+                                color: Colors.yellow[400],
+                              ),
+                              onPressed: (() =>
+                                  BlocProvider.of<HomeBloc>(context)
+                                      .add(HomeOpenHintEvent(index: index))),
+                            ),
+                          ),
+                  ),
+                ),
+        ),
+    ];
   }
 }
