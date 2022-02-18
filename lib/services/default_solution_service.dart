@@ -52,12 +52,12 @@ class DefaultSolutionService implements SolutionService {
       buildFormula(a, b, op).interpret() is int &&
       !buildFormula(a, b, op).interpret().isNegative;
 
-  bool isValidTwoPairOp(String op1, String op2, String op3) =>
-      !((isLowOp(op1) && isLowOp(op2) && isLowOp(op3)) ||
-          (isHighOp(op1) && isHighOp(op2) && isHighOp(op3))) &&
-      !((isDivOp(op3) && isMulOp(op2)) ||
-          (isReverseDivOp(op1) && isMulOp(op3))) &&
-      !((isAddOp(op3) || isMinusOp(op3)) && isReverseMinusOp(op2));
+  bool isValidTwoPairOp(String firstOp, String secondOp, String midOp) =>
+      !((isLowOp(firstOp) && isLowOp(secondOp) && isLowOp(midOp)) ||
+          (isHighOp(firstOp) && isHighOp(secondOp) && isHighOp(midOp))) &&
+      !((isDivOp(midOp) && isMulOp(secondOp)) ||
+          (isReverseDivOp(firstOp) && isMulOp(midOp))) &&
+      !((isAddOp(midOp) || isMinusOp(midOp)) && isReverseMinusOp(secondOp));
 
   bool isMulOne(String a, String b, String op) =>
       isMulOp(op) && (a == '1' || b == '1');
@@ -321,26 +321,29 @@ class DefaultSolutionService implements SolutionService {
   List<String> buildTwoPairSolutionList(Map<Tuple2, Tuple2> twoPairMap) {
     Set<String> formulaSet = <String>{};
     twoPairMap.forEach((pair1, pair2) {
-      for (String op1 in opList) {
-        if (!isValidFormula(pair1.item1, pair1.item2, op1)) {
+      for (String firstOp in opList) {
+        if (!isValidFormula(pair1.item1, pair1.item2, firstOp)) {
           continue;
         }
-        String formula1 = buildFormula(pair1.item1, pair1.item2, op1);
-        for (String op2 in opList) {
-          if (!isValidFormula(pair2.item1, pair2.item2, op2)) {
+        String formula1 = buildFormula(pair1.item1, pair1.item2, firstOp);
+        for (String secondOp in opList) {
+          if (!isValidFormula(pair2.item1, pair2.item2, secondOp)) {
             continue;
           }
-          String formula2 = buildFormula(pair2.item1, pair2.item2, op2);
-          for (String op3 in opList) {
-            if (!isValidFormula(formula1, formula2, op3) ||
-                !isValidTwoPairOp(op1, op2, op3)) {
+          String formula2 = buildFormula(pair2.item1, pair2.item2, secondOp);
+          for (String midOp in opList) {
+            if (!isValidFormula(formula1, formula2, midOp) ||
+                !isValidTwoPairOp(firstOp, secondOp, midOp)) {
               continue;
             }
             String firstFormula =
-                isLowOp(op1) && isHighOp(op3) ? addBracket(formula1) : formula1;
-            String secondFormula =
-                isLowOp(op2) && isHighOp(op3) ? addBracket(formula2) : formula2;
-            formulaSet.add(buildFormula(firstFormula, secondFormula, op3));
+                (isLowOp(firstOp) && isHighOp(midOp)) || isReverseDivOp(midOp)
+                    ? addBracket(formula1)
+                    : formula1;
+            String secondFormula = isLowOp(secondOp) && isHighOp(midOp)
+                ? addBracket(formula2)
+                : formula2;
+            formulaSet.add(buildFormula(firstFormula, secondFormula, midOp));
           }
         }
       }
