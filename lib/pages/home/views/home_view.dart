@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:combine24/pages/home/views/formula_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:combine24/config/const.dart';
 import 'package:combine24/pages/home/home_bloc.dart';
@@ -8,44 +9,86 @@ import 'package:combine24/pages/home/home_state.dart';
 import 'package:combine24/theme_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
 
   @override
+  _HomeViewState createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  late final FocusNode nodeText;
+  late final ValueNotifier<String> customNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    nodeText = FocusNode();
+    customNotifier = ValueNotifier<String>(Const.emptyString);
+    customNotifier.addListener(() {
+      if (customNotifier.value.contains(KeyboardConst.eof)) {
+        BlocProvider.of<HomeBloc>(context)
+            .add(HomeSubmitEvent(answer: customNotifier.value));
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: SafeArea(
-        child: RefreshIndicator(
+    return BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
+      return Scaffold(
+        appBar: _buildAppBar(context),
+        body: SafeArea(
+          child: RefreshIndicator(
             onRefresh: (() => Future.delayed(
                 const Duration(seconds: Const.refreshDelay),
                 () =>
                     BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()))),
-            child: BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
-              return ListView(
-                padding: const EdgeInsets.all(Const.edgeInsets),
-                physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
-                children: <Widget>[
-                  _buildHandView(context),
-                  _buildDeckView(context),
-                  const Divider(),
-                  _buildSolutionView(context),
-                ],
-              );
-            })),
-      ),
+            child: ListView(
+              padding: const EdgeInsets.all(Const.edgeInsets),
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              children: <Widget>[
+                _buildHandView(context),
+                const Divider(),
+                _buildSolutionView(context),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    List<String> cardList = BlocProvider.of<HomeBloc>(context).state.cardList;
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      actions: [
+        KeyboardActionsItem(
+          focusNode: nodeText,
+          displayActionBar: false,
+          footerBuilder: (context) => FormulaKeyboard(
+              focusNode: nodeText,
+              notifier: customNotifier,
+              cardList: cardList),
+        ),
+      ],
     );
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text(AppBarConst.title),
+      title: GestureDetector(
+          onTap: () => BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()),
+          child: const Text(AppBarConst.title)),
       centerTitle: true,
       actions: <Widget>[
         IconButton(
-          onPressed: (() => context.read<ThemeCubit>().toggleTheme()),
+          onPressed: () => context.read<ThemeCubit>().toggleTheme(),
           icon: Theme.of(context).brightness == Brightness.light
               ? const Icon(Icons.dark_mode_outlined)
               : const Icon(Icons.light_mode_outlined),
@@ -54,16 +97,10 @@ class HomeView extends StatelessWidget {
               : AppBarConst.lightModeTooltip,
         ),
         IconButton(
-          onPressed: (() =>
-              BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent())),
+          onPressed: () =>
+              BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent()),
           icon: const Icon(Icons.copy_rounded),
           tooltip: AppBarConst.randomDrawTooltip,
-        ),
-        IconButton(
-          onPressed: (() =>
-              BlocProvider.of<HomeBloc>(context).add(HomeResetEvent())),
-          icon: const Icon(Icons.refresh_rounded),
-          tooltip: AppBarConst.resetTooltip,
         ),
       ],
     );
@@ -73,49 +110,24 @@ class HomeView extends StatelessWidget {
     HomeState state = BlocProvider.of<HomeBloc>(context).state;
     double width = MediaQuery.of(context).size.width;
     return ResponsiveGridList(
-      desiredItemWidth: min(width / HandConst.desiredItemWidthDivisor,
+      desiredItemWidth: min(width * HandConst.desiredItemWidthWeight,
           HandConst.minDesiredItemWidth),
       squareCells: true,
       scroll: false,
-      minSpacing: width / HandConst.minSpacingDivisor,
+      minSpacing: width * HandConst.minSpacingWeight,
       rowMainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        for (int index in List.generate(4, (index) => index))
-          GestureDetector(
-            onTap: (() => BlocProvider.of<HomeBloc>(context)
-                .add(HomeRemoveEvent(index: index))),
-            child: Card(
-              elevation: HandConst.elevation,
-              child: FittedBox(
-                fit: BoxFit.fitHeight,
+        for (int index = 0; index < 4; index++)
+          Card(
+            elevation: Const.elevation,
+            child: FittedBox(
+              child: Padding(
+                padding: const EdgeInsets.all(HandConst.edgeInsets),
                 child: Text(state.cardList.length > index
                     ? state.cardList[index]
                     : Const.emptyString),
               ),
             ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildDeckView(BuildContext context) {
-    HomeState state = BlocProvider.of<HomeBloc>(context).state;
-    double width = MediaQuery.of(context).size.width;
-    return ResponsiveGridList(
-      desiredItemWidth: min(width / DeckConst.desiredItemWidthDivisor,
-          DeckConst.minDesiredItemWidth),
-      squareCells: true,
-      scroll: false,
-      minSpacing: DeckConst.minSpacing,
-      rowMainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        for (String card in DeckConst.deckList)
-          ElevatedButton(
-            onPressed: state is HomeDrawState
-                ? (() => BlocProvider.of<HomeBloc>(context)
-                    .add(HomeDrawEvent(card: card)))
-                : null,
-            child: Text(card),
           ),
       ],
     );
@@ -129,15 +141,9 @@ class HomeView extends StatelessWidget {
       );
     } else if (state is HomeErrorState) {
       return const Center(
-        child: Text("Unexpected Error occur :("),
+        child: Text(ErrorConst.errorMsg),
       );
     } else if (state is HomeSolutionState) {
-      List<String> solutionList = state.solutionList;
-      if (solutionList.isEmpty) {
-        return const Center(
-          child: Text("No solution"),
-        );
-      }
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -160,68 +166,97 @@ class HomeView extends StatelessWidget {
     int solutionLength = solutionList.length;
     double width = MediaQuery.of(context).size.width;
     return [
+      SizedBox(
+        width: width * SolutionConst.widthWeight + SolutionConst.widthBias,
+        height: SolutionConst.answerHeight,
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(SolutionConst.borderRadius),
+          ),
+          elevation: Const.elevation,
+          child: Center(
+            child: KeyboardActions(
+              autoScroll: false,
+              tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
+              isDialog: false,
+              config: _buildConfig(context),
+              child: KeyboardCustomInput<String>(
+                  focusNode: nodeText,
+                  notifier: customNotifier,
+                  builder: (context, val, hasFocus) {
+                    if (hasFocus != null && !hasFocus) {
+                      customNotifier.value = Const.emptyString;
+                    }
+                    return Center(
+                      child: Opacity(
+                        opacity: Const.opacity,
+                        child: Text(
+                          val.isEmpty ? SolutionConst.answerPlaceholder : val,
+                        ),
+                      ),
+                    );
+                  }),
+            ),
+          ),
+        ),
+      ),
       for (int index = 0; index < solutionLength; index++)
         SizedBox(
-          width: width / 4 + 200,
+          width: width * SolutionConst.widthWeight + SolutionConst.widthBias,
           child: solutionMaskList[index]
               ? Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+                    borderRadius:
+                        BorderRadius.circular(SolutionConst.borderRadius),
                   ),
-                  color: Colors.blue,
-                  elevation: 8.0,
+                  elevation: Const.elevation,
                   child: ListTile(
                     title: Center(
                       child: Text(solutionList[index]),
                     ),
-                    trailing: const IconButton(
-                      icon: Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                      onPressed: null,
+                    trailing: const Icon(
+                      Icons.check,
+                      color: Colors.green,
                     ),
                   ),
                 )
-              : GestureDetector(
-                  onTap: (() => BlocProvider.of<HomeBloc>(context)
-                      .add(HomeOpenSolutionEvent(index: index))),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    elevation: 8.0,
-                    child: hintMaskList[index]
-                        ? ListTile(
-                            title: Center(
-                              child: Text(hintList[index]),
-                            ),
-                            trailing: const IconButton(
-                              icon: Icon(
-                                Icons.lightbulb_outline_rounded,
-                              ),
-                              onPressed: null,
-                            ),
-                          )
-                        : ListTile(
-                            title: Center(
-                              child: Opacity(
-                                opacity: 0.5,
-                                child: Text("${index + 1}"),
-                              ),
-                            ),
-                            trailing: IconButton(
-                              tooltip: "提示",
-                              icon: Icon(
-                                Icons.lightbulb_outline_rounded,
-                                color: Colors.yellow[400],
-                              ),
-                              onPressed: (() =>
-                                  BlocProvider.of<HomeBloc>(context)
-                                      .add(HomeOpenHintEvent(index: index))),
-                            ),
-                          ),
+              : Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(SolutionConst.borderRadius),
                   ),
+                  elevation: Const.elevation,
+                  child: hintMaskList[index]
+                      ? ListTile(
+                          leading: Opacity(
+                            opacity: Const.opacity,
+                            child: Text("${index + 1}"),
+                          ),
+                          title: Center(
+                            child: Text(hintList[index]),
+                          ),
+                          trailing: const IconButton(
+                            icon: Icon(
+                              Icons.lightbulb_outline_rounded,
+                            ),
+                            onPressed: null,
+                          ),
+                        )
+                      : ListTile(
+                          leading: Opacity(
+                            opacity: 0.5,
+                            child: Text("${index + 1}"),
+                          ),
+                          trailing: IconButton(
+                            tooltip: SolutionConst.hintTooltip,
+                            icon: Icon(
+                              Icons.lightbulb_outline_rounded,
+                              color: Colors.yellow[600],
+                            ),
+                            onPressed: (() => BlocProvider.of<HomeBloc>(context)
+                                .add(HomeOpenHintEvent(index: index))),
+                          ),
+                        ),
                 ),
         ),
     ];

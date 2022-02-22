@@ -8,19 +8,7 @@ abstract class HomeEvent extends Equatable {
 }
 
 @immutable
-class HomeDrawEvent extends HomeEvent {
-  final String card;
-  HomeDrawEvent({required this.card});
-}
-
-@immutable
 class HomeRandomDrawEvent extends HomeEvent {}
-
-@immutable
-class HomeRemoveEvent extends HomeEvent {
-  final int index;
-  HomeRemoveEvent({required this.index});
-}
 
 @immutable
 class HomeOpenHintEvent extends HomeEvent {
@@ -29,9 +17,9 @@ class HomeOpenHintEvent extends HomeEvent {
 }
 
 @immutable
-class HomeOpenSolutionEvent extends HomeEvent {
-  final int index;
-  HomeOpenSolutionEvent({required this.index});
+class HomeSubmitEvent extends HomeEvent {
+  final String answer;
+  HomeSubmitEvent({required this.answer});
 }
 
 @immutable

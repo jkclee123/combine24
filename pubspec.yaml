@@ -39,6 +39,7 @@ dependencies:
   equatable: ^2.0.3
   responsive_grid: ^2.0.0
   tuple: ^2.0.0
+  keyboard_actions: ^3.4.7
 
 dev_dependencies:
   flutter_test:

@@ -11,6 +11,14 @@ class DefaultSolutionService implements SolutionService {
     "K": "13",
     "A": "1",
   };
+  static const Map<String, String> mathCardTranslateMap = {
+    "10": "T",
+    "11": "J",
+    "12": "Q",
+    "13": "K",
+    "1": "A",
+    "T": "10",
+  };
   static const Map<String, String> opTranslateMap = {
     "+": " + ",
     "-": " - ",
@@ -52,12 +60,14 @@ class DefaultSolutionService implements SolutionService {
       buildFormula(a, b, op).interpret() is int &&
       !buildFormula(a, b, op).interpret().isNegative;
 
-  bool isValidTwoPairOp(String firstOp, String secondOp, String midOp) =>
+  bool isValidTwoPairOp(String firstOp, String secondOp, String midOp,
+          String secondPair1, String secondPair2) =>
       !((isLowOp(firstOp) && isLowOp(secondOp) && isLowOp(midOp)) ||
           (isHighOp(firstOp) && isHighOp(secondOp) && isHighOp(midOp))) &&
       !((isDivOp(midOp) && isMulOp(secondOp)) ||
           (isReverseDivOp(firstOp) && isMulOp(midOp))) &&
-      !((isAddOp(midOp) || isMinusOp(midOp)) && isReverseMinusOp(secondOp));
+      !((isAddOp(midOp) || isMinusOp(midOp)) && isReverseMinusOp(secondOp)) &&
+      !(secondPair1 == secondPair2 && isMinusOp(midOp) && isAddOp(secondOp));
 
   bool isMulOne(String a, String b, String op) =>
       isMulOp(op) && (a == '1' || b == '1');
@@ -100,6 +110,8 @@ class DefaultSolutionService implements SolutionService {
 
   String translateSolution(String solution) {
     opTranslateMap
+        .forEach((key, value) => solution = solution.replaceAll(key, value));
+    mathCardTranslateMap
         .forEach((key, value) => solution = solution.replaceAll(key, value));
     return solution;
   }
@@ -333,7 +345,8 @@ class DefaultSolutionService implements SolutionService {
           String formula2 = buildFormula(pair2.item1, pair2.item2, secondOp);
           for (String midOp in opList) {
             if (!isValidFormula(formula1, formula2, midOp) ||
-                !isValidTwoPairOp(firstOp, secondOp, midOp)) {
+                !isValidTwoPairOp(
+                    firstOp, secondOp, midOp, pair2.item1, pair2.item2)) {
               continue;
             }
             String firstFormula =

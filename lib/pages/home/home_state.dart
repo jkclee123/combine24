@@ -10,9 +10,9 @@ abstract class HomeState extends Equatable {
 }
 
 @immutable
-class HomeDrawState extends HomeState {
-  HomeDrawState({List<String>? cardList}) {
-    this.cardList = cardList ?? <String>[];
+class HomeInitState extends HomeState {
+  HomeInitState() {
+    cardList = <String>[];
   }
 
   @override
