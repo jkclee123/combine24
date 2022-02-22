@@ -40,6 +40,7 @@ dependencies:
   responsive_grid: ^2.0.0
   tuple: ^2.0.0
   keyboard_actions: ^3.4.7
+  collection: ^1.15.0
 
 dev_dependencies:
   flutter_test:

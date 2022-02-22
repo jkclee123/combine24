@@ -23,4 +23,7 @@ class HomeSubmitEvent extends HomeEvent {
 }
 
 @immutable
+class HomeTestEvent extends HomeEvent {}
+
+@immutable
 class HomeResetEvent extends HomeEvent {}

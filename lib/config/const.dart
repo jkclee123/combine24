@@ -65,6 +65,6 @@ class KeyboardConst {
   static const double minSpacing = 10.0;
   static const int disabledColorHex = 0xFF4A4A4A;
   static const double borderRadius = 5.0;
-  static const double sumbitBorderRadius = 28.0;
+  static const double sumbitBorderRadius = 40.0;
   static const double edgeInsets = 3.0;
 }

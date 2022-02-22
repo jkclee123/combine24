@@ -37,6 +37,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    // BlocProvider.of<HomeBloc>(context).add(HomeTestEvent());
     return BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
       return Scaffold(
         appBar: _buildAppBar(context),
@@ -185,6 +186,7 @@ class _HomeViewState extends State<HomeView> {
                   notifier: customNotifier,
                   builder: (context, val, hasFocus) {
                     if (hasFocus != null && !hasFocus) {
+                      val = Const.emptyString;
                       customNotifier.value = Const.emptyString;
                     }
                     return Center(

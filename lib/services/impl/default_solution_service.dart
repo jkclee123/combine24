@@ -5,26 +5,6 @@ import 'package:tuple/tuple.dart';
 class DefaultSolutionService implements SolutionService {
   static const String hintRegExp = r' .*? .*? ';
   static const String divOneRegExp = r'\/1[\+\-\*\/\)]|\/1$';
-  static const Map<String, String> cardTranslateMap = {
-    "J": "11",
-    "Q": "12",
-    "K": "13",
-    "A": "1",
-  };
-  static const Map<String, String> mathCardTranslateMap = {
-    "10": "T",
-    "11": "J",
-    "12": "Q",
-    "13": "K",
-    "1": "A",
-    "T": "10",
-  };
-  static const Map<String, String> opTranslateMap = {
-    "+": " + ",
-    "-": " - ",
-    "*": " x ",
-    "/": " ÷ ",
-  };
   static const List<String> opList = ["+", "-", "*", "/", "r-", "r/"];
   static const List<String> lowOpList = ["+", "-"];
   static const List<String> highOpList = ["*", "/"];
@@ -73,10 +53,8 @@ class DefaultSolutionService implements SolutionService {
       isMulOp(op) && (a == '1' || b == '1');
 
   @override
-  List<String> findSolutions(List<String> cardList) {
+  List<String> findSolutions(List<String> mathCardList) {
     List<String> solutionList = <String>[];
-    List<String> mathCardList =
-        cardList.map((card) => translateCard(card)).toList();
     mathCardList.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
     Map<Tuple2, List<String>> pairSingleMap = buildPairSingleMap(mathCardList);
     Map<Tuple2, Tuple2> twoPairMap = buildTwoPairMap(pairSingleMap);
@@ -88,8 +66,6 @@ class DefaultSolutionService implements SolutionService {
     solutionList.addAll(buildLowPairSolutionList(pairSingleMap));
     solutionList.addAll(buildHighPairSolutionList(pairSingleMap));
     solutionList.addAll(buildTwoPairSolutionList(twoPairMap));
-    solutionList =
-        solutionList.map((solution) => translateSolution(solution)).toList();
     return solutionList;
   }
 
@@ -100,20 +76,6 @@ class DefaultSolutionService implements SolutionService {
       int endIndex = regexp.allMatches(solution).first.end - 1;
       return solution.substring(0, endIndex);
     }).toList();
-  }
-
-  String translateCard(String card) {
-    cardTranslateMap
-        .forEach((key, value) => card = card.replaceAll(key, value));
-    return card;
-  }
-
-  String translateSolution(String solution) {
-    opTranslateMap
-        .forEach((key, value) => solution = solution.replaceAll(key, value));
-    mathCardTranslateMap
-        .forEach((key, value) => solution = solution.replaceAll(key, value));
-    return solution;
   }
 
   String addBracket(String formula) => "($formula)";

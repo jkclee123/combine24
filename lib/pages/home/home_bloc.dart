@@ -2,20 +2,27 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:combine24/config/const.dart';
+import 'package:combine24/services/answer_service.dart';
+import 'package:combine24/services/impl/default_answer_service.dart';
+import 'package:combine24/services/impl/default_translate_service.dart';
+import 'package:combine24/services/translate_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:combine24/pages/home/home_event.dart';
 import 'package:combine24/pages/home/home_state.dart';
-import 'package:combine24/services/default_solution_service.dart';
+import 'package:combine24/services/impl/default_solution_service.dart';
 import 'package:combine24/services/solution_service.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final Completer _completer = Completer();
   final SolutionService _solutionService = DefaultSolutionService();
+  final AnswerService _answerService = DefaultAnswerService();
+  final TranslateService _translateService = DefaultTranslateService();
 
   HomeBloc() : super(HomeInitState()) {
     on<HomeRandomDrawEvent>(_randomDraw);
     on<HomeOpenHintEvent>(_openHint);
     on<HomeSubmitEvent>(_submit);
+    on<HomeTestEvent>(_test);
     on<HomeResetEvent>(_reset);
   }
 
@@ -30,7 +37,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         for (int index = 0; index < 4; index++) {
           cardList.add(Const.deckList[rng.nextInt(13)]);
         }
-        solutionList = _solutionService.findSolutions(cardList);
+        List<String> mathCardList =
+            _translateService.readCard2MathCard(cardList);
+        List<String> mathSolutionList =
+            _solutionService.findSolutions(mathCardList);
+        solutionList =
+            _translateService.mathSolutions2ReadSolutions(mathSolutionList);
       }
       List<String> hintList = _solutionService.extractHint(solutionList);
       emit(HomeSolutionState(
@@ -51,7 +63,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _submit(HomeSubmitEvent event, Emitter<HomeState> emit) {
-    print("${event.answer}");
+    List<String> cardList = List<String>.from(state.cardList);
+    if (state is HomeSolutionState) {
+      try {
+        HomeSolutionState oldState = (state as HomeSolutionState);
+        String mathAnswer =
+            _translateService.readSolution2MathSolution(event.answer);
+        if (!_answerService.canCombine24(mathAnswer)) {
+          emit(oldState.copyWith(wrongAnswer: true));
+        } else {
+          int index =
+              _answerService.matchAnswer(event.answer, oldState.solutionList);
+        }
+      } catch (e, stacktrace) {
+        emit(HomeErrorState(cardList: cardList));
+        _completer.completeError(e, stacktrace);
+      }
+    }
+  }
+
+  void _test(HomeTestEvent event, Emitter<HomeState> emit) {
+    // _answerService.matchAnswer("", []);
   }
 
   void _reset(HomeResetEvent event, Emitter<HomeState> emit) {
