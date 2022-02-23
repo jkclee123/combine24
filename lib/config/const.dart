@@ -37,12 +37,12 @@ class HandConst {
 }
 
 class ErrorConst {
-  static const String errorMsg = "你個嘢壞咗呀☹";
+  static const String errorMsg = "你個嘢壞咗呀☹ F5啦";
 }
 
 class SolutionConst {
   static const double answerHeight = 55;
-  static const String answerPlaceholder = "我知答案啦!";
+  static const String answerPlaceholder = "我知答案!";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
   static const double borderRadius = 15.0;

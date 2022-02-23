@@ -32,6 +32,8 @@ class DefaultTranslateService implements TranslateService {
   String readSolution2MathSolution(String solution) {
     readCardTranslateMap
         .forEach((key, value) => solution = solution.replaceAll(key, value));
+    opTranslateMap
+        .forEach((key, value) => solution = solution.replaceAll(value, key));
     return solution;
   }
 

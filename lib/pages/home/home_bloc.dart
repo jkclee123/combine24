@@ -83,7 +83,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _test(HomeTestEvent event, Emitter<HomeState> emit) {
-    // _answerService.matchAnswer("", []);
+    DefaultAnswerService haha = DefaultAnswerService();
+    haha.cleanBracket("");
   }
 
   void _reset(HomeResetEvent event, Emitter<HomeState> emit) {
