@@ -1,5 +1,5 @@
 abstract class TranslateService {
-  List<String> readCard2MathCard(List<String> cardList);
-  List<String> mathSolutions2ReadSolutions(List<String> solutionList);
-  String readSolution2MathSolution(String solution);
+  List<String> read2CalCard(List<String> cardList);
+  List<String> cal2ReadFormulaList(List<String> solutionList);
+  String read2CalFormula(String solution);
 }

@@ -213,6 +213,10 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   elevation: Const.elevation,
                   child: ListTile(
+                    leading: Opacity(
+                      opacity: Const.opacity,
+                      child: Text("${index + 1}"),
+                    ),
                     title: Center(
                       child: Text(solutionList[index]),
                     ),

@@ -6,6 +6,7 @@ import 'package:combine24/services/answer_service.dart';
 import 'package:combine24/services/impl/default_answer_service.dart';
 import 'package:combine24/services/impl/default_translate_service.dart';
 import 'package:combine24/services/translate_service.dart';
+import 'package:combine24/utils/combine24_util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:combine24/pages/home/home_event.dart';
 import 'package:combine24/pages/home/home_state.dart';
@@ -37,12 +38,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         for (int index = 0; index < 4; index++) {
           cardList.add(Const.deckList[rng.nextInt(13)]);
         }
-        List<String> mathCardList =
-            _translateService.readCard2MathCard(cardList);
+        List<String> mathCardList = _translateService.read2CalCard(cardList);
         List<String> mathSolutionList =
             _solutionService.findSolutions(mathCardList);
-        solutionList =
-            _translateService.mathSolutions2ReadSolutions(mathSolutionList);
+        solutionList = _translateService.cal2ReadFormulaList(mathSolutionList);
       }
       List<String> hintList = _solutionService.extractHint(solutionList);
       emit(HomeSolutionState(
@@ -67,9 +66,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (state is HomeSolutionState) {
       try {
         HomeSolutionState oldState = (state as HomeSolutionState);
-        String mathAnswer =
-            _translateService.readSolution2MathSolution(event.answer);
-        if (!_answerService.canCombine24(mathAnswer)) {
+        String mathAnswer = _translateService.read2CalFormula(event.answer);
+        if (!Combine24Util.canCombine24(mathAnswer)) {
           emit(oldState.copyWith(wrongAnswer: true));
         } else {
           int index =

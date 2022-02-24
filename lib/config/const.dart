@@ -1,8 +1,9 @@
 class Const {
   static const String emptyString = "";
+  static const String tempSign = "@";
   static const double edgeInsets = 10.0;
   static const int refreshDelay = 1;
-  static const double elevation = 8.0;
+  static const double elevation = 10.0;
   static const double opacity = 0.5;
   static const List<String> deckList = [
     "A",
@@ -18,6 +19,37 @@ class Const {
     "J",
     "Q",
     "K"
+  ];
+}
+
+class OpConst {
+  static const String addOp = "+";
+  static const String minusOp = "-";
+  static const String readMulOp = "x";
+  static const String calMulOp = "*";
+  static const String readDivOp = "÷";
+  static const String calDivOp = "/";
+  static const String reverseMinusOp = "r-";
+  static const String reverseDivOp = "r/";
+  static const String openBracket = "(";
+  static const String closeBracket = ")";
+  static const String reverseIdentifier = "r";
+  static const List<String> opList = [addOp, minusOp, calMulOp, calDivOp];
+  static const List<String> opWithRList = [
+    addOp,
+    minusOp,
+    calMulOp,
+    calDivOp,
+    reverseMinusOp,
+    reverseDivOp
+  ];
+  static const List<String> lowOpList = [addOp, minusOp];
+  static const List<String> highOpList = [calMulOp, calDivOp];
+  static const List<String> lowOpWithRList = [addOp, minusOp, reverseMinusOp];
+  static const List<String> highOpWithRList = [
+    calMulOp,
+    calDivOp,
+    reverseDivOp
   ];
 }
 
@@ -52,18 +84,15 @@ class SolutionConst {
 class KeyboardConst {
   static const double preferredSizeHeight = 240.0;
   static const List<String> opList = [
-    "+",
-    "-",
-    "x",
-    "÷",
+    OpConst.addOp,
+    OpConst.minusOp,
+    OpConst.readMulOp,
+    OpConst.readDivOp
   ];
-  static const String openBracket = "(";
-  static const String closeBracket = ")";
   static const String eof = "\u0000";
   static const double widthWeight = 1 / 14;
   static const double heightWeight = 1 / 14;
   static const double minSpacing = 10.0;
-  static const int disabledColorHex = 0xFF4A4A4A;
   static const double borderRadius = 5.0;
   static const double sumbitBorderRadius = 40.0;
   static const double edgeInsets = 3.0;

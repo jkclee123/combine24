@@ -1,3 +1,4 @@
+import 'package:combine24/config/const.dart';
 import 'package:combine24/services/translate_service.dart';
 
 class DefaultTranslateService implements TranslateService {
@@ -7,7 +8,7 @@ class DefaultTranslateService implements TranslateService {
     "K": "13",
     "A": "1",
   };
-  static const Map<String, String> mathCardTranslateMap = {
+  static const Map<String, String> calCardTranslateMap = {
     "10": "T",
     "11": "J",
     "12": "Q",
@@ -16,33 +17,33 @@ class DefaultTranslateService implements TranslateService {
     "T": "10",
   };
   static const Map<String, String> opTranslateMap = {
-    "+": " + ",
-    "-": " - ",
-    "*": " x ",
-    "/": " ÷ ",
+    OpConst.addOp: " ${OpConst.addOp} ",
+    OpConst.minusOp: " ${OpConst.minusOp} ",
+    OpConst.calMulOp: " ${OpConst.readMulOp} ",
+    OpConst.calDivOp: " ${OpConst.readDivOp} ",
   };
   @override
-  List<String> readCard2MathCard(List<String> cardList) {
+  List<String> read2CalCard(List<String> cardList) {
     return cardList
         .map((card) => card = readCardTranslateMap[card] ?? card)
         .toList();
   }
 
   @override
-  String readSolution2MathSolution(String solution) {
+  String read2CalFormula(String formula) {
     readCardTranslateMap
-        .forEach((key, value) => solution = solution.replaceAll(key, value));
+        .forEach((key, value) => formula = formula.replaceAll(key, value));
     opTranslateMap
-        .forEach((key, value) => solution = solution.replaceAll(value, key));
-    return solution;
+        .forEach((key, value) => formula = formula.replaceAll(value, key));
+    return formula;
   }
 
   @override
-  List<String> mathSolutions2ReadSolutions(List<String> solutionList) {
-    return solutionList.map((solution) {
+  List<String> cal2ReadFormulaList(List<String> formulaList) {
+    return formulaList.map((solution) {
       opTranslateMap
           .forEach((key, value) => solution = solution.replaceAll(key, value));
-      mathCardTranslateMap
+      calCardTranslateMap
           .forEach((key, value) => solution = solution.replaceAll(key, value));
       return solution;
     }).toList();

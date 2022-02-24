@@ -1,56 +1,36 @@
+import 'package:combine24/config/const.dart';
 import 'package:combine24/services/solution_service.dart';
+import 'package:combine24/utils/combine24_util.dart';
+import 'package:combine24/utils/op_util.dart';
 import 'package:function_tree/function_tree.dart';
 import 'package:tuple/tuple.dart';
 
 class DefaultSolutionService implements SolutionService {
   static const String hintRegExp = r' .*? .*? ';
   static const String divOneRegExp = r'\/1[\+\-\*\/\)]|\/1$';
-  static const List<String> opList = ["+", "-", "*", "/", "r-", "r/"];
-  static const List<String> lowOpList = ["+", "-"];
-  static const List<String> highOpList = ["*", "/"];
-  static const List<String> lowOpWithRList = ["+", "-", "r-"];
-  static const List<String> highOpWithRList = ["*", "/", "r/"];
-
-  bool isReverseOp(String op) => op.contains('r');
-
-  bool isAddOp(String op) => op == '+';
-
-  bool isMinusOp(String op) => op == '-';
-
-  bool isMulOp(String op) => op == '*';
-
-  bool isDivOp(String op) => op == '/';
-
-  bool isReverseMinusOp(String op) => op == 'r-';
-
-  bool isReverseDivOp(String op) => op == 'r/';
-
-  bool isLowOp(String op) =>
-      isAddOp(op) || isMinusOp(op) || isReverseMinusOp(op);
-
-  bool isHighOp(String op) => isMulOp(op) || isDivOp(op) || isReverseDivOp(op);
-
-  bool canCombine24(String formula) => formula.interpret().compareTo(24) == 0;
 
   bool containsDivOne(String formula) => formula.contains(RegExp(divOneRegExp));
 
   bool isValidFormula(String a, String b, String op) =>
-      !(b.interpret().compareTo(1) == 0 && isDivOp(op)) &&
-      !(a.interpret().compareTo(1) == 0 && isReverseDivOp(op)) &&
+      !(b.interpret().compareTo(1) == 0 && OpUtil.isDivOp(op)) &&
+      !(a.interpret().compareTo(1) == 0 && OpUtil.isReverseDivOp(op)) &&
       buildFormula(a, b, op).interpret() is int &&
       !buildFormula(a, b, op).interpret().isNegative;
 
   bool isValidTwoPairOp(String firstOp, String secondOp, String midOp,
           String secondPair1, String secondPair2) =>
-      !((isLowOp(firstOp) && isLowOp(secondOp) && isLowOp(midOp)) ||
-          (isHighOp(firstOp) && isHighOp(secondOp) && isHighOp(midOp))) &&
-      !((isDivOp(midOp) && isMulOp(secondOp)) ||
-          (isReverseDivOp(firstOp) && isMulOp(midOp))) &&
-      !((isAddOp(midOp) || isMinusOp(midOp)) && isReverseMinusOp(secondOp)) &&
-      !(secondPair1 == secondPair2 && isMinusOp(midOp) && isAddOp(secondOp));
+      !(OpUtil.isAllLowOp([firstOp, secondOp, midOp]) ||
+          OpUtil.isAllHighOp([firstOp, secondOp, midOp])) &&
+      !((OpUtil.isDivOp(midOp) && OpUtil.isMulOp(secondOp)) ||
+          (OpUtil.isReverseDivOp(firstOp) && OpUtil.isMulOp(midOp))) &&
+      !((OpUtil.isAddOp(midOp) || OpUtil.isMinusOp(midOp)) &&
+          OpUtil.isReverseMinusOp(secondOp)) &&
+      !(secondPair1 == secondPair2 &&
+          OpUtil.isMinusOp(midOp) &&
+          OpUtil.isAddOp(secondOp));
 
   bool isMulOne(String a, String b, String op) =>
-      isMulOp(op) && (a == '1' || b == '1');
+      OpUtil.isMulOp(op) && (a == '1' || b == '1');
 
   @override
   List<String> findSolutions(List<String> mathCardList) {
@@ -81,8 +61,8 @@ class DefaultSolutionService implements SolutionService {
   String addBracket(String formula) => "($formula)";
 
   String buildFormula(String a, String b, String op) {
-    if (isReverseOp(op)) {
-      return "$b${op.replaceAll('r', '')}$a";
+    if (OpUtil.isReverseOp(op)) {
+      return "$b${op.replaceAll(OpConst.reverseIdentifier, Const.emptyString)}$a";
     } else {
       return "$a$op$b";
     }
@@ -132,28 +112,7 @@ class DefaultSolutionService implements SolutionService {
     Set<String> formulaSet = <String>{};
     List<List<String>> opCard2dList = [
       for (String card in mathCardList)
-        [for (String op in lowOpList) "$op$card"]
-    ];
-    List<List<String>> opCardComb2dList = [
-      for (String opCard1 in opCard2dList[0])
-        for (String opCard2 in opCard2dList[1])
-          for (String opCard3 in opCard2dList[2])
-            for (String opCard4 in opCard2dList[3])
-              [opCard1, opCard2, opCard3, opCard4]
-    ];
-    for (List<String> opCardCombList in opCardComb2dList) {
-      opCardCombList.sort();
-      opCardCombList[0] = opCardCombList[0].substring(1);
-      formulaSet.add(opCardCombList.join());
-    }
-    return formulaSet.where((formula) => canCombine24(formula)).toList();
-  }
-
-  List<String> buildAllHighSolutionList(List<String> mathCardList) {
-    Set<String> formulaSet = <String>{};
-    List<List<String>> opCard2dList = [
-      for (String card in mathCardList)
-        [for (String op in highOpList) "$op$card"]
+        [for (String op in OpConst.lowOpList) "$op$card"]
     ];
     List<List<String>> opCardComb2dList = [
       for (String opCard1 in opCard2dList[0])
@@ -168,7 +127,31 @@ class DefaultSolutionService implements SolutionService {
       formulaSet.add(opCardCombList.join());
     }
     return formulaSet
-        .where((formula) => canCombine24(formula) && !containsDivOne(formula))
+        .where((formula) => Combine24Util.canCombine24(formula))
+        .toList();
+  }
+
+  List<String> buildAllHighSolutionList(List<String> mathCardList) {
+    Set<String> formulaSet = <String>{};
+    List<List<String>> opCard2dList = [
+      for (String card in mathCardList)
+        [for (String op in OpConst.highOpList) "$op$card"]
+    ];
+    List<List<String>> opCardComb2dList = [
+      for (String opCard1 in opCard2dList[0])
+        for (String opCard2 in opCard2dList[1])
+          for (String opCard3 in opCard2dList[2])
+            for (String opCard4 in opCard2dList[3])
+              [opCard1, opCard2, opCard3, opCard4]
+    ];
+    for (List<String> opCardCombList in opCardComb2dList) {
+      opCardCombList.sort();
+      opCardCombList[0] = opCardCombList[0].substring(1);
+      formulaSet.add(opCardCombList.join());
+    }
+    return formulaSet
+        .where((formula) =>
+            Combine24Util.canCombine24(formula) && !containsDivOne(formula))
         .toList();
   }
 
@@ -178,7 +161,7 @@ class DefaultSolutionService implements SolutionService {
     tripletSingleMap.forEach((triplet, single) {
       List<List<String>> opCard2dList = [
         for (String card in triplet.toList())
-          [for (String op in lowOpList) "$op$card"]
+          [for (String op in OpConst.lowOpList) "$op$card"]
       ];
       List<List<String>> opCardComb2dList = [
         for (String opCard1 in opCard2dList[0])
@@ -189,14 +172,15 @@ class DefaultSolutionService implements SolutionService {
         opCardCombList.sort();
         opCardCombList[0] = opCardCombList[0].substring(1);
         String tripletFormula = addBracket(opCardCombList.join());
-        for (String op in highOpWithRList) {
+        for (String op in OpConst.highOpWithRList) {
           String formula = buildFormula(tripletFormula, single, op);
           formulaSet.add(formula);
         }
       }
     });
     return formulaSet
-        .where((formula) => canCombine24(formula) && !containsDivOne(formula))
+        .where((formula) =>
+            Combine24Util.canCombine24(formula) && !containsDivOne(formula))
         .toList();
   }
 
@@ -206,7 +190,7 @@ class DefaultSolutionService implements SolutionService {
     tripletSingleMap.forEach((triplet, single) {
       List<List<String>> opCard2dList = [
         for (String card in triplet.toList())
-          [for (String op in highOpList) "$op$card"]
+          [for (String op in OpConst.highOpList) "$op$card"]
       ];
       List<List<String>> opCardComb2dList = [
         for (String opCard1 in opCard2dList[0])
@@ -217,14 +201,15 @@ class DefaultSolutionService implements SolutionService {
         opCardCombList.sort();
         opCardCombList[0] = opCardCombList[0].substring(1);
         String tripletFormula = opCardCombList.join();
-        for (String op in lowOpWithRList) {
+        for (String op in OpConst.lowOpWithRList) {
           String formula = buildFormula(tripletFormula, single, op);
           formulaSet.add(formula);
         }
       }
     });
     return formulaSet
-        .where((formula) => canCombine24(formula) && !containsDivOne(formula))
+        .where((formula) =>
+            Combine24Util.canCombine24(formula) && !containsDivOne(formula))
         .toList();
   }
 
@@ -232,7 +217,7 @@ class DefaultSolutionService implements SolutionService {
       Map<Tuple2, List<String>> pairSingleMap) {
     Set<String> formulaSet = <String>{};
     pairSingleMap.forEach((pair, singleList) {
-      for (String op1 in lowOpWithRList) {
+      for (String op1 in OpConst.lowOpWithRList) {
         if (!isValidFormula(pair.item1, pair.item2, op1)) {
           continue;
         }
@@ -240,12 +225,12 @@ class DefaultSolutionService implements SolutionService {
         for (String card in singleList) {
           List<String> dummySingleList = List<String>.from(singleList);
           dummySingleList.remove(card);
-          for (String op2 in highOpWithRList) {
+          for (String op2 in OpConst.highOpWithRList) {
             if (!isValidFormula(formula1, card, op2)) {
               continue;
             }
             String formula2 = buildFormula(formula1, card, op2);
-            for (String op3 in lowOpWithRList) {
+            for (String op3 in OpConst.lowOpWithRList) {
               if (!isValidFormula(formula2, dummySingleList.first, op3)) {
                 continue;
               }
@@ -256,7 +241,9 @@ class DefaultSolutionService implements SolutionService {
         }
       }
     });
-    return formulaSet.where((formula) => canCombine24(formula)).toList();
+    return formulaSet
+        .where((formula) => Combine24Util.canCombine24(formula))
+        .toList();
   }
 
   // (2 high 1 low) 1 high
@@ -264,7 +251,7 @@ class DefaultSolutionService implements SolutionService {
       Map<Tuple2, List<String>> pairSingleMap) {
     Set<String> formulaSet = <String>{};
     pairSingleMap.forEach((pair, singleList) {
-      for (String op1 in highOpWithRList) {
+      for (String op1 in OpConst.highOpWithRList) {
         if (!isValidFormula(pair.item1, pair.item2, op1) ||
             isMulOne(pair.item1, pair.item2, op1)) {
           continue;
@@ -273,12 +260,12 @@ class DefaultSolutionService implements SolutionService {
         for (String card in singleList) {
           List<String> dummySingleList = List<String>.from(singleList);
           dummySingleList.remove(card);
-          for (String op2 in lowOpWithRList) {
+          for (String op2 in OpConst.lowOpWithRList) {
             if (!isValidFormula(formula1, card, op2)) {
               continue;
             }
             String formula2 = addBracket(buildFormula(formula1, card, op2));
-            for (String op3 in highOpWithRList) {
+            for (String op3 in OpConst.highOpWithRList) {
               if (!isValidFormula(formula2, dummySingleList.first, op3)) {
                 continue;
               }
@@ -289,40 +276,46 @@ class DefaultSolutionService implements SolutionService {
         }
       }
     });
-    return formulaSet.where((formula) => canCombine24(formula)).toList();
+    return formulaSet
+        .where((formula) => Combine24Util.canCombine24(formula))
+        .toList();
   }
 
   List<String> buildTwoPairSolutionList(Map<Tuple2, Tuple2> twoPairMap) {
     Set<String> formulaSet = <String>{};
     twoPairMap.forEach((pair1, pair2) {
-      for (String firstOp in opList) {
+      for (String firstOp in OpConst.opWithRList) {
         if (!isValidFormula(pair1.item1, pair1.item2, firstOp)) {
           continue;
         }
         String formula1 = buildFormula(pair1.item1, pair1.item2, firstOp);
-        for (String secondOp in opList) {
+        for (String secondOp in OpConst.opWithRList) {
           if (!isValidFormula(pair2.item1, pair2.item2, secondOp)) {
             continue;
           }
           String formula2 = buildFormula(pair2.item1, pair2.item2, secondOp);
-          for (String midOp in opList) {
+          for (String midOp in OpConst.opWithRList) {
             if (!isValidFormula(formula1, formula2, midOp) ||
                 !isValidTwoPairOp(
                     firstOp, secondOp, midOp, pair2.item1, pair2.item2)) {
               continue;
             }
             String firstFormula =
-                (isLowOp(firstOp) && isHighOp(midOp)) || isReverseDivOp(midOp)
+                (OpUtil.isLowOp(firstOp) && OpUtil.isHighOp(midOp)) ||
+                        OpUtil.isReverseDivOp(midOp)
                     ? addBracket(formula1)
                     : formula1;
-            String secondFormula = isLowOp(secondOp) && isHighOp(midOp)
-                ? addBracket(formula2)
-                : formula2;
+            String secondFormula =
+                OpUtil.isLowOp(secondOp) && OpUtil.isHighOp(midOp)
+                    ? addBracket(formula2)
+                    : formula2;
             formulaSet.add(buildFormula(firstFormula, secondFormula, midOp));
           }
         }
       }
     });
-    return formulaSet.where((formula) => canCombine24(formula)).toList();
+    return formulaSet
+        .where((formula) => Combine24Util.canCombine24(formula))
+        .toList();
   }
 }

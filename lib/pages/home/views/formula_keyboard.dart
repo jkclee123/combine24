@@ -87,7 +87,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
 
   void onTapOpenBracket() {
     String currentValue = widget.notifier.value;
-    String temp = currentValue + KeyboardConst.openBracket;
+    String temp = currentValue + OpConst.openBracket;
     setState(() {
       isInBracket = true;
       lenFromBracket = 0;
@@ -97,7 +97,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
 
   void onTapCloseBracket() {
     String currentValue = widget.notifier.value;
-    String temp = currentValue + KeyboardConst.closeBracket;
+    String temp = currentValue + OpConst.closeBracket;
     setState(() {
       isInBracket = false;
       lenFromBracket = 0;
@@ -144,7 +144,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
   Widget buildCardButton(int index) {
     return Material(
       borderRadius: BorderRadius.circular(KeyboardConst.borderRadius),
-      color: canAddCard(index) ? Colors.blue : Colors.grey[700],
+      color: canAddCard(index) ? Colors.blue : Colors.grey[800],
       elevation: Const.elevation,
       child: InkWell(
         onTap: canAddCard(index) ? () => onTapCard(index) : null,
@@ -153,8 +153,8 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
             padding: const EdgeInsets.all(KeyboardConst.edgeInsets),
             child: Text(
               widget.cardList[index],
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: canAddCard(index) ? Colors.white : Colors.grey,
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -167,7 +167,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
   Widget buildOpButton(String op) {
     return Material(
       borderRadius: BorderRadius.circular(KeyboardConst.borderRadius),
-      color: canAddOp ? Colors.blue : Colors.grey[700],
+      color: canAddOp ? Colors.blue : Colors.grey[800],
       elevation: Const.elevation,
       child: InkWell(
         onTap: canAddOp ? () => onTapOp(op) : null,
@@ -176,8 +176,8 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
             padding: const EdgeInsets.all(KeyboardConst.edgeInsets),
             child: Text(
               op,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: canAddOp ? Colors.white : Colors.grey,
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -210,17 +210,17 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
   Widget buildOpenBracketButton() {
     return Material(
       borderRadius: BorderRadius.circular(KeyboardConst.borderRadius),
-      color: canAddOpenBracket ? Colors.blue : Colors.grey[700],
+      color: canAddOpenBracket ? Colors.blue : Colors.grey[800],
       elevation: Const.elevation,
       child: InkWell(
         onTap: canAddOpenBracket ? () => onTapOpenBracket() : null,
-        child: const FittedBox(
+        child: FittedBox(
           child: Padding(
-            padding: EdgeInsets.all(KeyboardConst.edgeInsets),
+            padding: const EdgeInsets.all(KeyboardConst.edgeInsets),
             child: Text(
-              KeyboardConst.openBracket,
+              OpConst.openBracket,
               style: TextStyle(
-                color: Colors.white,
+                color: canAddOpenBracket ? Colors.white : Colors.grey,
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -233,17 +233,17 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
   Widget buildCloseBracketButton() {
     return Material(
       borderRadius: BorderRadius.circular(KeyboardConst.borderRadius),
-      color: canAddCloseBracket ? Colors.blue : Colors.grey[700],
+      color: canAddCloseBracket ? Colors.blue : Colors.grey[800],
       elevation: Const.elevation,
       child: InkWell(
         onTap: canAddCloseBracket ? () => onTapCloseBracket() : null,
-        child: const FittedBox(
+        child: FittedBox(
           child: Padding(
-            padding: EdgeInsets.all(KeyboardConst.edgeInsets),
+            padding: const EdgeInsets.all(KeyboardConst.edgeInsets),
             child: Text(
-              KeyboardConst.closeBracket,
+              OpConst.closeBracket,
               style: TextStyle(
-                color: Colors.white,
+                color: canAddCloseBracket ? Colors.white : Colors.grey,
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -256,16 +256,16 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
   Widget buildSubmitButton() {
     return Material(
       shape: const CircleBorder(),
-      color: canSubmit ? Colors.greenAccent[400] : Colors.grey[700],
+      color: canSubmit ? Colors.greenAccent[400] : Colors.grey[800],
       elevation: Const.elevation,
       child: InkWell(
         onTap: canSubmit ? () => onTapSubmit() : null,
-        child: const FittedBox(
+        child: FittedBox(
           child: Padding(
-              padding: EdgeInsets.all(KeyboardConst.edgeInsets),
+              padding: const EdgeInsets.all(KeyboardConst.edgeInsets),
               child: Icon(
                 Icons.send_rounded,
-                color: Colors.white,
+                color: canSubmit ? Colors.white : Colors.grey,
               )),
         ),
       ),
