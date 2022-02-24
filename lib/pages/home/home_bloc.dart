@@ -6,7 +6,7 @@ import 'package:combine24/services/answer_service.dart';
 import 'package:combine24/services/impl/default_answer_service.dart';
 import 'package:combine24/services/impl/default_translate_service.dart';
 import 'package:combine24/services/translate_service.dart';
-import 'package:combine24/utils/combine24_util.dart';
+import 'package:combine24/utils/cal_util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:combine24/pages/home/home_event.dart';
 import 'package:combine24/pages/home/home_state.dart';
@@ -38,6 +38,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         for (int index = 0; index < 4; index++) {
           cardList.add(Const.deckList[rng.nextInt(13)]);
         }
+        cardList = ['10', 'Q', '3', '10'];
         List<String> mathCardList = _translateService.read2CalCard(cardList);
         List<String> mathSolutionList =
             _solutionService.findSolutions(mathCardList);
@@ -67,11 +68,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       try {
         HomeSolutionState oldState = (state as HomeSolutionState);
         String mathAnswer = _translateService.read2CalFormula(event.answer);
-        if (!Combine24Util.canCombine24(mathAnswer)) {
+        if (!CalUtil.canCombine24(mathAnswer)) {
           emit(oldState.copyWith(wrongAnswer: true));
         } else {
           int index =
               _answerService.matchAnswer(event.answer, oldState.solutionList);
+          if (!index.isNegative) {
+            List<bool> solutionMaskList =
+                List<bool>.from(oldState.solutionMaskList);
+            solutionMaskList[index] = true;
+            emit(oldState.copyWith(solutionMaskList: solutionMaskList));
+          }
         }
       } catch (e, stacktrace) {
         emit(HomeErrorState(cardList: cardList));
@@ -81,8 +88,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _test(HomeTestEvent event, Emitter<HomeState> emit) {
-    DefaultAnswerService haha = DefaultAnswerService();
-    haha.cleanBracket("");
+    _answerService.buildFormulaSchema("(K + Q) x (4 - 2)");
   }
 
   void _reset(HomeResetEvent event, Emitter<HomeState> emit) {

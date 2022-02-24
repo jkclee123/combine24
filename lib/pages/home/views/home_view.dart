@@ -19,20 +19,24 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  late final FocusNode nodeText;
+  late final FocusNode focusNode;
   late final ValueNotifier<String> customNotifier;
 
   @override
   void initState() {
     super.initState();
-    nodeText = FocusNode();
+    focusNode = FocusNode();
     customNotifier = ValueNotifier<String>(Const.emptyString);
-    customNotifier.addListener(() {
-      if (customNotifier.value.contains(KeyboardConst.eof)) {
-        BlocProvider.of<HomeBloc>(context)
-            .add(HomeSubmitEvent(answer: customNotifier.value));
-      }
-    });
+    customNotifier.addListener(() => onSubmit());
+  }
+
+  void onSubmit() {
+    if (customNotifier.value.contains(KeyboardConst.eof)) {
+      String answer =
+          customNotifier.value.replaceAll(KeyboardConst.eof, Const.emptyString);
+      BlocProvider.of<HomeBloc>(context).add(HomeSubmitEvent(answer: answer));
+      focusNode.unfocus();
+    }
   }
 
   @override
@@ -70,10 +74,10 @@ class _HomeViewState extends State<HomeView> {
       keyboardBarColor: Colors.grey[200],
       actions: [
         KeyboardActionsItem(
-          focusNode: nodeText,
+          focusNode: focusNode,
           displayActionBar: false,
           footerBuilder: (context) => FormulaKeyboard(
-              focusNode: nodeText,
+              focusNode: focusNode,
               notifier: customNotifier,
               cardList: cardList),
         ),
@@ -182,7 +186,7 @@ class _HomeViewState extends State<HomeView> {
               isDialog: false,
               config: _buildConfig(context),
               child: KeyboardCustomInput<String>(
-                  focusNode: nodeText,
+                  focusNode: focusNode,
                   notifier: customNotifier,
                   builder: (context, val, hasFocus) {
                     if (hasFocus != null && !hasFocus) {

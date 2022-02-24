@@ -41,7 +41,7 @@ class HomeSolutionState extends HomeState {
       bool? wrongAnswer}) {
     this.cardList = cardList;
     this.solutionMaskList =
-        solutionMaskList ?? List.generate(solutionList.length, (_) => true);
+        solutionMaskList ?? List.generate(solutionList.length, (_) => false);
     this.hintMaskList =
         hintMaskList ?? List.generate(hintList.length, (_) => false);
     this.wrongAnswer = false;

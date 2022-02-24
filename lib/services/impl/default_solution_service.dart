@@ -1,8 +1,7 @@
 import 'package:combine24/config/const.dart';
 import 'package:combine24/services/solution_service.dart';
-import 'package:combine24/utils/combine24_util.dart';
+import 'package:combine24/utils/cal_util.dart';
 import 'package:combine24/utils/op_util.dart';
-import 'package:function_tree/function_tree.dart';
 import 'package:tuple/tuple.dart';
 
 class DefaultSolutionService implements SolutionService {
@@ -12,10 +11,12 @@ class DefaultSolutionService implements SolutionService {
   bool containsDivOne(String formula) => formula.contains(RegExp(divOneRegExp));
 
   bool isValidFormula(String a, String b, String op) =>
-      !(b.interpret().compareTo(1) == 0 && OpUtil.isDivOp(op)) &&
-      !(a.interpret().compareTo(1) == 0 && OpUtil.isReverseDivOp(op)) &&
-      buildFormula(a, b, op).interpret() is int &&
-      !buildFormula(a, b, op).interpret().isNegative;
+      !(CalUtil.resultIsOne(b) && OpUtil.isDivOp(op)) &&
+      !(CalUtil.resultIsOne(a) && OpUtil.isReverseDivOp(op)) &&
+      CalUtil.resultIsPosInt(buildFormula(a, b, op));
+
+  bool isMulOne(String a, String b, String op) =>
+      OpUtil.isMulOp(op) && (a == '1' || b == '1');
 
   bool isValidTwoPairOp(String firstOp, String secondOp, String midOp,
           String secondPair1, String secondPair2) =>
@@ -28,9 +29,6 @@ class DefaultSolutionService implements SolutionService {
       !(secondPair1 == secondPair2 &&
           OpUtil.isMinusOp(midOp) &&
           OpUtil.isAddOp(secondOp));
-
-  bool isMulOne(String a, String b, String op) =>
-      OpUtil.isMulOp(op) && (a == '1' || b == '1');
 
   @override
   List<String> findSolutions(List<String> mathCardList) {
@@ -127,7 +125,7 @@ class DefaultSolutionService implements SolutionService {
       formulaSet.add(opCardCombList.join());
     }
     return formulaSet
-        .where((formula) => Combine24Util.canCombine24(formula))
+        .where((formula) => CalUtil.canCombine24(formula))
         .toList();
   }
 
@@ -151,7 +149,7 @@ class DefaultSolutionService implements SolutionService {
     }
     return formulaSet
         .where((formula) =>
-            Combine24Util.canCombine24(formula) && !containsDivOne(formula))
+            CalUtil.canCombine24(formula) && !containsDivOne(formula))
         .toList();
   }
 
@@ -180,7 +178,7 @@ class DefaultSolutionService implements SolutionService {
     });
     return formulaSet
         .where((formula) =>
-            Combine24Util.canCombine24(formula) && !containsDivOne(formula))
+            CalUtil.canCombine24(formula) && !containsDivOne(formula))
         .toList();
   }
 
@@ -209,7 +207,7 @@ class DefaultSolutionService implements SolutionService {
     });
     return formulaSet
         .where((formula) =>
-            Combine24Util.canCombine24(formula) && !containsDivOne(formula))
+            CalUtil.canCombine24(formula) && !containsDivOne(formula))
         .toList();
   }
 
@@ -242,7 +240,7 @@ class DefaultSolutionService implements SolutionService {
       }
     });
     return formulaSet
-        .where((formula) => Combine24Util.canCombine24(formula))
+        .where((formula) => CalUtil.canCombine24(formula))
         .toList();
   }
 
@@ -277,7 +275,7 @@ class DefaultSolutionService implements SolutionService {
       }
     });
     return formulaSet
-        .where((formula) => Combine24Util.canCombine24(formula))
+        .where((formula) => CalUtil.canCombine24(formula))
         .toList();
   }
 
@@ -315,7 +313,7 @@ class DefaultSolutionService implements SolutionService {
       }
     });
     return formulaSet
-        .where((formula) => Combine24Util.canCombine24(formula))
+        .where((formula) => CalUtil.canCombine24(formula))
         .toList();
   }
 }

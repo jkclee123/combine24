@@ -1,4 +1,5 @@
 class Const {
+  static const String space = " ";
   static const String emptyString = "";
   static const String tempSign = "@";
   static const double edgeInsets = 10.0;

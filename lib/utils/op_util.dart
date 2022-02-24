@@ -7,19 +7,35 @@ class OpUtil {
 
   static bool isMinusOp(String op) => op == OpConst.minusOp;
 
-  static bool isMulOp(String op) => op == OpConst.calMulOp;
+  static bool isMulOp(String op) =>
+      op == OpConst.calMulOp || op == OpConst.readMulOp;
 
-  static bool isDivOp(String op) => op == OpConst.calDivOp;
+  static bool isDivOp(String op) =>
+      op == OpConst.calDivOp || op == OpConst.readDivOp;
+
+  static bool isReadMulOp(String op) => op == OpConst.readMulOp;
+
+  static bool isReadDivOp(String op) => op == OpConst.readDivOp;
 
   static bool isReverseMinusOp(String op) => op == OpConst.reverseMinusOp;
 
   static bool isReverseDivOp(String op) => op == OpConst.reverseDivOp;
 
+  static bool isOpenBracket(String op) => op == OpConst.openBracket;
+
+  static bool isCloseBracket(String op) => op == OpConst.closeBracket;
+
+  static bool isBracket(String op) => isOpenBracket(op) || isCloseBracket(op);
+
   static bool isLowOp(String op) =>
       isAddOp(op) || isMinusOp(op) || isReverseMinusOp(op);
 
   static bool isHighOp(String op) =>
-      isMulOp(op) || isDivOp(op) || isReverseDivOp(op);
+      isMulOp(op) ||
+      isDivOp(op) ||
+      isReverseDivOp(op) ||
+      isReadMulOp(op) ||
+      isReadDivOp(op);
 
   static bool isAllLowOp(List<String> opList) =>
       opList.isNotEmpty && opList.every((op) => isLowOp(op));
