@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Const {
   static const String space = " ";
   static const String emptyString = "";
@@ -62,7 +64,7 @@ class AppBarConst {
   static const String resetTooltip = "重置";
 }
 
-class HandConst {
+class HandViewConst {
   static const double minDesiredItemWidth = 120.0;
   static const double desiredItemWidthWeight = 1 / 6;
   static const double minSpacingWeight = 1 / 120;
@@ -73,16 +75,20 @@ class ErrorConst {
   static const String errorMsg = "你個嘢壞咗呀☹ F5啦";
 }
 
-class SolutionConst {
-  static const double answerHeight = 55;
-  static const String answerPlaceholder = "我知答案!";
+class SolutionViewConst {
+  static const double answerHeight = 70;
+  static const String answerPlaceholder = "我諗到啦😎";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
   static const double borderRadius = 15.0;
   static const String hintTooltip = "提示";
+  static const double borderWidth = 1.5;
+  static const double noFocusFontSize = 14;
+  static const double hasFocusFontSize = 16;
+  static const FontWeight fontWeight = FontWeight.w300;
 }
 
-class KeyboardConst {
+class KeyboardViewConst {
   static const double preferredSizeHeight = 240.0;
   static const List<String> opList = [
     OpConst.addOp,

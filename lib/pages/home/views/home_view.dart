@@ -31,9 +31,9 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void onSubmit() {
-    if (keyboardNotifier.value.contains(KeyboardConst.eof)) {
+    if (keyboardNotifier.value.contains(KeyboardViewConst.eof)) {
       String answer = keyboardNotifier.value
-          .replaceAll(KeyboardConst.eof, Const.emptyString);
+          .replaceAll(KeyboardViewConst.eof, Const.emptyString);
       BlocProvider.of<HomeBloc>(context).add(HomeSubmitEvent(answer: answer));
       focusNode.unfocus();
     }
@@ -115,11 +115,11 @@ class _HomeViewState extends State<HomeView> {
     HomeState state = BlocProvider.of<HomeBloc>(context).state;
     double width = MediaQuery.of(context).size.width;
     return ResponsiveGridList(
-      desiredItemWidth: min(width * HandConst.desiredItemWidthWeight,
-          HandConst.minDesiredItemWidth),
+      desiredItemWidth: min(width * HandViewConst.desiredItemWidthWeight,
+          HandViewConst.minDesiredItemWidth),
       squareCells: true,
       scroll: false,
-      minSpacing: width * HandConst.minSpacingWeight,
+      minSpacing: width * HandViewConst.minSpacingWeight,
       rowMainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         for (int index = 0; index < 4; index++)
@@ -127,7 +127,7 @@ class _HomeViewState extends State<HomeView> {
             elevation: Const.elevation,
             child: FittedBox(
               child: Padding(
-                padding: const EdgeInsets.all(HandConst.edgeInsets),
+                padding: const EdgeInsets.all(HandViewConst.edgeInsets),
                 child: Text(state.cardList.length > index
                     ? state.cardList[index]
                     : Const.emptyString),
@@ -159,9 +159,47 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  List<Widget> _buildSolutionColumnView(
-    BuildContext context,
-  ) {
+  Widget _buildNoFocusAnswerCard() {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+      ),
+      elevation: Const.elevation,
+      child: const Center(
+        child: Opacity(
+          opacity: Const.opacity,
+          child: Text(
+            SolutionViewConst.answerPlaceholder,
+            style: TextStyle(
+                fontSize: SolutionViewConst.noFocusFontSize,
+                fontWeight: SolutionViewConst.fontWeight),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHasFocusAnswerCard(String val) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+            color: Theme.of(context).highlightColor,
+            width: SolutionViewConst.borderWidth),
+        borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+      ),
+      elevation: Const.elevation,
+      child: Center(
+        child: Text(
+          val,
+          style: const TextStyle(
+              fontSize: SolutionViewConst.hasFocusFontSize,
+              fontWeight: SolutionViewConst.fontWeight),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildSolutionColumnView(BuildContext context) {
     HomeSolutionState state =
         context.watch<HomeBloc>().state as HomeSolutionState;
     List<String> solutionList = state.solutionList;
@@ -172,48 +210,37 @@ class _HomeViewState extends State<HomeView> {
     double width = MediaQuery.of(context).size.width;
     return [
       SizedBox(
-        width: width * SolutionConst.widthWeight + SolutionConst.widthBias,
-        height: SolutionConst.answerHeight,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(SolutionConst.borderRadius),
-          ),
-          elevation: Const.elevation,
-          child: Center(
-            child: KeyboardActions(
-              autoScroll: false,
-              tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
-              isDialog: false,
-              config: _buildConfig(context),
-              child: KeyboardCustomInput<String>(
-                  focusNode: focusNode,
-                  notifier: keyboardNotifier,
-                  builder: (context, val, hasFocus) {
-                    if (hasFocus != null && !hasFocus) {
-                      val = Const.emptyString;
-                      keyboardNotifier.value = Const.emptyString;
-                    }
-                    return Center(
-                      child: Opacity(
-                        opacity: Const.opacity,
-                        child: Text(
-                          val.isEmpty ? SolutionConst.answerPlaceholder : val,
-                        ),
-                      ),
-                    );
-                  }),
-            ),
-          ),
+        width:
+            width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+        height: SolutionViewConst.answerHeight,
+        child: KeyboardActions(
+          autoScroll: false,
+          tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
+          isDialog: false,
+          config: _buildConfig(context),
+          child: KeyboardCustomInput<String>(
+              focusNode: focusNode,
+              notifier: keyboardNotifier,
+              builder: (context, val, hasFocus) {
+                if (hasFocus != null && !hasFocus) {
+                  val = Const.emptyString;
+                  keyboardNotifier.value = Const.emptyString;
+                }
+                return hasFocus != null && !hasFocus
+                    ? _buildNoFocusAnswerCard()
+                    : _buildHasFocusAnswerCard(val);
+              }),
         ),
       ),
       for (int index = 0; index < solutionLength; index++)
         SizedBox(
-          width: width * SolutionConst.widthWeight + SolutionConst.widthBias,
+          width: width * SolutionViewConst.widthWeight +
+              SolutionViewConst.widthBias,
           child: solutionMaskList[index]
               ? Card(
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(SolutionConst.borderRadius),
+                        BorderRadius.circular(SolutionViewConst.borderRadius),
                   ),
                   elevation: Const.elevation,
                   child: ListTile(
@@ -233,7 +260,7 @@ class _HomeViewState extends State<HomeView> {
               : Card(
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(SolutionConst.borderRadius),
+                        BorderRadius.circular(SolutionViewConst.borderRadius),
                   ),
                   elevation: Const.elevation,
                   child: hintMaskList[index]
@@ -258,7 +285,7 @@ class _HomeViewState extends State<HomeView> {
                             child: Text("${index + 1}"),
                           ),
                           trailing: IconButton(
-                            tooltip: SolutionConst.hintTooltip,
+                            tooltip: SolutionViewConst.hintTooltip,
                             icon: Icon(
                               Icons.lightbulb_outline_rounded,
                               color: Colors.yellow[600],
