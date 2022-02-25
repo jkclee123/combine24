@@ -20,20 +20,20 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final FocusNode focusNode;
-  late final ValueNotifier<String> customNotifier;
+  late final ValueNotifier<String> keyboardNotifier;
 
   @override
   void initState() {
     super.initState();
     focusNode = FocusNode();
-    customNotifier = ValueNotifier<String>(Const.emptyString);
-    customNotifier.addListener(() => onSubmit());
+    keyboardNotifier = ValueNotifier<String>(Const.emptyString);
+    keyboardNotifier.addListener(() => onSubmit());
   }
 
   void onSubmit() {
-    if (customNotifier.value.contains(KeyboardConst.eof)) {
-      String answer =
-          customNotifier.value.replaceAll(KeyboardConst.eof, Const.emptyString);
+    if (keyboardNotifier.value.contains(KeyboardConst.eof)) {
+      String answer = keyboardNotifier.value
+          .replaceAll(KeyboardConst.eof, Const.emptyString);
       BlocProvider.of<HomeBloc>(context).add(HomeSubmitEvent(answer: answer));
       focusNode.unfocus();
     }
@@ -78,7 +78,7 @@ class _HomeViewState extends State<HomeView> {
           displayActionBar: false,
           footerBuilder: (context) => FormulaKeyboard(
               focusNode: focusNode,
-              notifier: customNotifier,
+              notifier: keyboardNotifier,
               cardList: cardList),
         ),
       ],
@@ -187,11 +187,11 @@ class _HomeViewState extends State<HomeView> {
               config: _buildConfig(context),
               child: KeyboardCustomInput<String>(
                   focusNode: focusNode,
-                  notifier: customNotifier,
+                  notifier: keyboardNotifier,
                   builder: (context, val, hasFocus) {
                     if (hasFocus != null && !hasFocus) {
                       val = Const.emptyString;
-                      customNotifier.value = Const.emptyString;
+                      keyboardNotifier.value = Const.emptyString;
                     }
                     return Center(
                       child: Opacity(

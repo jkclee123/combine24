@@ -10,13 +10,13 @@ class DefaultSolutionService implements SolutionService {
 
   bool containsDivOne(String formula) => formula.contains(RegExp(divOneRegExp));
 
-  bool isValidFormula(String a, String b, String op) =>
-      !(CalUtil.resultIsOne(b) && OpUtil.isDivOp(op)) &&
-      !(CalUtil.resultIsOne(a) && OpUtil.isReverseDivOp(op)) &&
-      CalUtil.resultIsPosInt(buildFormula(a, b, op));
+  bool isValidFormula(String formula1, String formula2, String op) =>
+      !(CalUtil.resultIsOne(formula1) && OpUtil.isReverseDivOp(op)) &&
+      !(CalUtil.resultIsOne(formula2) && OpUtil.isDivOp(op)) &&
+      CalUtil.resultIsPosInt(buildFormula(formula1, formula2, op));
 
-  bool isMulOne(String a, String b, String op) =>
-      OpUtil.isMulOp(op) && (a == '1' || b == '1');
+  bool isMulOne(String card1, String card2, String op) =>
+      OpUtil.isMulOp(op) && (card1 == '1' || card2 == '1');
 
   bool isValidTwoPairOp(String firstOp, String secondOp, String midOp,
           String secondPair1, String secondPair2) =>
@@ -33,7 +33,8 @@ class DefaultSolutionService implements SolutionService {
   @override
   List<String> findSolutions(List<String> mathCardList) {
     List<String> solutionList = <String>[];
-    mathCardList.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
+    mathCardList
+        .sort((card1, card2) => int.parse(card1).compareTo(int.parse(card2)));
     Map<Tuple2, List<String>> pairSingleMap = buildPairSingleMap(mathCardList);
     Map<Tuple2, Tuple2> twoPairMap = buildTwoPairMap(pairSingleMap);
     Map<Tuple3, String> tripletSingleMap = buildTripletSingleMap(mathCardList);
@@ -293,11 +294,6 @@ class DefaultSolutionService implements SolutionService {
           }
           String formula2 = buildFormula(pair2.item1, pair2.item2, secondOp);
           for (String midOp in OpConst.opWithRList) {
-            if (!isValidFormula(formula1, formula2, midOp) ||
-                !isValidTwoPairOp(
-                    firstOp, secondOp, midOp, pair2.item1, pair2.item2)) {
-              continue;
-            }
             String firstFormula =
                 (OpUtil.isLowOp(firstOp) && OpUtil.isHighOp(midOp)) ||
                         OpUtil.isReverseDivOp(midOp)
@@ -307,6 +303,11 @@ class DefaultSolutionService implements SolutionService {
                 OpUtil.isLowOp(secondOp) && OpUtil.isHighOp(midOp)
                     ? addBracket(formula2)
                     : formula2;
+            if (!isValidFormula(firstFormula, secondFormula, midOp) ||
+                !isValidTwoPairOp(
+                    firstOp, secondOp, midOp, pair2.item1, pair2.item2)) {
+              continue;
+            }
             formulaSet.add(buildFormula(firstFormula, secondFormula, midOp));
           }
         }
