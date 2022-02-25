@@ -65,10 +65,10 @@ class AppBarConst {
 }
 
 class HandViewConst {
-  static const double minDesiredItemWidth = 120.0;
+  static const double minDesiredItemWidth = 120;
   static const double desiredItemWidthWeight = 1 / 6;
   static const double minSpacingWeight = 1 / 120;
-  static const double edgeInsets = 3.0;
+  static const double edgeInsets = 3;
 }
 
 class ErrorConst {
@@ -80,7 +80,7 @@ class SolutionViewConst {
   static const String answerPlaceholder = "我諗到啦😎";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
-  static const double borderRadius = 15.0;
+  static const double borderRadius = 15;
   static const String hintTooltip = "提示";
   static const double borderWidth = 1.5;
   static const double noFocusFontSize = 14;
@@ -89,7 +89,7 @@ class SolutionViewConst {
 }
 
 class KeyboardViewConst {
-  static const double preferredSizeHeight = 240.0;
+  static const double preferredSizeHeight = 240;
   static const List<String> opList = [
     OpConst.addOp,
     OpConst.minusOp,
@@ -99,8 +99,8 @@ class KeyboardViewConst {
   static const String eof = "\u0000";
   static const double widthWeight = 1 / 14;
   static const double heightWeight = 1 / 14;
-  static const double minSpacing = 10.0;
-  static const double borderRadius = 5.0;
-  static const double sumbitBorderRadius = 40.0;
-  static const double edgeInsets = 3.0;
+  static const double minSpacing = 10;
+  static const double borderRadius = 5;
+  static const double sumbitBorderRadius = 40;
+  static const double edgeInsets = 3;
 }
