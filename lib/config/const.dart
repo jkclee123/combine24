@@ -86,7 +86,7 @@ class SolutionViewConst {
   static const String hintTooltip = "提示";
   static const double borderWidth = 1.5;
   static const double noFocusFontSize = 14;
-  static const double hasFocusFontSize = 16;
+  static const double hasFocusFontSize = 16.5;
   static const FontWeight fontWeight = FontWeight.w400;
 }
 

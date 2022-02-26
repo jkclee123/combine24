@@ -162,21 +162,18 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildNoFocusAnswerCard() {
     return Card(
       shape: RoundedRectangleBorder(
-        side: const BorderSide(
-          color: Colors.black,
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           width: SolutionViewConst.borderWidth,
         ),
         borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
       ),
-      child: const Center(
-        child: Opacity(
-          opacity: Const.opacity,
-          child: Text(
-            SolutionViewConst.answerPlaceholder,
-            style: TextStyle(
-                fontSize: SolutionViewConst.noFocusFontSize,
-                fontWeight: SolutionViewConst.fontWeight),
-          ),
+      child: Center(
+        child: Text(
+          SolutionViewConst.answerPlaceholder,
+          style: TextStyle(
+              color: Theme.of(context).hintColor,
+              fontSize: SolutionViewConst.noFocusFontSize),
         ),
       ),
     );
@@ -185,8 +182,8 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildHasFocusAnswerCard(String val) {
     return Card(
       shape: RoundedRectangleBorder(
-        side: const BorderSide(
-          color: Colors.black,
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           width: SolutionViewConst.borderWidth,
         ),
         borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
@@ -194,9 +191,7 @@ class _HomeViewState extends State<HomeView> {
       child: Center(
         child: Text(
           val,
-          style: const TextStyle(
-              fontSize: SolutionViewConst.hasFocusFontSize,
-              fontWeight: SolutionViewConst.fontWeight),
+          style: const TextStyle(fontSize: SolutionViewConst.hasFocusFontSize),
         ),
       ),
     );
@@ -239,6 +234,10 @@ class _HomeViewState extends State<HomeView> {
           width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
       child: Card(
         shape: RoundedRectangleBorder(
+          side: const BorderSide(
+            color: Colors.green,
+            width: SolutionViewConst.borderWidth,
+          ),
           borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
         ),
         elevation: Const.elevation,
@@ -269,6 +268,10 @@ class _HomeViewState extends State<HomeView> {
           width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
       child: Card(
         shape: RoundedRectangleBorder(
+          side: const BorderSide(
+            color: Colors.yellow,
+            width: SolutionViewConst.borderWidth,
+          ),
           borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
         ),
         elevation: Const.elevation,
