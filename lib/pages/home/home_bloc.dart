@@ -83,10 +83,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  void _test(HomeTestEvent event, Emitter<HomeState> emit) {
-    List<String> sl = _solutionService.findSolutions(["7", "8", "5", "4"]);
-    print("sl $sl");
-  }
+  void _test(HomeTestEvent event, Emitter<HomeState> emit) {}
 
   void _reset(HomeResetEvent event, Emitter<HomeState> emit) {
     emit(HomeInitState());

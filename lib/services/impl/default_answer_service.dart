@@ -17,7 +17,7 @@ class DefaultAnswerService implements AnswerService {
   static const String opRegExp = r"[\+\-\*\/]";
 
   String getHeadOp(String op) =>
-      OpUtil.isHighOp(op) ? OpConst.readMulOp : OpConst.addOp;
+      OpUtil.isHighOp(op) ? OpConst.calMulOp : OpConst.addOp;
 
   @override
   int matchAnswer(String answer, List<String> solutionList) {

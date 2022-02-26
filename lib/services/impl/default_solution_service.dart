@@ -294,9 +294,6 @@ class DefaultSolutionService implements SolutionService {
             continue;
           }
           String formula2 = buildFormula(pair2.item1, pair2.item2, secondOp);
-          if (formula1 == "8/4") {
-            print("$formula1 $formula2");
-          }
           for (String midOp in OpConst.opWithRList) {
             String firstFormula =
                 (OpUtil.isLowOp(firstOp) && OpUtil.isHighOp(midOp)) ||

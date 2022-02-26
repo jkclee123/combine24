@@ -41,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<HomeBloc>(context).add(HomeTestEvent());
+    // BlocProvider.of<HomeBloc>(context).add(HomeTestEvent());
     return BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
       return Scaffold(
         appBar: _buildAppBar(context),
@@ -168,7 +168,6 @@ class _HomeViewState extends State<HomeView> {
         ),
         borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
       ),
-      // elevation: Const.elevation,
       child: const Center(
         child: Opacity(
           opacity: Const.opacity,
@@ -192,7 +191,6 @@ class _HomeViewState extends State<HomeView> {
         ),
         borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
       ),
-      // elevation: Const.elevation,
       child: Center(
         child: Text(
           val,
