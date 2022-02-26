@@ -18,12 +18,12 @@ class DefaultSolutionService implements SolutionService {
   bool isMulOne(String card1, String card2, String op) =>
       OpUtil.isMulOp(op) && (card1 == '1' || card2 == '1');
 
+  // (OpUtil.isReverseDivOp(firstOp) && OpUtil.isMulOp(midOp))
   bool isValidTwoPairOp(String firstOp, String secondOp, String midOp,
           String secondPair1, String secondPair2) =>
       !(OpUtil.isAllLowOp([firstOp, secondOp, midOp]) ||
           OpUtil.isAllHighOp([firstOp, secondOp, midOp])) &&
-      !((OpUtil.isDivOp(midOp) && OpUtil.isMulOp(secondOp)) ||
-          (OpUtil.isReverseDivOp(firstOp) && OpUtil.isMulOp(midOp))) &&
+      !(OpUtil.isDivOp(midOp) && OpUtil.isMulOp(secondOp)) &&
       !((OpUtil.isAddOp(midOp) || OpUtil.isMinusOp(midOp)) &&
           OpUtil.isReverseMinusOp(secondOp)) &&
       !(secondPair1 == secondPair2 &&
@@ -295,6 +295,9 @@ class DefaultSolutionService implements SolutionService {
             continue;
           }
           String formula2 = buildFormula(pair2.item1, pair2.item2, secondOp);
+          if (formula1 == "8/4") {
+            print("$formula1 $formula2");
+          }
           for (String midOp in OpConst.opWithRList) {
             String firstFormula =
                 (OpUtil.isLowOp(firstOp) && OpUtil.isHighOp(midOp)) ||

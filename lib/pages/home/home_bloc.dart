@@ -84,7 +84,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _test(HomeTestEvent event, Emitter<HomeState> emit) {
-    _answerService.matchAnswer("9 ÷ 1 ÷ (2 - 1)", []);
+    List<String> sl = _solutionService.findSolutions(["7", "8", "5", "4"]);
+    print("sl $sl");
   }
 
   void _reset(HomeResetEvent event, Emitter<HomeState> emit) {
