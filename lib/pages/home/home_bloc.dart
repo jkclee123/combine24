@@ -38,11 +38,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         for (int index = 0; index < 4; index++) {
           cardList.add(Const.deckList[rng.nextInt(13)]);
         }
-        cardList = ['10', '8', '6', 'Q'];
-        List<String> mathCardList = _translateService.read2CalCard(cardList);
-        List<String> mathSolutionList =
-            _solutionService.findSolutions(mathCardList);
-        solutionList = _translateService.cal2ReadFormulaList(mathSolutionList);
+        solutionList = _solutionService.findSolutions(cardList);
       }
       List<String> hintList = _solutionService.extractHint(solutionList);
       emit(HomeSolutionState(
@@ -67,8 +63,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (state is HomeSolutionState) {
       try {
         HomeSolutionState oldState = (state as HomeSolutionState);
-        String mathAnswer = _translateService.read2CalFormula(event.answer);
-        if (!CalUtil.canCombine24(mathAnswer)) {
+        String calAnswer = _translateService.read2CalFormula(event.answer);
+        if (!CalUtil.canCombine24(calAnswer)) {
           emit(oldState.copyWith(wrongAnswer: true));
         } else {
           int index =
@@ -88,7 +84,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _test(HomeTestEvent event, Emitter<HomeState> emit) {
-    _answerService.buildFormulaSchema("(K + Q) x (4 - 2)");
+    _answerService.matchAnswer("9 ÷ 1 ÷ (2 - 1)", []);
   }
 
   void _reset(HomeResetEvent event, Emitter<HomeState> emit) {

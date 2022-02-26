@@ -1,14 +1,14 @@
 import 'package:combine24/config/const.dart';
+import 'package:combine24/services/impl/default_translate_service.dart';
 import 'package:combine24/services/solution_service.dart';
+import 'package:combine24/services/translate_service.dart';
 import 'package:combine24/utils/cal_util.dart';
 import 'package:combine24/utils/op_util.dart';
 import 'package:tuple/tuple.dart';
 
 class DefaultSolutionService implements SolutionService {
+  TranslateService translateService = DefaultTranslateService();
   static const String hintRegExp = r' .*? .*? ';
-  static const String divOneRegExp = r'\/1[\+\-\*\/\)]|\/1$';
-
-  bool containsDivOne(String formula) => formula.contains(RegExp(divOneRegExp));
 
   bool isValidFormula(String formula1, String formula2, String op) =>
       !(CalUtil.resultIsOne(formula1) && OpUtil.isReverseDivOp(op)) &&
@@ -31,8 +31,9 @@ class DefaultSolutionService implements SolutionService {
           OpUtil.isAddOp(secondOp));
 
   @override
-  List<String> findSolutions(List<String> mathCardList) {
+  List<String> findSolutions(List<String> cardList) {
     List<String> solutionList = <String>[];
+    List<String> mathCardList = translateService.read2CalCard(cardList);
     mathCardList
         .sort((card1, card2) => int.parse(card1).compareTo(int.parse(card2)));
     Map<Tuple2, List<String>> pairSingleMap = buildPairSingleMap(mathCardList);
@@ -45,6 +46,7 @@ class DefaultSolutionService implements SolutionService {
     solutionList.addAll(buildLowPairSolutionList(pairSingleMap));
     solutionList.addAll(buildHighPairSolutionList(pairSingleMap));
     solutionList.addAll(buildTwoPairSolutionList(twoPairMap));
+    solutionList = translateService.cal2ReadFormulaList(solutionList);
     return solutionList;
   }
 
@@ -72,8 +74,8 @@ class DefaultSolutionService implements SolutionService {
     for (int index1 = 0; index1 < mathCardList.length; index1++) {
       for (int index2 = index1 + 1; index2 < mathCardList.length; index2++) {
         List<String> dummyCardList = List<String>.from(mathCardList);
-        String card1 = mathCardList.elementAt(index1);
-        String card2 = mathCardList.elementAt(index2);
+        String card1 = mathCardList[index1];
+        String card2 = mathCardList[index2];
         Tuple2 cardPair = Tuple2(card1, card2);
         dummyCardList.remove(card1);
         dummyCardList.remove(card2);
@@ -150,7 +152,7 @@ class DefaultSolutionService implements SolutionService {
     }
     return formulaSet
         .where((formula) =>
-            CalUtil.canCombine24(formula) && !containsDivOne(formula))
+            CalUtil.canCombine24(formula) && !CalUtil.containsDivOne(formula))
         .toList();
   }
 
@@ -179,7 +181,7 @@ class DefaultSolutionService implements SolutionService {
     });
     return formulaSet
         .where((formula) =>
-            CalUtil.canCombine24(formula) && !containsDivOne(formula))
+            CalUtil.canCombine24(formula) && !CalUtil.containsDivOne(formula))
         .toList();
   }
 
@@ -208,7 +210,7 @@ class DefaultSolutionService implements SolutionService {
     });
     return formulaSet
         .where((formula) =>
-            CalUtil.canCombine24(formula) && !containsDivOne(formula))
+            CalUtil.canCombine24(formula) && !CalUtil.containsDivOne(formula))
         .toList();
   }
 

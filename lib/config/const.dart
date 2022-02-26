@@ -37,6 +37,8 @@ class OpConst {
   static const String openBracket = "(";
   static const String closeBracket = ")";
   static const String reverseIdentifier = "r";
+  static const String divOne = "/1";
+  static const String mulOne = "*1";
   static const List<String> opList = [addOp, minusOp, calMulOp, calDivOp];
   static const List<String> opWithRList = [
     addOp,
@@ -85,7 +87,7 @@ class SolutionViewConst {
   static const double borderWidth = 1.5;
   static const double noFocusFontSize = 14;
   static const double hasFocusFontSize = 16;
-  static const FontWeight fontWeight = FontWeight.w300;
+  static const FontWeight fontWeight = FontWeight.w400;
 }
 
 class KeyboardViewConst {

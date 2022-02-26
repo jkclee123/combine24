@@ -7,15 +7,9 @@ class OpUtil {
 
   static bool isMinusOp(String op) => op == OpConst.minusOp;
 
-  static bool isMulOp(String op) =>
-      op == OpConst.calMulOp || op == OpConst.readMulOp;
+  static bool isMulOp(String op) => op == OpConst.calMulOp;
 
-  static bool isDivOp(String op) =>
-      op == OpConst.calDivOp || op == OpConst.readDivOp;
-
-  static bool isReadMulOp(String op) => op == OpConst.readMulOp;
-
-  static bool isReadDivOp(String op) => op == OpConst.readDivOp;
+  static bool isDivOp(String op) => op == OpConst.calDivOp;
 
   static bool isReverseMinusOp(String op) => op == OpConst.reverseMinusOp;
 
@@ -31,11 +25,7 @@ class OpUtil {
       isAddOp(op) || isMinusOp(op) || isReverseMinusOp(op);
 
   static bool isHighOp(String op) =>
-      isMulOp(op) ||
-      isDivOp(op) ||
-      isReverseDivOp(op) ||
-      isReadMulOp(op) ||
-      isReadDivOp(op);
+      isMulOp(op) || isDivOp(op) || isReverseDivOp(op);
 
   static bool isAllLowOp(List<String> opList) =>
       opList.isNotEmpty && opList.every((op) => isLowOp(op));
@@ -43,10 +33,9 @@ class OpUtil {
   static bool isAllHighOp(List<String> opList) =>
       opList.isNotEmpty && opList.every((op) => isHighOp(op));
 
-  static bool containsLowReadOp(String formula) =>
+  static bool containsLowOp(String formula) =>
       formula.contains(OpConst.addOp) || formula.contains(OpConst.minusOp);
 
-  static bool containsHighReadOp(String formula) =>
-      formula.contains(OpConst.readMulOp) ||
-      formula.contains(OpConst.readDivOp);
+  static bool containsHighOp(String formula) =>
+      formula.contains(OpConst.calMulOp) || formula.contains(OpConst.calDivOp);
 }

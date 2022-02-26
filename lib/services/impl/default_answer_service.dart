@@ -3,17 +3,21 @@ import 'dart:math';
 import 'package:combine24/config/const.dart';
 import 'package:combine24/services/answer_service.dart';
 import 'package:collection/collection.dart';
+import 'package:combine24/services/impl/default_translate_service.dart';
+import 'package:combine24/services/translate_service.dart';
+import 'package:combine24/utils/cal_util.dart';
 import 'package:combine24/utils/op_util.dart';
 
 class DefaultAnswerService implements AnswerService {
+  TranslateService translateService = DefaultTranslateService();
   static Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
   static const String bracketSplitRegExp = r"(?<=\))|(?=\()";
   static const String bracketRegExp = r"\(|\)";
   static const String cardRegExp = r"[A-Z0-9]";
-  static const String opRegExp = r"[\+\-x÷]";
+  static const String opRegExp = r"[\+\-\*\/]";
 
   String getHeadOp(String op) =>
-      OpUtil.isMulOp(op) ? OpConst.readMulOp : OpConst.addOp;
+      OpUtil.isHighOp(op) ? OpConst.readMulOp : OpConst.addOp;
 
   @override
   int matchAnswer(String answer, List<String> solutionList) {
@@ -31,8 +35,9 @@ class DefaultAnswerService implements AnswerService {
 
   @override
   Object buildFormulaSchema(String formula) {
-    formula = formula.replaceAll(Const.space, Const.emptyString);
+    formula = translateService.read2CalFormula(formula);
     formula = cleanUnusedBracket(formula);
+    formula = handleDivOne(formula);
     List<int> orderList = getOpOrder(formula);
     formula = cleanUnusedChar(formula);
     List<Object> cardList = List<Object>.from(formula.split(RegExp(opRegExp)));
@@ -63,7 +68,10 @@ class DefaultAnswerService implements AnswerService {
       }
       cardList.insert(groupIndexList.reduce(min), schemaList);
     }
-    return cardList[0];
+    if (cardList.isNotEmpty) {
+      return cardList[0];
+    }
+    return Const.emptyString;
   }
 
   /// Order 0: (x÷)
@@ -97,21 +105,32 @@ class DefaultAnswerService implements AnswerService {
     return formula.replaceAll(RegExp(bracketRegExp), Const.emptyString);
   }
 
+  String handleDivOne(String formula) {
+    if (CalUtil.containsDivOne(formula)) {
+      formula = formula.replaceAll(OpConst.divOne, OpConst.mulOne);
+    }
+    List<String> partList = formula.split(RegExp(bracketSplitRegExp));
+    for (int index = 0; index < partList.length; index++) {
+      if (partList[index].contains(OpConst.openBracket) &&
+          CalUtil.resultIsOne(partList[index]) &&
+          partList[index - 1].endsWith(OpConst.calDivOp)) {
+        partList[index - 1] = partList[index - 1].replaceFirst(
+            OpConst.calDivOp, OpConst.calMulOp, partList[index - 1].length - 1);
+      }
+    }
+    return partList.join();
+  }
+
   String cleanUnusedBracket(String formula) {
     List<String> partList = formula.split(RegExp(bracketSplitRegExp));
-    List<bool> hasBracketList =
-        partList.map((p) => p.contains(OpConst.openBracket)).toList();
-    List<bool> hasLowOpList =
-        partList.map((p) => OpUtil.containsLowReadOp(p)).toList();
-    List<bool> hasHighOpList =
-        partList.map((p) => OpUtil.containsHighReadOp(p)).toList();
     for (int index = 0; index < partList.length; index++) {
-      if (hasBracketList[index] &&
-          (!hasLowOpList[index] ||
-              (hasLowOpList[index] &&
-                  (index - 1 < 0 || !hasHighOpList[index - 1]) &&
+      if (partList[index].contains(OpConst.openBracket) &&
+          (!OpUtil.containsLowOp(partList[index]) ||
+              (OpUtil.containsLowOp(partList[index]) &&
+                  (index - 1 < 0 ||
+                      !OpUtil.containsHighOp(partList[index - 1])) &&
                   (index + 1 >= partList.length ||
-                      !hasHighOpList[index + 1])))) {
+                      !OpUtil.containsHighOp(partList[index + 1]))))) {
         partList[index] =
             partList[index].replaceAll(OpConst.openBracket, Const.emptyString);
         partList[index] =
@@ -124,16 +143,16 @@ class DefaultAnswerService implements AnswerService {
           partList[index] =
               partList[index].replaceAll(Const.tempSign, OpConst.minusOp);
         } else if (index - 1 >= 0 &&
-            partList[index - 1].contains(OpConst.readDivOp)) {
+            partList[index - 1].contains(OpConst.calDivOp)) {
           partList[index] =
-              partList[index].replaceAll(OpConst.readMulOp, Const.tempSign);
+              partList[index].replaceAll(OpConst.calMulOp, Const.tempSign);
           partList[index] =
-              partList[index].replaceAll(OpConst.readDivOp, OpConst.readMulOp);
+              partList[index].replaceAll(OpConst.calDivOp, OpConst.calMulOp);
           partList[index] =
-              partList[index].replaceAll(Const.tempSign, OpConst.readDivOp);
+              partList[index].replaceAll(Const.tempSign, OpConst.calDivOp);
         }
       }
     }
-    return partList.join(Const.emptyString);
+    return partList.join();
   }
 }

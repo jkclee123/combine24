@@ -58,7 +58,7 @@ class _HomeViewState extends State<HomeView> {
               children: <Widget>[
                 _buildHandView(context),
                 const Divider(),
-                _buildSolutionView(context),
+                _buildDisplayView(context),
               ],
             ),
           ),
@@ -138,7 +138,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildSolutionView(BuildContext context) {
+  Widget _buildDisplayView(BuildContext context) {
     HomeState state = BlocProvider.of<HomeBloc>(context).state;
     if (state is HomeLoadingState) {
       return const Center(
@@ -152,7 +152,7 @@ class _HomeViewState extends State<HomeView> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: _buildSolutionColumnView(context),
+        children: _buildSolutionStateView(context),
       );
     } else {
       return const SizedBox.shrink();
@@ -162,9 +162,13 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildNoFocusAnswerCard() {
     return Card(
       shape: RoundedRectangleBorder(
+        side: const BorderSide(
+          color: Colors.black,
+          width: SolutionViewConst.borderWidth,
+        ),
         borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
       ),
-      elevation: Const.elevation,
+      // elevation: Const.elevation,
       child: const Center(
         child: Opacity(
           opacity: Const.opacity,
@@ -182,12 +186,13 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildHasFocusAnswerCard(String val) {
     return Card(
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-            color: Theme.of(context).highlightColor,
-            width: SolutionViewConst.borderWidth),
+        side: const BorderSide(
+          color: Colors.black,
+          width: SolutionViewConst.borderWidth,
+        ),
         borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
       ),
-      elevation: Const.elevation,
+      // elevation: Const.elevation,
       child: Center(
         child: Text(
           val,
@@ -199,102 +204,142 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  List<Widget> _buildSolutionColumnView(BuildContext context) {
+  Widget _buildAnswerView(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width:
+          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+      height: SolutionViewConst.answerHeight,
+      child: KeyboardActions(
+        autoScroll: false,
+        tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
+        isDialog: false,
+        config: _buildConfig(context),
+        child: KeyboardCustomInput<String>(
+            focusNode: focusNode,
+            notifier: keyboardNotifier,
+            builder: (context, val, hasFocus) {
+              if (hasFocus != null && !hasFocus) {
+                val = Const.emptyString;
+                keyboardNotifier.value = Const.emptyString;
+              }
+              return hasFocus != null && !hasFocus
+                  ? _buildNoFocusAnswerCard()
+                  : _buildHasFocusAnswerCard(val);
+            }),
+      ),
+    );
+  }
+
+  Widget _buildSolutionCard(BuildContext context, int index) {
     HomeSolutionState state =
         context.watch<HomeBloc>().state as HomeSolutionState;
     List<String> solutionList = state.solutionList;
-    List<String> hintList = state.hintList;
-    List<bool> solutionMaskList = state.solutionMaskList;
-    List<bool> hintMaskList = state.hintMaskList;
-    int solutionLength = solutionList.length;
     double width = MediaQuery.of(context).size.width;
-    return [
-      SizedBox(
-        width:
-            width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
-        height: SolutionViewConst.answerHeight,
-        child: KeyboardActions(
-          autoScroll: false,
-          tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
-          isDialog: false,
-          config: _buildConfig(context),
-          child: KeyboardCustomInput<String>(
-              focusNode: focusNode,
-              notifier: keyboardNotifier,
-              builder: (context, val, hasFocus) {
-                if (hasFocus != null && !hasFocus) {
-                  val = Const.emptyString;
-                  keyboardNotifier.value = Const.emptyString;
-                }
-                return hasFocus != null && !hasFocus
-                    ? _buildNoFocusAnswerCard()
-                    : _buildHasFocusAnswerCard(val);
-              }),
+    return SizedBox(
+      width:
+          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+        ),
+        elevation: Const.elevation,
+        child: ListTile(
+          leading: Opacity(
+            opacity: Const.opacity,
+            child: Text("${index + 1}"),
+          ),
+          title: Center(
+            child: Text(solutionList[index]),
+          ),
+          trailing: const Icon(
+            Icons.check,
+            color: Colors.green,
+          ),
         ),
       ),
-      for (int index = 0; index < solutionLength; index++)
+    );
+  }
+
+  Widget _buildHintCard(BuildContext context, int index) {
+    HomeSolutionState state =
+        context.watch<HomeBloc>().state as HomeSolutionState;
+    List<String> hintList = state.hintList;
+    double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width:
+          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+        ),
+        elevation: Const.elevation,
+        child: ListTile(
+          leading: Opacity(
+            opacity: Const.opacity,
+            child: Text("${index + 1}"),
+          ),
+          title: Center(
+            child: Text(hintList[index]),
+          ),
+          trailing: const IconButton(
+            icon: Icon(
+              Icons.lightbulb_outline_rounded,
+            ),
+            onPressed: null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHideSolutionCard(BuildContext context, int index) {
+    double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width:
+          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+        ),
+        elevation: Const.elevation,
+        child: ListTile(
+          leading: Opacity(
+            opacity: Const.opacity,
+            child: Text("${index + 1}"),
+          ),
+          trailing: IconButton(
+            tooltip: SolutionViewConst.hintTooltip,
+            icon: Icon(
+              Icons.lightbulb_outline_rounded,
+              color: Colors.yellow[600],
+            ),
+            onPressed: (() => BlocProvider.of<HomeBloc>(context)
+                .add(HomeOpenHintEvent(index: index))),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildSolutionStateView(BuildContext context) {
+    HomeSolutionState state =
+        context.watch<HomeBloc>().state as HomeSolutionState;
+    List<String> solutionList = state.solutionList;
+    List<bool> solutionMaskList = state.solutionMaskList;
+    List<bool> hintMaskList = state.hintMaskList;
+    double width = MediaQuery.of(context).size.width;
+    return [
+      _buildAnswerView(context),
+      for (int index = 0; index < solutionList.length; index++)
         SizedBox(
           width: width * SolutionViewConst.widthWeight +
               SolutionViewConst.widthBias,
           child: solutionMaskList[index]
-              ? Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(SolutionViewConst.borderRadius),
-                  ),
-                  elevation: Const.elevation,
-                  child: ListTile(
-                    leading: Opacity(
-                      opacity: Const.opacity,
-                      child: Text("${index + 1}"),
-                    ),
-                    title: Center(
-                      child: Text(solutionList[index]),
-                    ),
-                    trailing: const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ),
-                  ),
-                )
-              : Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(SolutionViewConst.borderRadius),
-                  ),
-                  elevation: Const.elevation,
-                  child: hintMaskList[index]
-                      ? ListTile(
-                          leading: Opacity(
-                            opacity: Const.opacity,
-                            child: Text("${index + 1}"),
-                          ),
-                          title: Center(
-                            child: Text(hintList[index]),
-                          ),
-                          trailing: const IconButton(
-                            icon: Icon(
-                              Icons.lightbulb_outline_rounded,
-                            ),
-                            onPressed: null,
-                          ),
-                        )
-                      : ListTile(
-                          leading: Opacity(
-                            opacity: 0.5,
-                            child: Text("${index + 1}"),
-                          ),
-                          trailing: IconButton(
-                            tooltip: SolutionViewConst.hintTooltip,
-                            icon: Icon(
-                              Icons.lightbulb_outline_rounded,
-                              color: Colors.yellow[600],
-                            ),
-                            onPressed: (() => BlocProvider.of<HomeBloc>(context)
-                                .add(HomeOpenHintEvent(index: index))),
-                          ),
-                        ),
-                ),
+              ? _buildSolutionCard(context, index)
+              : hintMaskList[index]
+                  ? _buildHintCard(context, index)
+                  : _buildHideSolutionCard(context, index),
         ),
     ];
   }
