@@ -18,7 +18,6 @@ class DefaultSolutionService implements SolutionService {
   bool isMulOne(String card1, String card2, String op) =>
       OpUtil.isMulOp(op) && (card1 == '1' || card2 == '1');
 
-  // (OpUtil.isReverseDivOp(firstOp) && OpUtil.isMulOp(midOp))
   bool isValidTwoPairOp(String firstOp, String secondOp, String midOp,
           String secondPair1, String secondPair2) =>
       !(OpUtil.isAllLowOp([firstOp, secondOp, midOp]) ||
