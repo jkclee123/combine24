@@ -12,7 +12,7 @@ class ThemeCubit extends Cubit<ThemeData> {
 
   static final _darkTheme = ThemeData.dark().copyWith(
     appBarTheme: const AppBarTheme().copyWith(
-      backgroundColor: Colors.amber[700],
+      backgroundColor: Colors.amber,
       foregroundColor: Colors.black,
     ),
   );
