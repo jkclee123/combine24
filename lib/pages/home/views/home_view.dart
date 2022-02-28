@@ -95,8 +95,8 @@ class _HomeViewState extends State<HomeView> {
         IconButton(
           onPressed: () => context.read<ThemeCubit>().toggleTheme(),
           icon: Theme.of(context).brightness == Brightness.light
-              ? const Icon(Icons.dark_mode_outlined)
-              : const Icon(Icons.light_mode_outlined),
+              ? const Icon(Icons.dark_mode_rounded)
+              : const Icon(Icons.light_mode_rounded),
           tooltip: Theme.of(context).brightness == Brightness.light
               ? AppBarConst.dartModeTooltip
               : AppBarConst.lightModeTooltip,
@@ -164,16 +164,16 @@ class _HomeViewState extends State<HomeView> {
       shape: RoundedRectangleBorder(
         side: BorderSide(
           color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-          width: SolutionViewConst.borderWidth,
+          width: SolutionStateViewConst.borderWidth,
         ),
-        borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+        borderRadius: BorderRadius.zero,
       ),
       child: Center(
         child: Text(
-          SolutionViewConst.answerPlaceholder,
+          SolutionStateViewConst.answerPlaceholder,
           style: TextStyle(
               color: Theme.of(context).hintColor,
-              fontSize: SolutionViewConst.noFocusFontSize),
+              fontSize: SolutionStateViewConst.noFocusFontSize),
         ),
       ),
     );
@@ -184,14 +184,15 @@ class _HomeViewState extends State<HomeView> {
       shape: RoundedRectangleBorder(
         side: BorderSide(
           color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-          width: SolutionViewConst.borderWidth,
+          width: SolutionStateViewConst.borderWidth,
         ),
-        borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+        borderRadius: BorderRadius.zero,
       ),
       child: Center(
         child: Text(
           val,
-          style: const TextStyle(fontSize: SolutionViewConst.hasFocusFontSize),
+          style: const TextStyle(
+              fontSize: SolutionStateViewConst.hasFocusFontSize),
         ),
       ),
     );
@@ -200,9 +201,9 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildAnswerView(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      width:
-          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
-      height: SolutionViewConst.answerHeight,
+      width: width * SolutionStateViewConst.widthWeight +
+          SolutionStateViewConst.widthBias,
+      height: SolutionStateViewConst.answerHeight,
       child: KeyboardActions(
         autoScroll: false,
         tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
@@ -230,15 +231,16 @@ class _HomeViewState extends State<HomeView> {
     List<String> solutionList = state.solutionList;
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      width:
-          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+      width: width * SolutionStateViewConst.widthWeight +
+          SolutionStateViewConst.widthBias,
       child: Card(
         shape: RoundedRectangleBorder(
           side: const BorderSide(
             color: Colors.green,
-            width: SolutionViewConst.borderWidth,
+            width: SolutionStateViewConst.borderWidth,
           ),
-          borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+          borderRadius:
+              BorderRadius.circular(SolutionStateViewConst.borderRadius),
         ),
         elevation: Const.elevation,
         child: ListTile(
@@ -264,15 +266,16 @@ class _HomeViewState extends State<HomeView> {
     List<String> hintList = state.hintList;
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      width:
-          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+      width: width * SolutionStateViewConst.widthWeight +
+          SolutionStateViewConst.widthBias,
       child: Card(
         shape: RoundedRectangleBorder(
           side: const BorderSide(
             color: Colors.yellow,
-            width: SolutionViewConst.borderWidth,
+            width: SolutionStateViewConst.borderWidth,
           ),
-          borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+          borderRadius:
+              BorderRadius.circular(SolutionStateViewConst.borderRadius),
         ),
         elevation: Const.elevation,
         child: ListTile(
@@ -285,7 +288,7 @@ class _HomeViewState extends State<HomeView> {
           ),
           trailing: const IconButton(
             icon: Icon(
-              Icons.lightbulb_outline_rounded,
+              Icons.lightbulb,
             ),
             onPressed: null,
           ),
@@ -297,11 +300,12 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildHideSolutionCard(BuildContext context, int index) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      width:
-          width * SolutionViewConst.widthWeight + SolutionViewConst.widthBias,
+      width: width * SolutionStateViewConst.widthWeight +
+          SolutionStateViewConst.widthBias,
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SolutionViewConst.borderRadius),
+          borderRadius:
+              BorderRadius.circular(SolutionStateViewConst.borderRadius),
         ),
         elevation: Const.elevation,
         child: ListTile(
@@ -310,9 +314,9 @@ class _HomeViewState extends State<HomeView> {
             child: Text("${index + 1}"),
           ),
           trailing: IconButton(
-            tooltip: SolutionViewConst.hintTooltip,
+            tooltip: SolutionStateViewConst.hintTooltip,
             icon: Icon(
-              Icons.lightbulb_outline_rounded,
+              Icons.lightbulb,
               color: Colors.yellow[600],
             ),
             onPressed: (() => BlocProvider.of<HomeBloc>(context)
@@ -334,8 +338,8 @@ class _HomeViewState extends State<HomeView> {
       _buildAnswerView(context),
       for (int index = 0; index < solutionList.length; index++)
         SizedBox(
-          width: width * SolutionViewConst.widthWeight +
-              SolutionViewConst.widthBias,
+          width: width * SolutionStateViewConst.widthWeight +
+              SolutionStateViewConst.widthBias,
           child: solutionMaskList[index]
               ? _buildSolutionCard(context, index)
               : hintMaskList[index]

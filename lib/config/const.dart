@@ -77,14 +77,14 @@ class ErrorConst {
   static const String errorMsg = "你個嘢壞咗呀☹ F5啦";
 }
 
-class SolutionViewConst {
+class SolutionStateViewConst {
   static const double answerHeight = 70;
   static const String answerPlaceholder = "我諗到啦😎";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
   static const double borderRadius = 15;
   static const String hintTooltip = "提示";
-  static const double borderWidth = 1.5;
+  static const double borderWidth = 2;
   static const double noFocusFontSize = 14;
   static const double hasFocusFontSize = 16.5;
   static const FontWeight fontWeight = FontWeight.w400;
