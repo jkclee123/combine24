@@ -89,7 +89,7 @@ class _HomeViewState extends State<HomeView> {
     return AppBar(
       title: GestureDetector(
           onTap: () => BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()),
-          child: const Text(AppBarConst.title)),
+          child: const Text(Const.title)),
       centerTitle: true,
       actions: <Widget>[
         IconButton(

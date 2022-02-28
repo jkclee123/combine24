@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Const {
+  static const String title = "合廿四";
   static const String space = " ";
   static const String emptyString = "";
   static const String tempSign = "@";
@@ -59,7 +60,6 @@ class OpConst {
 }
 
 class AppBarConst {
-  static const String title = "合廿四";
   static const String lightModeTooltip = "眼盲模式";
   static const String dartModeTooltip = "正常模式";
   static const String randomDrawTooltip = "出題";

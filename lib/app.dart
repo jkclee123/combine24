@@ -1,3 +1,4 @@
+import 'package:combine24/config/const.dart';
 import 'package:combine24/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,7 @@ class App extends StatelessWidget {
       child: BlocBuilder<ThemeCubit, ThemeData>(
         builder: (_, theme) {
           return MaterialApp(
+            title: Const.title,
             theme: theme,
             home: const HomePage(),
           );
