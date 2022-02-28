@@ -53,8 +53,7 @@ class _HomeViewState extends State<HomeView> {
                     BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()))),
             child: ListView(
               padding: const EdgeInsets.all(Const.edgeInsets),
-              physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
+              physics: const AlwaysScrollableScrollPhysics(),
               children: <Widget>[
                 _buildHandView(context),
                 const Divider(),

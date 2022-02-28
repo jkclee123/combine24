@@ -78,7 +78,7 @@ class ErrorConst {
 }
 
 class SolutionStateViewConst {
-  static const double answerHeight = 70;
+  static const double answerHeight = 80;
   static const String answerPlaceholder = "我諗到啦😎";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
