@@ -143,9 +143,10 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
       alignment: Alignment.topCenter,
       padding: const EdgeInsets.all(Const.edgeInsets),
       child: SizedBox(
-        width:
+        width: max(
             widget.preferredHeight * FormulaKeyboardConst.containerWidthWeight +
                 FormulaKeyboardConst.containerWidthBias,
+            0),
         child: GridView(
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
