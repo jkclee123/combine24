@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:combine24/config/const.dart';
 import 'package:combine24/utils/op_util.dart';
@@ -60,9 +61,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
     bool isInBracketCopy = false;
     int lenFromBracketCopy = 0;
     List<bool> availCardCopy = [true, true, true, true];
-    ans = ans.replaceAll("10", "T");
     for (String char in ans.split(Const.emptyString)) {
-      char = char.replaceAll("T", "10");
       if (OpUtil.isOpenBracket(char)) {
         isInBracketCopy = true;
         lenFromBracketCopy = 0;
