@@ -63,7 +63,6 @@ class AppBarConst {
   static const String lightModeTooltip = "眼盲模式";
   static const String dartModeTooltip = "正常模式";
   static const String randomDrawTooltip = "出題";
-  static const String resetTooltip = "重置";
 }
 
 class HandViewConst {
@@ -78,8 +77,7 @@ class ErrorConst {
 }
 
 class SolutionStateViewConst {
-  static const double answerHeight = 80;
-  static const String answerPlaceholder = "我諗到啦😎";
+  static const String answerLabelText = "我諗到啦😎";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
   static const double borderRadius = 15;
@@ -90,19 +88,17 @@ class SolutionStateViewConst {
   static const FontWeight fontWeight = FontWeight.w400;
 }
 
-class KeyboardViewConst {
-  static const double preferredSizeHeight = 240;
-  static const List<String> opList = [
-    OpConst.addOp,
-    OpConst.minusOp,
-    OpConst.readMulOp,
-    OpConst.readDivOp
-  ];
+class FormulaKeyboardConst {
+  static const String allClear = "AC";
+  static const String bracket = "()";
+  static const String submit = "=";
   static const String eof = "\u0000";
-  static const double widthWeight = 1 / 14;
-  static const double heightWeight = 1 / 14;
-  static const double minSpacing = 10;
-  static const double borderRadius = 5;
-  static const double sumbitBorderRadius = 40;
-  static const double edgeInsets = 3;
+  static const double crossAxisSpacing = 10;
+  static const double mainAxisSpacing = 10;
+  static const double edgeInsets = 8;
+  static const double preferredHeightWidthWeight = 3 / 4;
+  static const double preferredHeightWidthBias = 20;
+  static const double preferredHeightHeightWeight = 5 / 11;
+  static const double containerWidthWeight = 4 / 3;
+  static const double containerWidthBias = -40;
 }

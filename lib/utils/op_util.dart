@@ -1,15 +1,20 @@
 import 'package:combine24/config/const.dart';
 
 class OpUtil {
-  static bool isReverseOp(String op) => op.contains(OpConst.reverseIdentifier);
+  static bool isOp(String op) =>
+      isAddOp(op) || isMinusOp(op) || isMulOp(op) || isDivOp(op);
 
   static bool isAddOp(String op) => op == OpConst.addOp;
 
   static bool isMinusOp(String op) => op == OpConst.minusOp;
 
-  static bool isMulOp(String op) => op == OpConst.calMulOp;
+  static bool isMulOp(String op) =>
+      op == OpConst.calMulOp || op == OpConst.readMulOp;
 
-  static bool isDivOp(String op) => op == OpConst.calDivOp;
+  static bool isDivOp(String op) =>
+      op == OpConst.calDivOp || op == OpConst.readDivOp;
+
+  static bool isReverseOp(String op) => op.contains(OpConst.reverseIdentifier);
 
   static bool isReverseMinusOp(String op) => op == OpConst.reverseMinusOp;
 

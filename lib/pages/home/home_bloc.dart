@@ -63,12 +63,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (state is HomeSolutionState) {
       try {
         HomeSolutionState oldState = (state as HomeSolutionState);
-        String calAnswer = _translateService.read2CalFormula(event.answer);
+        String answer = event.answer
+            .replaceAll(FormulaKeyboardConst.eof, Const.emptyString);
+        String calAnswer = _translateService.read2CalFormula(answer);
         if (!CalUtil.canCombine24(calAnswer)) {
           emit(oldState.copyWith(wrongAnswer: true));
         } else {
-          int index =
-              _answerService.matchAnswer(event.answer, oldState.solutionList);
+          int index = _answerService.matchAnswer(answer, oldState.solutionList);
           if (!index.isNegative) {
             List<bool> solutionMaskList =
                 List<bool>.from(oldState.solutionMaskList);

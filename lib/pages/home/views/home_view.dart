@@ -21,43 +21,55 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   late final FocusNode focusNode;
   late final ValueNotifier<String> keyboardNotifier;
+  late final TextEditingController answerController;
 
   @override
   void initState() {
     super.initState();
     focusNode = FocusNode();
     keyboardNotifier = ValueNotifier<String>(Const.emptyString);
-    keyboardNotifier.addListener(() => onSubmit());
+    answerController = TextEditingController();
+    keyboardNotifier.addListener(() => onAnswerChanged());
   }
 
-  void onSubmit() {
-    if (keyboardNotifier.value.contains(KeyboardViewConst.eof)) {
-      String answer = keyboardNotifier.value
-          .replaceAll(KeyboardViewConst.eof, Const.emptyString);
-      BlocProvider.of<HomeBloc>(context).add(HomeSubmitEvent(answer: answer));
+  void onAnswerChanged() {
+    if (keyboardNotifier.value.contains(FormulaKeyboardConst.eof)) {
+      BlocProvider.of<HomeBloc>(context)
+          .add(HomeSubmitEvent(answer: keyboardNotifier.value));
+      keyboardNotifier.value = Const.emptyString;
       focusNode.unfocus();
+    } else {
+      answerController.value = TextEditingValue(
+        text: keyboardNotifier.value,
+        selection: TextSelection.fromPosition(
+          TextPosition(offset: keyboardNotifier.value.length),
+        ),
+      );
     }
+  }
+
+  void copyHint2Ans(String hint) {
+    keyboardNotifier.value = hint;
   }
 
   @override
   Widget build(BuildContext context) {
     // BlocProvider.of<HomeBloc>(context).add(HomeTestEvent());
     return BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
-      return Scaffold(
-        appBar: _buildAppBar(context),
-        body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: (() => Future.delayed(
-                const Duration(seconds: Const.refreshDelay),
-                () =>
-                    BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()))),
+      return RefreshIndicator(
+        onRefresh: () => Future.delayed(
+            const Duration(seconds: Const.refreshDelay),
+            () => BlocProvider.of<HomeBloc>(context).add(HomeResetEvent())),
+        child: Scaffold(
+          appBar: _buildAppBar(context),
+          body: SafeArea(
             child: ListView(
               padding: const EdgeInsets.all(Const.edgeInsets),
               physics: const AlwaysScrollableScrollPhysics(),
               children: <Widget>[
                 _buildHandView(context),
                 const Divider(),
-                _buildDisplayView(context),
+                _buildDisplayView(context)
               ],
             ),
           ),
@@ -78,7 +90,8 @@ class _HomeViewState extends State<HomeView> {
           footerBuilder: (context) => FormulaKeyboard(
               focusNode: focusNode,
               notifier: keyboardNotifier,
-              cardList: cardList),
+              cardList: cardList,
+              context: context),
         ),
       ],
     );
@@ -94,8 +107,8 @@ class _HomeViewState extends State<HomeView> {
         IconButton(
           onPressed: () => context.read<ThemeCubit>().toggleTheme(),
           icon: Theme.of(context).brightness == Brightness.light
-              ? const Icon(Icons.dark_mode_rounded)
-              : const Icon(Icons.light_mode_rounded),
+              ? const Icon(Icons.dark_mode_outlined)
+              : const Icon(Icons.light_mode_outlined),
           tooltip: Theme.of(context).brightness == Brightness.light
               ? AppBarConst.dartModeTooltip
               : AppBarConst.lightModeTooltip,
@@ -158,68 +171,33 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  Widget _buildNoFocusAnswerCard() {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-          width: SolutionStateViewConst.borderWidth,
-        ),
-        borderRadius: BorderRadius.zero,
-      ),
-      child: Center(
-        child: Text(
-          SolutionStateViewConst.answerPlaceholder,
-          style: TextStyle(
-              color: Theme.of(context).hintColor,
-              fontSize: SolutionStateViewConst.noFocusFontSize),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHasFocusAnswerCard(String val) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-          width: SolutionStateViewConst.borderWidth,
-        ),
-        borderRadius: BorderRadius.zero,
-      ),
-      child: Center(
-        child: Text(
-          val,
-          style: const TextStyle(
-              fontSize: SolutionStateViewConst.hasFocusFontSize),
-        ),
-      ),
-    );
-  }
-
   Widget _buildAnswerView(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
-      height: SolutionStateViewConst.answerHeight,
       child: KeyboardActions(
         autoScroll: false,
         tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
         isDialog: false,
         config: _buildConfig(context),
         child: KeyboardCustomInput<String>(
-            focusNode: focusNode,
-            notifier: keyboardNotifier,
-            builder: (context, val, hasFocus) {
-              if (hasFocus != null && !hasFocus) {
-                val = Const.emptyString;
-                keyboardNotifier.value = Const.emptyString;
-              }
-              return hasFocus != null && !hasFocus
-                  ? _buildNoFocusAnswerCard()
-                  : _buildHasFocusAnswerCard(val);
-            }),
+          focusNode: focusNode,
+          notifier: keyboardNotifier,
+          builder: (context, val, hasFocus) {
+            return TextFormField(
+              showCursor: true,
+              readOnly: true,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.none,
+              controller: answerController,
+              decoration: const InputDecoration(
+                labelText: SolutionStateViewConst.answerLabelText,
+                border: OutlineInputBorder(),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -267,29 +245,32 @@ class _HomeViewState extends State<HomeView> {
     return SizedBox(
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            color: Colors.yellow,
-            width: SolutionStateViewConst.borderWidth,
-          ),
-          borderRadius:
-              BorderRadius.circular(SolutionStateViewConst.borderRadius),
-        ),
-        elevation: Const.elevation,
-        child: ListTile(
-          leading: Opacity(
-            opacity: Const.opacity,
-            child: Text("${index + 1}"),
-          ),
-          title: Center(
-            child: Text(hintList[index]),
-          ),
-          trailing: const IconButton(
-            icon: Icon(
-              Icons.lightbulb,
+      child: GestureDetector(
+        onTap: () => copyHint2Ans(hintList[index]),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+              color: Colors.yellow,
+              width: SolutionStateViewConst.borderWidth,
             ),
-            onPressed: null,
+            borderRadius:
+                BorderRadius.circular(SolutionStateViewConst.borderRadius),
+          ),
+          elevation: Const.elevation,
+          child: ListTile(
+            leading: Opacity(
+              opacity: Const.opacity,
+              child: Text("${index + 1}"),
+            ),
+            title: Center(
+              child: Text(hintList[index]),
+            ),
+            trailing: const IconButton(
+              icon: Icon(
+                Icons.lightbulb,
+              ),
+              onPressed: null,
+            ),
           ),
         ),
       ),
@@ -318,8 +299,8 @@ class _HomeViewState extends State<HomeView> {
               Icons.lightbulb,
               color: Colors.yellow[600],
             ),
-            onPressed: (() => BlocProvider.of<HomeBloc>(context)
-                .add(HomeOpenHintEvent(index: index))),
+            onPressed: () => BlocProvider.of<HomeBloc>(context)
+                .add(HomeOpenHintEvent(index: index)),
           ),
         ),
       ),

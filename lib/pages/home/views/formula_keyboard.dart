@@ -1,6 +1,9 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:combine24/config/const.dart';
+import 'package:combine24/utils/op_util.dart';
 import 'package:flutter/material.dart';
-import 'package:responsive_grid/responsive_grid.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 class FormulaKeyboard extends StatefulWidget
@@ -10,16 +13,26 @@ class FormulaKeyboard extends StatefulWidget
   final ValueNotifier<String> notifier;
   final FocusNode focusNode;
   final List<String> cardList;
+  final BuildContext context;
   FormulaKeyboard({
     Key? key,
     required this.notifier,
     required this.focusNode,
     required this.cardList,
+    required this.context,
   }) : super(key: key);
 
+  double get preferredHeight {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    return min(
+        width * FormulaKeyboardConst.preferredHeightWidthWeight +
+            FormulaKeyboardConst.preferredHeightWidthBias,
+        height * FormulaKeyboardConst.preferredHeightHeightWeight);
+  }
+
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(KeyboardViewConst.preferredSizeHeight);
+  Size get preferredSize => Size.fromHeight(preferredHeight);
 
   @override
   _FormulaKeyboardState createState() => _FormulaKeyboardState();
@@ -32,13 +45,50 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
   List<bool> availCard = [true, true, true, true];
   bool submited = false;
 
-  void initKeyboardState() {
+  @override
+  void initState() {
+    super.initState();
+    widget.notifier.addListener(() => onAnsChanged());
+    onAnsChanged();
+  }
+
+  void onAnsChanged() {
+    if (!mounted) {
+      return;
+    }
+    String ans = widget.notifier.value;
+    bool isNextCardCopy = true;
+    bool isInBracketCopy = false;
+    int lenFromBracketCopy = 0;
+    List<bool> availCardCopy = [true, true, true, true];
+    for (String char in ans.split(Const.emptyString)) {
+      if (OpUtil.isOpenBracket(char)) {
+        isInBracketCopy = true;
+        lenFromBracketCopy = 0;
+      } else if (OpUtil.isCloseBracket(char)) {
+        isInBracketCopy = false;
+      } else if (char != Const.space) {
+        lenFromBracketCopy += 1;
+        if (OpUtil.isOp(char)) {
+          isNextCardCopy = true;
+        } else {
+          isNextCardCopy = false;
+        }
+        if (widget.cardList.contains(char)) {
+          for (int index = 0; index < widget.cardList.length; index++) {
+            if (widget.cardList[index] == char && availCardCopy[index]) {
+              availCardCopy[index] = false;
+              break;
+            }
+          }
+        }
+      }
+    }
     setState(() {
-      isNextCard = true;
-      isInBracket = false;
-      lenFromBracket = 0;
-      availCard = [true, true, true, true];
-      submited = false;
+      isNextCard = isNextCardCopy;
+      isInBracket = isInBracketCopy;
+      lenFromBracket = lenFromBracketCopy;
+      availCard = List<bool>.from(availCardCopy);
     });
   }
 
@@ -48,6 +98,8 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
 
   bool get canAddOp => !noAvailCard && !isNextCard;
 
+  bool get canAddBracket => canAddOpenBracket || canAddCloseBracket;
+
   bool get canAddOpenBracket => !noAvailCard && isNextCard && !isInBracket;
 
   bool get canAddCloseBracket =>
@@ -55,220 +107,147 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
 
   bool get canSubmit => noAvailCard && !isInBracket && !submited;
 
-  void onTapCard(int index) {
-    String currentValue = widget.notifier.value;
-    String temp = currentValue + widget.cardList[index];
-    setState(() {
-      isNextCard = !isNextCard;
-      if (isInBracket) {
-        lenFromBracket += 1;
-      }
-      availCard[index] = false;
-    });
-    widget.updateValue(temp);
+  void onTapCard(int index) =>
+      widget.updateValue("${widget.notifier.value}${widget.cardList[index]}");
+
+  void onTapOp(String op) =>
+      widget.updateValue("${widget.notifier.value} $op ");
+
+  void onTapAllClear() => widget.updateValue(Const.emptyString);
+
+  void onTapBracket() {
+    if (canAddOpenBracket) {
+      widget.updateValue("${widget.notifier.value}${OpConst.openBracket}");
+    } else if (canAddCloseBracket) {
+      widget.updateValue("${widget.notifier.value}${OpConst.closeBracket}");
+    }
   }
 
-  void onTapOp(String op) {
-    String currentValue = widget.notifier.value;
-    String temp = currentValue + " $op ";
-    setState(() {
-      isNextCard = !isNextCard;
-      if (isInBracket) {
-        lenFromBracket += 1;
-      }
-    });
-    widget.updateValue(temp);
-  }
-
-  void onTapClear() {
-    initKeyboardState();
-    widget.updateValue(Const.emptyString);
-  }
-
-  void onTapOpenBracket() {
-    String currentValue = widget.notifier.value;
-    String temp = currentValue + OpConst.openBracket;
-    setState(() {
-      isInBracket = true;
-      lenFromBracket = 0;
-    });
-    widget.updateValue(temp);
-  }
-
-  void onTapCloseBracket() {
-    String currentValue = widget.notifier.value;
-    String temp = currentValue + OpConst.closeBracket;
-    setState(() {
-      isInBracket = false;
-      lenFromBracket = 0;
-    });
-    widget.updateValue(temp);
+  void onTapBackspace() {
+    String currVal = widget.notifier.value;
+    if (currVal.endsWith(Const.space)) {
+      widget.updateValue(currVal.substring(0, currVal.length - 3));
+    } else if (currVal.isNotEmpty) {
+      widget.updateValue(currVal.substring(0, currVal.length - 1));
+    }
   }
 
   void onTapSubmit() {
-    String currentValue = widget.notifier.value;
-    String temp = currentValue + KeyboardViewConst.eof;
-    setState(() {
-      submited = true;
-    });
-    widget.updateValue(temp);
+    widget.updateValue("${widget.notifier.value}${FormulaKeyboardConst.eof}");
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return Container(
       color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(Const.edgeInsets),
-        child: ResponsiveGridList(
-          desiredItemWidth: width > height
-              ? width * KeyboardViewConst.widthWeight
-              : height * KeyboardViewConst.heightWeight,
-          squareCells: true,
-          minSpacing: KeyboardViewConst.minSpacing,
+      alignment: Alignment.topCenter,
+      padding: const EdgeInsets.all(Const.edgeInsets),
+      child: SizedBox(
+        width:
+            widget.preferredHeight * FormulaKeyboardConst.containerWidthWeight +
+                FormulaKeyboardConst.containerWidthBias,
+        child: GridView(
+          shrinkWrap: true,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            childAspectRatio: 1,
+            crossAxisSpacing: FormulaKeyboardConst.crossAxisSpacing,
+            mainAxisSpacing: FormulaKeyboardConst.mainAxisSpacing,
+          ),
           children: <Widget>[
-            for (int index = 0; index < 4; index++) buildCardButton(index),
-            for (String op in KeyboardViewConst.opList) buildOpButton(op),
-            buildOpenBracketButton(),
-            buildCloseBracketButton(),
-            buildClearButton(),
-            buildSubmitButton(),
+            buildButton(
+                text: FormulaKeyboardConst.allClear,
+                isEnabled: true,
+                callback: () => onTapAllClear()),
+            buildButton(
+                text: OpConst.readDivOp,
+                isEnabled: canAddOp,
+                callback: () => onTapOp(OpConst.readDivOp)),
+            buildButton(
+                text: OpConst.readMulOp,
+                isEnabled: canAddOp,
+                callback: () => onTapOp(OpConst.readMulOp)),
+            buildButton(
+                text: OpConst.minusOp,
+                isEnabled: canAddOp,
+                callback: () => onTapOp(OpConst.minusOp)),
+            buildButton(
+                text: widget.cardList[0],
+                isEnabled: canAddCard(0),
+                callback: () => onTapCard(0)),
+            buildButton(
+                text: widget.cardList[1],
+                isEnabled: canAddCard(1),
+                callback: () => onTapCard(1)),
+            buildButton(
+                text: FormulaKeyboardConst.bracket,
+                isEnabled: canAddBracket,
+                callback: () => onTapBracket()),
+            buildButton(
+                text: OpConst.addOp,
+                isEnabled: canAddOp,
+                callback: () => onTapOp(OpConst.addOp)),
+            buildButton(
+                text: widget.cardList[2],
+                isEnabled: canAddCard(2),
+                callback: () => onTapCard(2)),
+            buildButton(
+                text: widget.cardList[3],
+                isEnabled: canAddCard(3),
+                callback: () => onTapCard(3)),
+            buildButton(
+                icon: Icons.backspace_outlined,
+                isEnabled: true,
+                callback: () => onTapBackspace()),
+            buildButton(
+                text: FormulaKeyboardConst.submit,
+                isEnabled: canSubmit,
+                callback: () => onTapSubmit()),
           ],
         ),
       ),
     );
   }
 
-  Widget buildCardButton(int index) {
-    return Material(
-      borderRadius: BorderRadius.circular(KeyboardViewConst.borderRadius),
-      color: canAddCard(index) ? Colors.blue : Colors.grey[800],
-      elevation: Const.elevation,
-      child: InkWell(
-        onTap: canAddCard(index) ? () => onTapCard(index) : null,
-        child: FittedBox(
-          child: Padding(
-            padding: const EdgeInsets.all(KeyboardViewConst.edgeInsets),
-            child: Text(
-              widget.cardList[index],
-              style: TextStyle(
-                color: canAddCard(index) ? Colors.white : Colors.grey,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildOpButton(String op) {
-    return Material(
-      borderRadius: BorderRadius.circular(KeyboardViewConst.borderRadius),
-      color: canAddOp ? Colors.blue : Colors.grey[800],
-      elevation: Const.elevation,
-      child: InkWell(
-        onTap: canAddOp ? () => onTapOp(op) : null,
-        child: FittedBox(
-          child: Padding(
-            padding: const EdgeInsets.all(KeyboardViewConst.edgeInsets),
-            child: Text(
-              op,
-              style: TextStyle(
-                color: canAddOp ? Colors.white : Colors.grey,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildClearButton() {
-    return Material(
-      borderRadius: BorderRadius.circular(KeyboardViewConst.borderRadius),
-      color: Colors.redAccent,
-      elevation: Const.elevation,
-      child: InkWell(
-        onTap: () => onTapClear(),
-        child: const FittedBox(
-          child: Padding(
-            padding: EdgeInsets.all(KeyboardViewConst.edgeInsets),
-            child: Icon(
-              Icons.format_clear_outlined,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildOpenBracketButton() {
-    return Material(
-      borderRadius: BorderRadius.circular(KeyboardViewConst.borderRadius),
-      color: canAddOpenBracket ? Colors.blue : Colors.grey[800],
-      elevation: Const.elevation,
-      child: InkWell(
-        onTap: canAddOpenBracket ? () => onTapOpenBracket() : null,
-        child: FittedBox(
-          child: Padding(
-            padding: const EdgeInsets.all(KeyboardViewConst.edgeInsets),
-            child: Text(
-              OpConst.openBracket,
-              style: TextStyle(
-                color: canAddOpenBracket ? Colors.white : Colors.grey,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildCloseBracketButton() {
-    return Material(
-      borderRadius: BorderRadius.circular(KeyboardViewConst.borderRadius),
-      color: canAddCloseBracket ? Colors.blue : Colors.grey[800],
-      elevation: Const.elevation,
-      child: InkWell(
-        onTap: canAddCloseBracket ? () => onTapCloseBracket() : null,
-        child: FittedBox(
-          child: Padding(
-            padding: const EdgeInsets.all(KeyboardViewConst.edgeInsets),
-            child: Text(
-              OpConst.closeBracket,
-              style: TextStyle(
-                color: canAddCloseBracket ? Colors.white : Colors.grey,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildSubmitButton() {
+  Widget buildButton(
+      {String? text,
+      IconData? icon,
+      required bool isEnabled,
+      required VoidCallback callback}) {
     return Material(
       shape: const CircleBorder(),
-      color: canSubmit ? Colors.greenAccent[400] : Colors.grey[800],
+      color: isEnabled ? Colors.blueGrey : Colors.grey[850],
       elevation: Const.elevation,
       child: InkWell(
-        onTap: canSubmit ? () => onTapSubmit() : null,
+        onTap: isEnabled ? callback : null,
         child: FittedBox(
           child: Padding(
-              padding: const EdgeInsets.all(KeyboardViewConst.edgeInsets),
-              child: Icon(
-                Icons.send_rounded,
-                color: canSubmit ? Colors.white : Colors.grey,
-              )),
+            padding: const EdgeInsets.all(FormulaKeyboardConst.edgeInsets),
+            child: text != null
+                ? buildBtnText(text, isEnabled)
+                : icon != null
+                    ? buildBtnIcon(icon, isEnabled)
+                    : const SizedBox.shrink(),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget buildBtnText(String text, bool isEnabled) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: isEnabled ? Colors.white : Colors.grey[700],
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+
+  Widget buildBtnIcon(IconData icon, bool isEnabled) {
+    return Icon(
+      icon,
+      color: isEnabled ? Colors.white : Colors.grey[700],
     );
   }
 }
