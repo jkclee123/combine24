@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:combine24/pages/home/views/formula_keyboard.dart';
+import 'package:combine24/services/impl/default_translate_service.dart';
+import 'package:combine24/services/translate_service.dart';
 import 'package:flutter/material.dart';
 import 'package:combine24/config/const.dart';
 import 'package:combine24/pages/home/home_bloc.dart';
@@ -8,6 +10,7 @@ import 'package:combine24/pages/home/home_event.dart';
 import 'package:combine24/pages/home/home_state.dart';
 import 'package:combine24/theme_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:function_tree/function_tree.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
@@ -22,6 +25,7 @@ class _HomeViewState extends State<HomeView> {
   late final FocusNode focusNode;
   late final ValueNotifier<String> keyboardNotifier;
   late final TextEditingController answerController;
+  late final TranslateService translateService;
 
   @override
   void initState() {
@@ -29,6 +33,7 @@ class _HomeViewState extends State<HomeView> {
     focusNode = FocusNode();
     keyboardNotifier = ValueNotifier<String>(Const.emptyString);
     answerController = TextEditingController();
+    translateService = DefaultTranslateService();
     keyboardNotifier.addListener(() => onAnswerChanged());
   }
 
@@ -50,6 +55,22 @@ class _HomeViewState extends State<HomeView> {
 
   void copyHint2Ans(String hint) {
     keyboardNotifier.value = hint;
+  }
+
+  String subTotal(String formula) {
+    if (formula.isEmpty) {
+      return "= 0";
+    }
+    try {
+      formula = translateService.read2CalFormula(formula);
+      if (OpConst.openBracket.allMatches(formula).length == 1 &&
+          OpConst.closeBracket.allMatches(formula).isEmpty) {
+        formula = formula.replaceAll(OpConst.openBracket, Const.emptyString);
+      }
+      return "= ${formula.interpret().toStringAsFixed(1)}";
+    } catch (e, _) {
+      return "= --";
+    }
   }
 
   @override
@@ -185,15 +206,16 @@ class _HomeViewState extends State<HomeView> {
           focusNode: focusNode,
           notifier: keyboardNotifier,
           builder: (context, val, hasFocus) {
-            return TextFormField(
+            return TextField(
               showCursor: true,
               readOnly: true,
               textAlign: TextAlign.center,
               keyboardType: TextInputType.none,
               controller: answerController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: SolutionStateViewConst.answerLabelText,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                counterText: subTotal(answerController.text),
               ),
             );
           },
