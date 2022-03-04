@@ -59,7 +59,7 @@ class _HomeViewState extends State<HomeView> {
 
   String subTotal(String formula) {
     if (formula.isEmpty) {
-      return "= 0";
+      return SolutionStateViewConst.subTotalZero;
     }
     try {
       formula = translateService.read2CalFormula(formula);
@@ -69,7 +69,7 @@ class _HomeViewState extends State<HomeView> {
       }
       return "= ${formula.interpret().toStringAsFixed(1)}";
     } catch (e, _) {
-      return "= --";
+      return SolutionStateViewConst.subTotalError;
     }
   }
 
@@ -103,7 +103,6 @@ class _HomeViewState extends State<HomeView> {
     List<String> cardList = BlocProvider.of<HomeBloc>(context).state.cardList;
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor: Colors.grey[200],
       actions: [
         KeyboardActionsItem(
           focusNode: focusNode,
@@ -194,6 +193,28 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  List<Widget> _buildSolutionStateView(BuildContext context) {
+    HomeSolutionState state =
+        context.watch<HomeBloc>().state as HomeSolutionState;
+    List<String> solutionList = state.solutionList;
+    List<bool> solutionMaskList = state.solutionMaskList;
+    List<bool> hintMaskList = state.hintMaskList;
+    double width = MediaQuery.of(context).size.width;
+    return [
+      _buildAnswerView(context),
+      for (int index = 0; index < solutionList.length; index++)
+        SizedBox(
+          width: width * SolutionStateViewConst.widthWeight +
+              SolutionStateViewConst.widthBias,
+          child: solutionMaskList[index]
+              ? _buildSolutionCard(context, index)
+              : hintMaskList[index]
+                  ? _buildHintCard(context, index)
+                  : _buildHideSolutionCard(context, index),
+        ),
+    ];
+  }
+
   Widget _buildAnswerView(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
@@ -226,20 +247,13 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildSolutionCard(BuildContext context, int index) {
-    HomeSolutionState state =
-        context.watch<HomeBloc>().state as HomeSolutionState;
-    List<String> solutionList = state.solutionList;
+  Widget _buildHideSolutionCard(BuildContext context, int index) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
       child: Card(
         shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            color: Colors.green,
-            width: SolutionStateViewConst.borderWidth,
-          ),
           borderRadius:
               BorderRadius.circular(SolutionStateViewConst.borderRadius),
         ),
@@ -249,12 +263,14 @@ class _HomeViewState extends State<HomeView> {
             opacity: Const.opacity,
             child: Text("${index + 1}"),
           ),
-          title: Center(
-            child: Text(solutionList[index]),
-          ),
-          trailing: const Icon(
-            Icons.check,
-            color: Colors.green,
+          trailing: IconButton(
+            tooltip: SolutionStateViewConst.hintTooltip,
+            icon: Icon(
+              Icons.lightbulb,
+              color: Colors.yellow[600],
+            ),
+            onPressed: () => BlocProvider.of<HomeBloc>(context)
+                .add(HomeOpenHintEvent(index: index)),
           ),
         ),
       ),
@@ -301,13 +317,20 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildHideSolutionCard(BuildContext context, int index) {
+  Widget _buildSolutionCard(BuildContext context, int index) {
+    HomeSolutionState state =
+        context.watch<HomeBloc>().state as HomeSolutionState;
+    List<String> solutionList = state.solutionList;
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
       child: Card(
         shape: RoundedRectangleBorder(
+          side: const BorderSide(
+            color: Colors.green,
+            width: SolutionStateViewConst.borderWidth,
+          ),
           borderRadius:
               BorderRadius.circular(SolutionStateViewConst.borderRadius),
         ),
@@ -317,39 +340,15 @@ class _HomeViewState extends State<HomeView> {
             opacity: Const.opacity,
             child: Text("${index + 1}"),
           ),
-          trailing: IconButton(
-            tooltip: SolutionStateViewConst.hintTooltip,
-            icon: Icon(
-              Icons.lightbulb,
-              color: Colors.yellow[600],
-            ),
-            onPressed: () => BlocProvider.of<HomeBloc>(context)
-                .add(HomeOpenHintEvent(index: index)),
+          title: Center(
+            child: Text(solutionList[index]),
+          ),
+          trailing: const Icon(
+            Icons.check,
+            color: Colors.green,
           ),
         ),
       ),
     );
-  }
-
-  List<Widget> _buildSolutionStateView(BuildContext context) {
-    HomeSolutionState state =
-        context.watch<HomeBloc>().state as HomeSolutionState;
-    List<String> solutionList = state.solutionList;
-    List<bool> solutionMaskList = state.solutionMaskList;
-    List<bool> hintMaskList = state.hintMaskList;
-    double width = MediaQuery.of(context).size.width;
-    return [
-      _buildAnswerView(context),
-      for (int index = 0; index < solutionList.length; index++)
-        SizedBox(
-          width: width * SolutionStateViewConst.widthWeight +
-              SolutionStateViewConst.widthBias,
-          child: solutionMaskList[index]
-              ? _buildSolutionCard(context, index)
-              : hintMaskList[index]
-                  ? _buildHintCard(context, index)
-                  : _buildHideSolutionCard(context, index),
-        ),
-    ];
   }
 }

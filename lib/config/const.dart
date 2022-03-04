@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Const {
   static const String title = "合廿四";
   static const String space = " ";
@@ -83,9 +81,8 @@ class SolutionStateViewConst {
   static const double borderRadius = 15;
   static const String hintTooltip = "提示";
   static const double borderWidth = 2;
-  static const double noFocusFontSize = 14;
-  static const double hasFocusFontSize = 16.5;
-  static const FontWeight fontWeight = FontWeight.w400;
+  static const String subTotalZero = "= 0";
+  static const String subTotalError = "= --";
 }
 
 class FormulaKeyboardConst {
