@@ -135,8 +135,10 @@ class _HomeViewState extends State<HomeView> {
               : AppBarConst.lightModeTooltip,
         ),
         IconButton(
-          onPressed: () =>
-              BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent()),
+          onPressed: () {
+            keyboardNotifier.value = Const.emptyString;
+            BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
+          },
           icon: const Icon(Icons.copy_rounded),
           tooltip: AppBarConst.randomDrawTooltip,
         ),
