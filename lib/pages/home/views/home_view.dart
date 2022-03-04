@@ -39,10 +39,10 @@ class _HomeViewState extends State<HomeView> {
 
   void onAnswerChanged() {
     if (keyboardNotifier.value.contains(FormulaKeyboardConst.eof)) {
+      // on sumbit clear input
       BlocProvider.of<HomeBloc>(context)
           .add(HomeSubmitEvent(answer: keyboardNotifier.value));
       keyboardNotifier.value = Const.emptyString;
-      focusNode.unfocus();
     } else {
       answerController.value = TextEditingValue(
         text: keyboardNotifier.value,
@@ -195,10 +195,8 @@ class _HomeViewState extends State<HomeView> {
 
   List<Widget> _buildSolutionStateView(BuildContext context) {
     HomeSolutionState state =
-        context.watch<HomeBloc>().state as HomeSolutionState;
+        BlocProvider.of<HomeBloc>(context).state as HomeSolutionState;
     List<String> solutionList = state.solutionList;
-    List<bool> solutionMaskList = state.solutionMaskList;
-    List<bool> hintMaskList = state.hintMaskList;
     double width = MediaQuery.of(context).size.width;
     return [
       _buildAnswerView(context),
@@ -206,11 +204,7 @@ class _HomeViewState extends State<HomeView> {
         SizedBox(
           width: width * SolutionStateViewConst.widthWeight +
               SolutionStateViewConst.widthBias,
-          child: solutionMaskList[index]
-              ? _buildSolutionCard(context, index)
-              : hintMaskList[index]
-                  ? _buildHintCard(context, index)
-                  : _buildHideSolutionCard(context, index),
+          child: _buildFlipAnimation(context, index),
         ),
     ];
   }
@@ -247,9 +241,36 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildHideSolutionCard(BuildContext context, int index) {
+  Widget _buildFlipAnimation(BuildContext context, int index) {
+    HomeSolutionState state =
+        BlocProvider.of<HomeBloc>(context).state as HomeSolutionState;
+    List<bool> solutionMaskList = state.solutionMaskList;
+    List<bool> hintMaskList = state.hintMaskList;
+    return AnimatedSwitcher(
+      duration:
+          const Duration(milliseconds: SolutionStateViewConst.flipDuration),
+      transitionBuilder: _transitionBuilder,
+      layoutBuilder: (widget, list) {
+        if (widget != null) {
+          return Stack(children: [widget, ...list]);
+        } else {
+          return Stack(children: list);
+        }
+      },
+      child: solutionMaskList[index]
+          ? _buildSolutionCard(context, index)
+          : hintMaskList[index]
+              ? _buildHintCard(context, index)
+              : _buildEmptySolutionCard(context, index),
+      switchInCurve: Curves.easeInBack,
+      switchOutCurve: Curves.easeInBack.flipped,
+    );
+  }
+
+  Widget _buildEmptySolutionCard(BuildContext context, int index) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
+      key: const ValueKey(false),
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
       child: Card(
@@ -279,10 +300,11 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buildHintCard(BuildContext context, int index) {
     HomeSolutionState state =
-        context.watch<HomeBloc>().state as HomeSolutionState;
+        BlocProvider.of<HomeBloc>(context).state as HomeSolutionState;
     List<String> hintList = state.hintList;
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
+      key: const ValueKey(false),
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
       child: GestureDetector(
@@ -319,10 +341,11 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buildSolutionCard(BuildContext context, int index) {
     HomeSolutionState state =
-        context.watch<HomeBloc>().state as HomeSolutionState;
+        BlocProvider.of<HomeBloc>(context).state as HomeSolutionState;
     List<String> solutionList = state.solutionList;
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
+      key: const ValueKey(true),
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
       child: Card(
@@ -349,6 +372,26 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _transitionBuilder(Widget widget, Animation<double> animation) {
+    final rotateAnim = Tween(begin: pi, end: 0.0).animate(animation);
+    return AnimatedBuilder(
+      animation: rotateAnim,
+      child: widget,
+      builder: (context, widget) {
+        final isUnder = const ValueKey(true) != widget!.key;
+        var tilt = ((animation.value - 0.5).abs() - 0.5) * 0.003;
+        tilt *= isUnder ? -1.0 : 1.0;
+        final value =
+            isUnder ? min(rotateAnim.value, pi / 2) : rotateAnim.value;
+        return Transform(
+          transform: Matrix4.rotationX(value)..setEntry(3, 1, tilt),
+          child: widget,
+          alignment: Alignment.center,
+        );
+      },
     );
   }
 }

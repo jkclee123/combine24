@@ -74,10 +74,10 @@ class DefaultAnswerService implements AnswerService {
     return Const.emptyString;
   }
 
-  /// Order 0: (x÷)
-  /// Order 1: (+-)
-  /// Order 2: x÷
-  /// Order 3: +-
+  /// order 0: (x÷)
+  /// order 1: (+-)
+  /// order 2: x÷
+  /// order 3: +-
   List<int> getOpOrder(String formula) {
     List<int> orderList = <int>[];
     formula = formula.replaceAll(RegExp(cardRegExp), Const.emptyString);

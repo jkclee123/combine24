@@ -83,6 +83,7 @@ class SolutionStateViewConst {
   static const double borderWidth = 2;
   static const String subTotalZero = "= 0";
   static const String subTotalError = "= --";
+  static const int flipDuration = 600;
 }
 
 class FormulaKeyboardConst {
