@@ -38,7 +38,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         for (int index = 0; index < 4; index++) {
           cardList.add(Const.deckList[rng.nextInt(13)]);
         }
-        cardList = ['J', 'J', 'K', 'Q'];
         solutionList = _solutionService.findSolutions(cardList);
       }
       List<String> hintList = _solutionService.extractHint(solutionList);
