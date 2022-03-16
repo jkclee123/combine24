@@ -43,6 +43,7 @@ class _HomeViewState extends State<HomeView> {
       BlocProvider.of<HomeBloc>(context)
           .add(HomeSubmitEvent(answer: keyboardNotifier.value));
       keyboardNotifier.value = Const.emptyString;
+      focusNode.unfocus();
     } else {
       answerController.value = TextEditingValue(
         text: keyboardNotifier.value,
@@ -224,7 +225,7 @@ class _HomeViewState extends State<HomeView> {
           notifier: keyboardNotifier,
           builder: (context, val, hasFocus) {
             return TextField(
-              showCursor: true,
+              showCursor: false,
               readOnly: true,
               textAlign: TextAlign.center,
               keyboardType: TextInputType.none,

@@ -113,7 +113,7 @@ class DefaultAnswerService implements AnswerService {
     for (int index = 0; index < partList.length; index++) {
       if (partList[index].contains(OpConst.openBracket) &&
           CalUtil.resultIsOne(partList[index]) &&
-          partList[index - 1].endsWith(OpConst.calDivOp)) {
+          (index - 1 >= 0 && partList[index - 1].endsWith(OpConst.calDivOp))) {
         partList[index - 1] = partList[index - 1].replaceFirst(
             OpConst.calDivOp, OpConst.calMulOp, partList[index - 1].length - 1);
       }
