@@ -35,13 +35,18 @@ dependencies:
   equatable: any
   responsive_grid: any
   tuple: any
-  keyboard_actions: any 
   collection: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: any
+
+dependency_overrides:
+  keyboard_actions:
+    git:
+      url: https://github.com/jkclee123/flutter_keyboard_actions.git
+      ref: master
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
