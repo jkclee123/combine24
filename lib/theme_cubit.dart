@@ -3,12 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ThemeCubit extends Cubit<ThemeData> {
   ThemeCubit()
-      : super(WidgetsBinding.instance!.platformDispatcher.platformBrightness ==
+      : super(WidgetsBinding.instance.platformDispatcher.platformBrightness ==
                 Brightness.light
             ? _lightTheme
             : _darkTheme);
 
-  static final _lightTheme = ThemeData.light().copyWith();
+  static final _lightTheme = ThemeData.light().copyWith(
+    appBarTheme: const AppBarTheme().copyWith(
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
+    ),
+  );
 
   static final _darkTheme = ThemeData.dark().copyWith(
     appBarTheme: const AppBarTheme().copyWith(

@@ -14,12 +14,12 @@ class FormulaKeyboard extends StatefulWidget
   final List<String> cardList;
   final BuildContext context;
   FormulaKeyboard({
-    Key? key,
+    super.key,
     required this.notifier,
     required this.focusNode,
     required this.cardList,
     required this.context,
-  }) : super(key: key);
+  });
 
   double get preferredHeight {
     double width = MediaQuery.of(context).size.width;
@@ -34,7 +34,7 @@ class FormulaKeyboard extends StatefulWidget
   Size get preferredSize => Size.fromHeight(preferredHeight);
 
   @override
-  _FormulaKeyboardState createState() => _FormulaKeyboardState();
+  State<FormulaKeyboard> createState() => _FormulaKeyboardState();
 }
 
 class _FormulaKeyboardState extends State<FormulaKeyboard> {

@@ -15,10 +15,10 @@ import 'package:responsive_grid/responsive_grid.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
@@ -79,9 +79,13 @@ class _HomeViewState extends State<HomeView> {
     // BlocProvider.of<HomeBloc>(context).add(HomeTestEvent());
     return BlocBuilder<HomeBloc, HomeState>(builder: (_, state) {
       return RefreshIndicator(
-        onRefresh: () => Future.delayed(
+        onRefresh: () {
+          final homeBloc = context.read<HomeBloc>();
+          return Future.delayed(
             const Duration(seconds: Const.refreshDelay),
-            () => BlocProvider.of<HomeBloc>(context).add(HomeResetEvent())),
+            () => homeBloc.add(HomeResetEvent()),
+          );
+        },
         child: Scaffold(
           appBar: _buildAppBar(context),
           body: SafeArea(
@@ -258,13 +262,13 @@ class _HomeViewState extends State<HomeView> {
           return Stack(children: list);
         }
       },
+      switchInCurve: Curves.easeInBack,
+      switchOutCurve: Curves.easeInBack.flipped,
       child: solutionMaskList[index]
           ? _buildSolutionCard(context, index)
           : hintMaskList[index]
               ? _buildHintCard(context, index)
               : _buildEmptySolutionCard(context, index),
-      switchInCurve: Curves.easeInBack,
-      switchOutCurve: Curves.easeInBack.flipped,
     );
   }
 
@@ -389,8 +393,8 @@ class _HomeViewState extends State<HomeView> {
             isUnder ? min(rotateAnim.value, pi / 2) : rotateAnim.value;
         return Transform(
           transform: Matrix4.rotationX(value)..setEntry(3, 1, tilt),
-          child: widget,
           alignment: Alignment.center,
+          child: widget,
         );
       },
     );
