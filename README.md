@@ -27,7 +27,7 @@ Enter expressions using the on-screen formula keyboard to solve the puzzle. The 
 
 ## How It Handles Equivalent Solutions
 
-- Interactive explaination: [equivalent-solutions.html](https://html-preview.github.io/?url=https://github.com/jkclee123/combine24/blob/main/web/equivalent-solutions.html)
+- Interactive explaination: [equivalent-solutions.html](https://html-preview.github.io/?url=https://github.com/jkclee123/combine24/blob/main/equivalent-solutions.html)
 
 A unique feature of this app is its ability to recognize that different-looking formulas are mathematically equivalent. For example, with the numbers 3, 8, 6, and 7, the solutions 3+8+6+7 and 3+6+7+8 are considered the same. This is achieved by converting every formula into a standardized, order-independent "schema" before comparison.
 
