@@ -1,6 +1,8 @@
-# combine24
+# combine24 (合廿四)
 
-An interactive "24 game" solver built with Flutter. Enter expressions using the on-screen formula keyboard to make 24 from four numbers. The app gives live hints, validates your answer, and shows all solutions when available.
+combine24 (合廿四) is an interactive "24 game" solver built with Flutter. The Chinese name means "combine 24" - the classic mathematical puzzle where you must use each of four given numbers exactly once, combining them with addition, subtraction, multiplication, division, and parentheses to make exactly 24.
+
+Enter expressions using the on-screen formula keyboard to solve the puzzle. The app provides live hints, validates your answers, and shows all possible solutions when available.
 
 - Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
 
@@ -17,17 +19,18 @@ An interactive "24 game" solver built with Flutter. Enter expressions using the 
 
 ## How to Play
 
-1. You are given four numbers. Use each number exactly once.
-2. Combine them using +, −, ×, ÷, and parentheses to make 24.
-3. Use the on-screen keyboard to build your expression and press Submit.
-4. Open a hint for each solution slot; tap a hint to copy it into the input.
+1. **Get your numbers**: You are given four random numbers between 1-13.
+2. **Build your expression**: Use each number exactly once, combining them with +, −, ×, ÷, and parentheses to make exactly 24.
+3. **Use the keyboard**: Enter your mathematical expression using the on-screen formula keyboard.
+4. **Get hints**: When stuck, tap the hint cards to reveal partial solutions. Tap any hint to copy it directly into your input field.
+5. **Submit & verify**: Press Submit to check your answer. The app will validate and show if you're correct.
 
 ## Local Development
 
 Prerequisites:
 
-- Flutter SDK with Dart 2.x (the project enforces `environment: ">=2.16.1 <3.0.0"`)
-  - If your global Flutter uses Dart 3.x, consider using FVM or installing a Flutter SDK that ships with Dart 2.x (e.g., Flutter 3.7.x).
+- Flutter SDK with Dart 3.x (the project enforces `environment: ">=3.0.0 <4.0.0"`)
+- Recommended: Flutter 3.10.x or later
 
 Install and run (web):
 
@@ -51,11 +54,11 @@ flutter build web --release
 
 ## Tech Stack
 
-- Flutter + Dart
-- State management: `flutter_bloc`
-- Expression parsing/eval: `function_tree`
-- UI helpers: `responsive_grid`, `keyboard_actions`
-- Utilities: `equatable`, `tuple`, `collection`
+- **Framework**: Flutter + Dart 3.x
+- **State Management**: `flutter_bloc` (BLoC pattern implementation)
+- **Expression Parsing**: `function_tree` (mathematical expression evaluation)
+- **UI Components**: `responsive_grid` (responsive layouts), `keyboard_actions` (custom keyboard handling)
+- **Utilities**: `equatable` (value equality), `tuple` (immutable tuples), `collection` (enhanced collections)
 
 ## Project Structure (high-level)
 
