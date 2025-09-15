@@ -124,9 +124,7 @@ class _HomeViewState extends State<HomeView> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: GestureDetector(
-          onTap: () => BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()),
-          child: const Text(Const.title)),
+      title: const Text(Const.title),
       centerTitle: true,
       actions: <Widget>[
         IconButton(
@@ -219,7 +217,7 @@ class _HomeViewState extends State<HomeView> {
     return SizedBox(
       width: width * SolutionStateViewConst.widthWeight +
           SolutionStateViewConst.widthBias,
-      child: KeyboardActions(
+        child: KeyboardActions(
         autoScroll: false,
         tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
         isDialog: false,
