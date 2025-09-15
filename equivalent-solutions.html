@@ -775,7 +775,7 @@
                     </button>
                     <button class="tab-button" data-tab="tab4">
                         <span class="tab-number">4</span>
-                        <span class="tab-title">Precedence Handling</span>
+                        <span class="tab-title">Division by One</span>
                     </button>
                 </div>
 
@@ -982,34 +982,42 @@
                     <div id="tab4" class="tab-content">
                         <div class="deep-dive-grid">
                             <div class="formula-section">
-                                <h3>📝 Precedence & Grouping</h3>
+                                <h3>📝 Division by One Handling</h3>
                                 <div class="formula-pair">
                                     <div class="formula-item">
                                         <div class="formula-label">Formula A:</div>
-                                        <div class="math-expression">6 + 9 ÷ 2 × 4</div>
-                                        <div class="result">= 6 + 4.5 × 4 = 6 + 18 = 24</div>
+                                        <div class="math-expression">2 × Q × (9 - 8)</div>
+                                        <div class="result">= 2 × 13 × 1 = 26</div>
                                     </div>
                                     <div class="formula-item">
                                         <div class="formula-label">Formula B:</div>
-                                        <div class="math-expression">4 × 9 ÷ 2 + 6</div>
-                                        <div class="result">= 36 ÷ 2 + 6 = 18 + 6 = 24</div>
+                                        <div class="math-expression">2 × Q ÷ (9 - 8)</div>
+                                        <div class="result">= 2 × 13 ÷ 1 = 26</div>
                                     </div>
                                 </div>
                                 <div class="equivalent-indicator">
-                                    <div class="equivalent-badge pulse">✓ Equivalent Solutions</div>
+                                    <div class="equivalent-badge pulse">✓ Considered Equivalent</div>
+                                </div>
+                                <div class="explanation" style="margin-top: 20px;">
+                                    <p><strong>handleDivOne Function:</strong> Normalizes ÷1 to ×1 to prevent duplicate solutions</p>
                                 </div>
                             </div>
 
                             <div class="schema-section">
-                                <h3>🔧 Equivalent Schemas</h3>
-                                <div class="schema-comparison">
-                                    <div class="schema-item">
-                                        <div class="schema-label">Schema A:</div>
-                                        <div class="schema-code">[[+, 6], [+, [[*, 9], [/, 2], [*, 4]]]]</div>
-                                    </div>
-                                    <div class="schema-item">
-                                        <div class="schema-label">Schema B:</div>
-                                        <div class="schema-code">[[+, [[*, 4], [*, 9], [/, 2]]], [+, 6]]</div>
+                                <h3>🔧 Normalization Process</h3>
+                                <div class="schema-explanation">
+                                    <p>Both formulas normalize to the same schema:</p>
+                                    <div class="schema-visualization">
+                                        <div class="schema-tree">
+                                            <div class="tree-node root">
+                                                <div class="operator-node">×</div>
+                                                <div class="branch">
+                                                    <div class="value-node">2</div>
+                                                    <div class="value-node">Q</div>
+                                                    <div class="value-node">1</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1018,21 +1026,21 @@
                                 <h3>⚖️ Why They're Equivalent</h3>
                                 <div class="comparison-details">
                                     <div class="comparison-step">
-                                        <div class="step-icon">📊</div>
-                                        <div class="step-content">
-                                            <strong>Precedence Handled:</strong> ÷ and × operations grouped correctly in both schemas
-                                        </div>
-                                    </div>
-                                    <div class="comparison-step">
                                         <div class="step-icon">🔄</div>
                                         <div class="step-content">
-                                            <strong>Commutative Addition:</strong> + operations allow reordering of terms
+                                            <strong>Division by One:</strong> (9-8) = 1, so ÷(9-8) ≡ ×(9-8)
                                         </div>
                                     </div>
                                     <div class="comparison-step">
-                                        <div class="step-icon">🎯</div>
+                                        <div class="step-icon">🚫</div>
                                         <div class="step-content">
-                                            <strong>Same Evaluation:</strong> Despite different syntax, both evaluate to 24
+                                            <strong>Prevent Duplicates:</strong> Without normalization, both would be separate solutions
+                                        </div>
+                                    </div>
+                                    <div class="comparison-step">
+                                        <div class="step-icon">📝</div>
+                                        <div class="step-content">
+                                            <strong>Example:</strong> 2 ÷ (9 - 8) × Q also normalizes to the same schema
                                         </div>
                                     </div>
                                 </div>
