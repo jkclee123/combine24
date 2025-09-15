@@ -58,8 +58,8 @@ class OpConst {
 }
 
 class AppBarConst {
-  static const String lightModeTooltip = "眼盲模式";
-  static const String dartModeTooltip = "正常模式";
+  static const String lightModeTooltip = "淺色模式";
+  static const String dartModeTooltip = "深色模式";
   static const String randomDrawTooltip = "出題";
 }
 
@@ -71,11 +71,11 @@ class HandViewConst {
 }
 
 class ErrorConst {
-  static const String errorMsg = "你個嘢壞咗呀☹ F5啦";
+  static const String errorMsg = "你個嘢壞咗呀☹";
 }
 
 class SolutionStateViewConst {
-  static const String answerLabelText = "我諗到啦😎";
+  static const String answerLabelText = "輸入答案";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
   static const double borderRadius = 15;
