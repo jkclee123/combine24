@@ -25,6 +25,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeSubmitEvent>(_submit);
     on<HomeTestEvent>(_test);
     on<HomeResetEvent>(_reset);
+    _randomDrawOnInit();
+  }
+
+  void _randomDrawOnInit() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      add(HomeRandomDrawEvent());
+    });
   }
 
   void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) {

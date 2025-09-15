@@ -306,6 +306,7 @@ class _HomeViewState extends State<HomeView> {
         BlocProvider.of<HomeBloc>(context).state as HomeSolutionState;
     List<String> hintList = state.hintList;
     double width = MediaQuery.of(context).size.width;
+    copyHint2Ans(hintList[index]);
     return SizedBox(
       key: const ValueKey(false),
       width: width * SolutionStateViewConst.widthWeight +
