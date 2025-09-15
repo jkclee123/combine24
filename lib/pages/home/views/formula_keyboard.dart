@@ -163,7 +163,9 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return FocusScope(
+      canRequestFocus: false,
+      child: Container(
       color: Colors.grey[900],
       alignment: Alignment.topCenter,
       padding: const EdgeInsets.all(Const.edgeInsets),
@@ -232,6 +234,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -245,6 +248,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
       color: isEnabled ? Colors.blueGrey : Colors.grey[850],
       elevation: Const.elevation,
       child: InkWell(
+        onTapDown: isEnabled ? (_) { if (!widget.focusNode.hasFocus) widget.focusNode.requestFocus(); } : null,
         onTap: isEnabled ? callback : null,
         child: FittedBox(
           child: Padding(
