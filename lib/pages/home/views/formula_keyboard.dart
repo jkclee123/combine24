@@ -54,6 +54,7 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
     super.initState();
     widget.notifier.addListener(() => onAnsChanged());
     onAnsChanged();
+    widget.focusNode.requestFocus();
   }
 
   void onAnsChanged() {
@@ -113,29 +114,16 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
 
   bool get canSubmit => noAvailCard && !isInBracket && !submited;
 
-  void _ensureFocus() {
-    // Only request focus if we're not in a normal keyboard interaction
-    // This prevents focus contention on first keyboard appearance
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!widget.focusNode.hasFocus) {
-        widget.focusNode.requestFocus();
-      }
-    });
-  }
-
   void onTapCard(int index) {
     widget.updateValue("${widget.notifier.value}${widget.cardList[index]}");
-    _ensureFocus();
   }
 
   void onTapOp(String op) {
     widget.updateValue("${widget.notifier.value} $op ");
-    _ensureFocus();
   }
 
   void onTapAllClear() {
     widget.updateValue(Const.emptyString);
-    _ensureFocus();
   }
 
   void onTapBracket() {
@@ -144,7 +132,6 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
     } else if (canAddCloseBracket) {
       widget.updateValue("${widget.notifier.value}${OpConst.closeBracket}");
     }
-    _ensureFocus();
   }
 
   void onTapBackspace() {
@@ -154,7 +141,6 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
     } else if (currVal.isNotEmpty) {
       widget.updateValue(currVal.substring(0, currVal.length - 1));
     }
-    _ensureFocus();
   }
 
   void onTapSubmit() {

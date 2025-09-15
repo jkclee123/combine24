@@ -36,6 +36,7 @@ dependencies:
   responsive_grid: any
   tuple: any
   collection: any
+  keyboard_actions: any
 
 dev_dependencies:
   flutter_test:

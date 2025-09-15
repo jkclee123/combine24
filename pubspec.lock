@@ -108,7 +108,7 @@ packages:
     source: hosted
     version: "0.9.1"
   keyboard_actions:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "."
       ref: master

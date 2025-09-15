@@ -26,6 +26,8 @@ class _HomeViewState extends State<HomeView> {
   late final ValueNotifier<String> keyboardNotifier;
   late final TextEditingController answerController;
   late final TranslateService translateService;
+  int _keyboardOpenTick = 0;
+  bool _previousHasFocus = false;
 
   @override
   void initState() {
@@ -113,6 +115,7 @@ class _HomeViewState extends State<HomeView> {
           focusNode: focusNode,
           displayActionBar: false,
           footerBuilder: (context) => FormulaKeyboard(
+              key: ValueKey(_keyboardOpenTick),
               focusNode: focusNode,
               notifier: keyboardNotifier,
               cardList: cardList,
@@ -226,6 +229,10 @@ class _HomeViewState extends State<HomeView> {
           focusNode: focusNode,
           notifier: keyboardNotifier,
           builder: (context, val, hasFocus) {
+            if (hasFocus == true && !_previousHasFocus) {
+              _keyboardOpenTick++;
+            }
+            _previousHasFocus = hasFocus == true;
             return TextField(
               showCursor: false,
               readOnly: true,
