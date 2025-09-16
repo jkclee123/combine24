@@ -11,6 +11,9 @@ abstract class HomeEvent extends Equatable {
 class HomeRandomDrawEvent extends HomeEvent {}
 
 @immutable
+class HomeStartPickCardEvent extends HomeEvent {}
+
+@immutable
 class HomePickCardEvent extends HomeEvent {}
 
 @immutable

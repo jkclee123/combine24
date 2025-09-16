@@ -48,12 +48,12 @@ class _CardKeyboardState extends State<CardKeyboard> {
   @override
   void initState() {
     super.initState();
-    widget.notifier.addListener(() => onSelectionChanged());
-    onSelectionChanged();
+    widget.notifier.addListener(() => onCardChanged());
+    onCardChanged();
     widget.focusNode.requestFocus();
   }
 
-  void onSelectionChanged() {
+  void onCardChanged() {
     if (!mounted) {
       return;
     }

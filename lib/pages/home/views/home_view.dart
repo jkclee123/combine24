@@ -40,6 +40,7 @@ class _HomeViewState extends State<HomeView> {
     answerController = TextEditingController();
     translateService = DefaultTranslateService();
     formulaKeyboardNotifier.addListener(() => onAnswerChanged());
+    cardKeyboardNotifier.addListener(() => onCardChanged());
   }
 
   void onAnswerChanged() {
@@ -57,6 +58,9 @@ class _HomeViewState extends State<HomeView> {
         ),
       );
     }
+  }
+
+  void onCardChanged() {
   }
 
   void copyHint2Ans(String hint) {
@@ -177,7 +181,7 @@ class _HomeViewState extends State<HomeView> {
     HomeState state = BlocProvider.of<HomeBloc>(context).state;
     double width = MediaQuery.of(context).size.width;
     return GestureDetector( 
-      onTap: () => BlocProvider.of<HomeBloc>(context).add(HomePickCardEvent()),
+      onTap: () => BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()),
       child: ResponsiveGridList(
       desiredItemWidth: min(width * HandViewConst.desiredItemWidthWeight,
           HandViewConst.minDesiredItemWidth),

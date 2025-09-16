@@ -24,6 +24,11 @@ class HomeLoadingState extends HomeState {
     this.cardList = cardList;
   }
 }
+class HomePickCardState extends HomeState {
+  HomePickCardState({required List<String> cardList}) {
+    this.cardList = cardList;
+  }
+}
 
 class HomeSolutionState extends HomeState {
   late final List<String> solutionList;

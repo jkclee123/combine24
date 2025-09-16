@@ -26,10 +26,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeTestEvent>(_test);
     on<HomeResetEvent>(_reset);
     on<HomePickCardEvent>(_pickCard);
+    on<HomeStartPickCardEvent>(_startPickCard);
   }
 
   void _pickCard(HomePickCardEvent event, Emitter<HomeState> emit) {
-    emit(HomeInitState());
+    List<String> cardList = List<String>.from(state.cardList);
+    try {
+      if (cardList.length == 4) {
+          List<String> solutionList = _solutionService.findSolutions(cardList);
+          List<String> hintList = _solutionService.extractHint(solutionList);
+          emit(HomeSolutionState(cardList: cardList, solutionList: solutionList, hintList: hintList));
+        } else {
+          emit(HomePickCardState(cardList: cardList));
+        }
+    } catch (e, stacktrace) {
+      emit(HomeErrorState(cardList: cardList));
+      _completer.completeError(e, stacktrace);
+    }
+  }
+
+  void _startPickCard(HomeStartPickCardEvent event, Emitter<HomeState> emit) {
+    emit(HomePickCardState(cardList: <String>[]));
   }
 
   void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) {
