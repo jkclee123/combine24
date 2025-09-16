@@ -24,7 +24,8 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final FocusNode focusNode;
-  late final ValueNotifier<String> keyboardNotifier;
+  late final ValueNotifier<String> formulaKeyboardNotifier;
+  late final ValueNotifier<String> cardKeyboardNotifier;
   late final TextEditingController answerController;
   late final TranslateService translateService;
   int _keyboardOpenTick = 0;
@@ -34,31 +35,32 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     focusNode = FocusNode();
-    keyboardNotifier = ValueNotifier<String>(Const.emptyString);
+    formulaKeyboardNotifier = ValueNotifier<String>(Const.emptyString);
+    cardKeyboardNotifier = ValueNotifier<String>(Const.emptyString);
     answerController = TextEditingController();
     translateService = DefaultTranslateService();
-    keyboardNotifier.addListener(() => onAnswerChanged());
+    formulaKeyboardNotifier.addListener(() => onAnswerChanged());
   }
 
   void onAnswerChanged() {
-    if (keyboardNotifier.value.contains(FormulaKeyboardConst.eof)) {
+    if (formulaKeyboardNotifier.value.contains(FormulaKeyboardConst.eof)) {
       // on sumbit clear input
       BlocProvider.of<HomeBloc>(context)
-          .add(HomeSubmitEvent(answer: keyboardNotifier.value));
-      keyboardNotifier.value = Const.emptyString;
+          .add(HomeSubmitEvent(answer: formulaKeyboardNotifier.value));
+      formulaKeyboardNotifier.value = Const.emptyString;
       focusNode.unfocus();
     } else {
       answerController.value = TextEditingValue(
-        text: keyboardNotifier.value,
+        text: formulaKeyboardNotifier.value,
         selection: TextSelection.fromPosition(
-          TextPosition(offset: keyboardNotifier.value.length),
+          TextPosition(offset: formulaKeyboardNotifier.value.length),
         ),
       );
     }
   }
 
   void copyHint2Ans(String hint) {
-    keyboardNotifier.value = hint;
+    formulaKeyboardNotifier.value = hint;
   }
 
   String subTotal(String formula) {
@@ -104,7 +106,7 @@ class _HomeViewState extends State<HomeView> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              keyboardNotifier.value = Const.emptyString;
+              formulaKeyboardNotifier.value = Const.emptyString;
               BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
             },
             tooltip: Const.randomDrawTooltip,
@@ -126,7 +128,7 @@ class _HomeViewState extends State<HomeView> {
           footerBuilder: (context) => FormulaKeyboard(
               key: ValueKey(_keyboardOpenTick),
               focusNode: focusNode,
-              notifier: keyboardNotifier,
+              notifier: formulaKeyboardNotifier,
               cardList: cardList,
               context: context),
         ),
@@ -135,7 +137,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   KeyboardActionsConfig _buildCardKeyboardConfig(BuildContext context) {
-    List<String> selectedCards = _extractSelectedCards(keyboardNotifier.value);
+    List<String> cardList = BlocProvider.of<HomeBloc>(context).state.cardList;
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
       actions: [
@@ -144,23 +146,13 @@ class _HomeViewState extends State<HomeView> {
           displayActionBar: false,
           footerBuilder: (context) => CardKeyboard(
               key: ValueKey(_keyboardOpenTick),
-              notifier: keyboardNotifier,
+              notifier: cardKeyboardNotifier,
               focusNode: focusNode,
-              selectedCards: selectedCards,
+              cardList: cardList,
               context: context),
         ),
       ],
     );
-  }
-
-  List<String> _extractSelectedCards(String formula) {
-    List<String> selectedCards = [];
-    for (String card in Const.deckList) {
-      if (formula.contains(card)) {
-        selectedCards.add(card);
-      }
-    }
-    return selectedCards;
   }
 
   AppBar _buildAppBar(BuildContext context) {
@@ -259,7 +251,7 @@ class _HomeViewState extends State<HomeView> {
         config: _buildFormulaKeyboardConfig(context),
         child: KeyboardCustomInput<String>(
           focusNode: focusNode,
-          notifier: keyboardNotifier,
+          notifier: formulaKeyboardNotifier,
           builder: (context, val, hasFocus) {
             if (hasFocus == true && !_previousHasFocus) {
               _keyboardOpenTick++;

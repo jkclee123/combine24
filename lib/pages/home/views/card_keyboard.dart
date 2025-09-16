@@ -10,7 +10,7 @@ class CardKeyboard extends StatefulWidget
   @override
   final ValueNotifier<String> notifier;
   final FocusNode focusNode;
-  final List<String> selectedCards;
+  final List<String> cardList;
   final BuildContext context;
 
   @override
@@ -22,7 +22,7 @@ class CardKeyboard extends StatefulWidget
     super.key,
     required this.notifier,
     required this.focusNode,
-    required this.selectedCards,
+    required this.cardList,
     required this.context,
   });
 
@@ -57,7 +57,7 @@ class _CardKeyboardState extends State<CardKeyboard> {
     if (!mounted) {
       return;
     }
-    List<String> selected = widget.selectedCards;
+    List<String> selected = widget.cardList;
     List<bool> availCardCopy = List<bool>.filled(Const.deckList.length, true);
 
     for (String card in selected) {
@@ -72,9 +72,9 @@ class _CardKeyboardState extends State<CardKeyboard> {
     });
   }
 
-  bool canSelectCard(int index) => availCard[index] && widget.selectedCards.length < 4;
+  bool canSelectCard(int index) => availCard[index] && widget.cardList.length < 4;
 
-  bool get canBackspace => widget.selectedCards.isNotEmpty;
+  bool get canBackspace => widget.cardList.isNotEmpty;
 
   void onTapCard(int index) {
     widget.updateValue("${widget.notifier.value}${Const.deckList[index]}");
