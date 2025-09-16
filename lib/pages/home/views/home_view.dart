@@ -23,18 +23,21 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  late final FocusNode focusNode;
+  late final FocusNode formulaFocusNode;
+  late final FocusNode cardFocusNode;
   late final ValueNotifier<String> formulaKeyboardNotifier;
   late final ValueNotifier<String> cardKeyboardNotifier;
   late final TextEditingController answerController;
   late final TranslateService translateService;
-  int _keyboardOpenTick = 0;
+  int _formulaKeyboardOpenTick = 0;
+  int _cardKeyboardOpenTick = 0;
   bool _previousHasFocus = false;
 
   @override
   void initState() {
     super.initState();
-    focusNode = FocusNode();
+    formulaFocusNode = FocusNode();
+    cardFocusNode = FocusNode();
     formulaKeyboardNotifier = ValueNotifier<String>(Const.emptyString);
     cardKeyboardNotifier = ValueNotifier<String>(Const.emptyString);
     answerController = TextEditingController();
@@ -49,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
       BlocProvider.of<HomeBloc>(context)
           .add(HomeSubmitEvent(answer: formulaKeyboardNotifier.value));
       formulaKeyboardNotifier.value = Const.emptyString;
-      focusNode.unfocus();
+      formulaFocusNode.unfocus();
     } else {
       answerController.value = TextEditingValue(
         text: formulaKeyboardNotifier.value,
@@ -61,8 +64,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void onCardChanged() {
-    print('onCardChanged: ${cardKeyboardNotifier.value}');
     BlocProvider.of<HomeBloc>(context).add(HomePickCardEvent(buffer: cardKeyboardNotifier.value));
+    if (cardKeyboardNotifier.value.length == 4) {
+      cardKeyboardNotifier.value = Const.emptyString;
+      cardFocusNode.unfocus();
+    }
   }
 
   void copyHint2Ans(String hint) {
@@ -129,11 +135,11 @@ class _HomeViewState extends State<HomeView> {
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
       actions: [
         KeyboardActionsItem(
-          focusNode: focusNode,
+          focusNode: formulaFocusNode,
           displayActionBar: false,
           footerBuilder: (context) => FormulaKeyboard(
-              key: ValueKey(_keyboardOpenTick),
-              focusNode: focusNode,
+              key: ValueKey(_formulaKeyboardOpenTick),
+              focusNode: formulaFocusNode,
               notifier: formulaKeyboardNotifier,
               cardList: cardList,
               context: context),
@@ -143,18 +149,16 @@ class _HomeViewState extends State<HomeView> {
   }
 
   KeyboardActionsConfig _buildCardKeyboardConfig(BuildContext context) {
-    List<String> cardList = BlocProvider.of<HomeBloc>(context).state.cardList;
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
       actions: [
         KeyboardActionsItem(
-          focusNode: focusNode,
+          focusNode: cardFocusNode,
           displayActionBar: false,
           footerBuilder: (context) => CardKeyboard(
-              key: ValueKey(_keyboardOpenTick),
+              key: ValueKey(_cardKeyboardOpenTick),
               notifier: cardKeyboardNotifier,
-              focusNode: focusNode,
-              cardList: cardList,
+              focusNode: cardFocusNode,
               context: context),
         ),
       ],
@@ -188,19 +192,20 @@ class _HomeViewState extends State<HomeView> {
       isDialog: false,
       config: _buildCardKeyboardConfig(context),
       child: KeyboardCustomInput<String>(
-        focusNode: focusNode,
+        focusNode: cardFocusNode,
         notifier: cardKeyboardNotifier,
         builder: (context, val, hasFocus) {
           if (hasFocus == true && !_previousHasFocus) {
-            _keyboardOpenTick++;
+            _cardKeyboardOpenTick++;
           }
           _previousHasFocus = hasFocus == true;
           return GestureDetector(
             onTap: () {
-              BlocProvider.of<HomeBloc>(context).add(HomeStartPickCardEvent());
+              BlocProvider.of<HomeBloc>(context).add(HomeResetEvent());
+              formulaKeyboardNotifier.value = Const.emptyString;
               cardKeyboardNotifier.value = Const.emptyString;
-              if (!focusNode.hasFocus) {
-                focusNode.requestFocus();
+              if (!cardFocusNode.hasFocus) {
+                cardFocusNode.requestFocus();
               }
             },
             child: ResponsiveGridList(
@@ -258,7 +263,8 @@ class _HomeViewState extends State<HomeView> {
     List<String> solutionList = state.solutionList;
     double width = MediaQuery.of(context).size.width;
     return [
-      _buildAnswerView(context),
+      if (state.solutionList.isNotEmpty)
+        _buildAnswerView(context),
       for (int index = 0; index < solutionList.length; index++)
         SizedBox(
           width: width * SolutionStateViewConst.widthWeight +
@@ -279,11 +285,11 @@ class _HomeViewState extends State<HomeView> {
         isDialog: false,
         config: _buildFormulaKeyboardConfig(context),
         child: KeyboardCustomInput<String>(
-          focusNode: focusNode,
+          focusNode: formulaFocusNode,
           notifier: formulaKeyboardNotifier,
           builder: (context, val, hasFocus) {
             if (hasFocus == true && !_previousHasFocus) {
-              _keyboardOpenTick++;
+              _formulaKeyboardOpenTick++;
             }
             _previousHasFocus = hasFocus == true;
             return TextField(

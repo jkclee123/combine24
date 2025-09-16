@@ -10,7 +10,6 @@ class CardKeyboard extends StatefulWidget
   @override
   final ValueNotifier<String> notifier;
   final FocusNode focusNode;
-  final List<String> cardList;
   final BuildContext context;
 
   @override
@@ -22,7 +21,6 @@ class CardKeyboard extends StatefulWidget
     super.key,
     required this.notifier,
     required this.focusNode,
-    required this.cardList,
     required this.context,
   });
 
@@ -48,43 +46,17 @@ class _CardKeyboardState extends State<CardKeyboard> {
   @override
   void initState() {
     super.initState();
-    widget.notifier.addListener(() => onCardChanged());
-    onCardChanged();
-    widget.focusNode.requestFocus();
   }
-
-  void onCardChanged() {
-    if (!mounted) {
-      return;
-    }
-    List<String> selected = widget.cardList;
-    List<bool> availCardCopy = List<bool>.filled(Const.deckList.length, true);
-
-    for (String card in selected) {
-      int index = Const.deckList.indexOf(card);
-      if (index != -1) {
-        availCardCopy[index] = false;
-      }
-    }
-
-    setState(() {
-      availCard = availCardCopy;
-    });
-  }
-
-  bool canSelectCard(int index) => true;
-
-  bool get canBackspace => widget.cardList.isNotEmpty;
 
   void onTapCard(int index) {
-    widget.updateValue("${widget.notifier.value}${Const.deckList[index]}");
+    // index 9 is 10
+    String newCard = index == 9 ? 'T' : Const.deckList[index];
+    widget.updateValue("${widget.notifier.value}$newCard");
   }
 
   void onTapBackspace() {
     String currVal = widget.notifier.value;
-    if (currVal.endsWith(Const.space)) {
-      widget.updateValue(currVal.substring(0, currVal.length - 3));
-    } else if (currVal.isNotEmpty) {
+    if (currVal.isNotEmpty) {
       widget.updateValue(currVal.substring(0, currVal.length - 1));
     }
   }
@@ -114,30 +86,30 @@ class _CardKeyboardState extends State<CardKeyboard> {
               // First row: A, 2, 3, 4, 5
               ...List.generate(5, (index) => buildButton(
                   text: Const.deckList[index],
-                  isEnabled: canSelectCard(index),
+                  isEnabled: true,
                   callback: () => onTapCard(index))),
               // Second row: 6, 7, 8, 9, 10
               ...List.generate(5, (index) => buildButton(
                   text: Const.deckList[index + 5],
-                  isEnabled: canSelectCard(index + 5),
+                  isEnabled: true,
                   callback: () => onTapCard(index + 5))),
               // Third row: J, Q, K, Enter, empty
               buildButton(
                   text: Const.deckList[10], // J
-                  isEnabled: canSelectCard(10),
+                  isEnabled: true,
                   callback: () => onTapCard(10)),
               buildButton(
                   text: Const.deckList[11], // Q
-                  isEnabled: canSelectCard(11),
+                  isEnabled: true,
                   callback: () => onTapCard(11)),
               buildButton(
                   text: Const.deckList[12], // K
-                  isEnabled: canSelectCard(12),
+                  isEnabled: true,
                   callback: () => onTapCard(12)),
               buildButton(text: "", isEnabled: false, callback: (){}),
               buildButton(
                   icon: Icons.backspace_outlined,
-                  isEnabled: canBackspace,
+                  isEnabled: true,
                   callback: () => onTapBackspace()),
             ],
           ),

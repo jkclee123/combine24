@@ -31,38 +31,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _pickCard(HomePickCardEvent event, Emitter<HomeState> emit) {
     try {
-      final String buffer = event.buffer;
-      final List<String> parsedCards = <String>[];
-      int i = 0;
-      while (i < buffer.length && parsedCards.length < 4) {
-        if (i + 1 < buffer.length && buffer[i] == '1' && buffer[i + 1] == '0') {
-          if (!parsedCards.contains('10')) {
-            parsedCards.add('10');
-          }
-          i += 2;
-          continue;
-        }
-        final String ch = buffer[i];
-        if (Const.deckList.contains(ch)) {
-          if (!parsedCards.contains(ch)) {
-            parsedCards.add(ch);
-          }
-        }
-        i += 1;
-      }
+      List<String> cardList = event.buffer.split('');
+      cardList = cardList.map((card) => card == 'T' ? '10' : card).toList();
       
-      print('parsedCards: $parsedCards');
-      if (parsedCards.length == 4) {
-        final List<String> solutionList = _solutionService.findSolutions(parsedCards);
+      if (cardList.length == 4) {
+        final List<String> solutionList = _solutionService.findSolutions(cardList);
         final List<String> hintList = _solutionService.extractHint(solutionList);
         emit(HomeSolutionState(
-            cardList: parsedCards, solutionList: solutionList, hintList: hintList));
+            cardList: cardList, solutionList: solutionList, hintList: hintList));
       } else {
-        print('HomePickCardState');
         if (state is HomePickCardState) {
-          print('HomePickCardState2');
           HomePickCardState oldState = (state as HomePickCardState);
-          emit(oldState.copyWith(cardList: parsedCards));
+          emit(oldState.copyWith(cardList: cardList));
         }
       }
     } catch (e, stacktrace) {
