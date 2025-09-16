@@ -101,14 +101,6 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
           ),
-        // IconButton(
-        //   onPressed: () {
-        //     keyboardNotifier.value = Const.emptyString;
-        //     BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
-        //   },
-        //   icon: const Icon(Icons.copy_rounded),
-        //   tooltip: AppBarConst.randomDrawTooltip,
-        // ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               keyboardNotifier.value = Const.emptyString;

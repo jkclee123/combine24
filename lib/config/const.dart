@@ -100,3 +100,14 @@ class FormulaKeyboardConst {
   static const double containerWidthWeight = 4 / 3;
   static const double containerWidthBias = -40;
 }
+
+class CardKeyboardConst {
+  static const double crossAxisSpacing = 15;
+  static const double mainAxisSpacing = 10;
+  static const double edgeInsets = 8;
+  static const double preferredHeightWidthWeight = 3 / 4;
+  static const double preferredHeightWidthBias = 20;
+  static const double preferredHeightHeightWeight = 5 / 11;
+  static const double containerWidthWeight = 4 / 3;
+  static const double containerWidthBias = -40;
+}
