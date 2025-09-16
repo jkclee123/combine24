@@ -12,14 +12,16 @@ Enter expressions using the on-screen formula keyboard to solve the puzzle. The 
 - Live subtotal preview while you type
 - Hint system that reveals partial solutions (tap to copy into the answer box)
 - Flip animation between empty/hint/solution cards
-- Random draw for a new hand of four numbers
+- **Dual card selection modes**: Random draw for a new hand or manually pick your own four numbers
 - Pull to refresh to reset the current round
 - Light/Dark theme toggle
 - Web, iOS, Android, and desktop-ready (Flutter)
 
 ## How to Play
 
-1. **Get your numbers**: You are given four random numbers between 1-13.
+1. **Get your cards**: Choose between two options:
+   - **Random draw**: Tap the floating action button (▶️) to get four random cards between A-K
+   - **Manual pick**: Tap on the card display area to manually select your own four cards using the on-screen card keyboard
 2. **Build your expression**: Use each number exactly once, combining them with +, −, ×, ÷, and parentheses to make exactly 24.
 3. **Use the keyboard**: Enter your mathematical expression using the on-screen formula keyboard.
 4. **Get hints**: When stuck, tap the hint cards to reveal partial solutions. Tap any hint to copy it directly into your input field.
