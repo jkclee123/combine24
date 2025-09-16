@@ -72,7 +72,7 @@ class _CardKeyboardState extends State<CardKeyboard> {
     });
   }
 
-  bool canSelectCard(int index) => availCard[index] && widget.cardList.length < 4;
+  bool canSelectCard(int index) => true;
 
   bool get canBackspace => widget.cardList.isNotEmpty;
 

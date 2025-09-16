@@ -28,6 +28,13 @@ class HomePickCardState extends HomeState {
   HomePickCardState({required List<String> cardList}) {
     this.cardList = cardList;
   }
+
+  HomePickCardState copyWith({List<String>? cardList}) {
+    return HomePickCardState(cardList: cardList ?? this.cardList);
+  }
+
+  @override
+  List<Object> get props => [cardList];
 }
 
 class HomeSolutionState extends HomeState {

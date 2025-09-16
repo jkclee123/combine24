@@ -14,7 +14,12 @@ class HomeRandomDrawEvent extends HomeEvent {}
 class HomeStartPickCardEvent extends HomeEvent {}
 
 @immutable
-class HomePickCardEvent extends HomeEvent {}
+class HomePickCardEvent extends HomeEvent {
+  final String buffer;
+  HomePickCardEvent({required this.buffer});
+  @override
+  List<Object> get props => [buffer];
+}
 
 @immutable
 class HomeOpenHintEvent extends HomeEvent {

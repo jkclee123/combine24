@@ -30,17 +30,43 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _pickCard(HomePickCardEvent event, Emitter<HomeState> emit) {
-    List<String> cardList = List<String>.from(state.cardList);
     try {
-      if (cardList.length == 4) {
-          List<String> solutionList = _solutionService.findSolutions(cardList);
-          List<String> hintList = _solutionService.extractHint(solutionList);
-          emit(HomeSolutionState(cardList: cardList, solutionList: solutionList, hintList: hintList));
-        } else {
-          emit(HomePickCardState(cardList: cardList));
+      final String buffer = event.buffer;
+      final List<String> parsedCards = <String>[];
+      int i = 0;
+      while (i < buffer.length && parsedCards.length < 4) {
+        if (i + 1 < buffer.length && buffer[i] == '1' && buffer[i + 1] == '0') {
+          if (!parsedCards.contains('10')) {
+            parsedCards.add('10');
+          }
+          i += 2;
+          continue;
         }
+        final String ch = buffer[i];
+        if (Const.deckList.contains(ch)) {
+          if (!parsedCards.contains(ch)) {
+            parsedCards.add(ch);
+          }
+        }
+        i += 1;
+      }
+      
+      print('parsedCards: $parsedCards');
+      if (parsedCards.length == 4) {
+        final List<String> solutionList = _solutionService.findSolutions(parsedCards);
+        final List<String> hintList = _solutionService.extractHint(solutionList);
+        emit(HomeSolutionState(
+            cardList: parsedCards, solutionList: solutionList, hintList: hintList));
+      } else {
+        print('HomePickCardState');
+        if (state is HomePickCardState) {
+          print('HomePickCardState2');
+          HomePickCardState oldState = (state as HomePickCardState);
+          emit(oldState.copyWith(cardList: parsedCards));
+        }
+      }
     } catch (e, stacktrace) {
-      emit(HomeErrorState(cardList: cardList));
+      emit(HomeErrorState(cardList: state.cardList));
       _completer.completeError(e, stacktrace);
     }
   }

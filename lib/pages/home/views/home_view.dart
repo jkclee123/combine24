@@ -61,6 +61,8 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void onCardChanged() {
+    print('onCardChanged: ${cardKeyboardNotifier.value}');
+    BlocProvider.of<HomeBloc>(context).add(HomePickCardEvent(buffer: cardKeyboardNotifier.value));
   }
 
   void copyHint2Ans(String hint) {
@@ -180,30 +182,53 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildHandView(BuildContext context) {
     HomeState state = BlocProvider.of<HomeBloc>(context).state;
     double width = MediaQuery.of(context).size.width;
-    return GestureDetector( 
-      onTap: () => BlocProvider.of<HomeBloc>(context).add(HomeResetEvent()),
-      child: ResponsiveGridList(
-      desiredItemWidth: min(width * HandViewConst.desiredItemWidthWeight,
-          HandViewConst.minDesiredItemWidth),
-      squareCells: true,
-      scroll: false,
-      minSpacing: width * HandViewConst.minSpacingWeight,
-      rowMainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        for (int index = 0; index < 4; index++)
-          Card(
-            elevation: Const.elevation,
-            child: FittedBox(
-              child: Padding(
-                padding: const EdgeInsets.all(HandViewConst.edgeInsets),
-                child: Text(state.cardList.length > index
-                    ? state.cardList[index]
-                    : Const.emptyString),
-              ),
+    return KeyboardActions(
+      autoScroll: false,
+      tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
+      isDialog: false,
+      config: _buildCardKeyboardConfig(context),
+      child: KeyboardCustomInput<String>(
+        focusNode: focusNode,
+        notifier: cardKeyboardNotifier,
+        builder: (context, val, hasFocus) {
+          if (hasFocus == true && !_previousHasFocus) {
+            _keyboardOpenTick++;
+          }
+          _previousHasFocus = hasFocus == true;
+          return GestureDetector(
+            onTap: () {
+              BlocProvider.of<HomeBloc>(context).add(HomeStartPickCardEvent());
+              cardKeyboardNotifier.value = Const.emptyString;
+              if (!focusNode.hasFocus) {
+                focusNode.requestFocus();
+              }
+            },
+            child: ResponsiveGridList(
+              desiredItemWidth: min(width * HandViewConst.desiredItemWidthWeight,
+                  HandViewConst.minDesiredItemWidth),
+              squareCells: true,
+              scroll: false,
+              minSpacing: width * HandViewConst.minSpacingWeight,
+              rowMainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                for (int index = 0; index < 4; index++) 
+                  Card(
+                    elevation: Const.elevation,
+                    child: FittedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.all(HandViewConst.edgeInsets),
+                        child: Text(state.cardList.length > index
+                            ? state.cardList[index]
+                            : Const.emptyString),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          ),
-      ],
-    ));
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildDisplayView(BuildContext context) {
