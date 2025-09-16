@@ -119,7 +119,7 @@ class _HomeViewState extends State<HomeView> {
               BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
             },
             tooltip: Const.randomDrawTooltip,
-            child: const Icon(Icons.question_mark_rounded),
+            child: const Icon(Icons.quiz_rounded),
           ),
         ),
       );
