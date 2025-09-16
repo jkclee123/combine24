@@ -101,6 +101,22 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
           ),
+        // IconButton(
+        //   onPressed: () {
+        //     keyboardNotifier.value = Const.emptyString;
+        //     BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
+        //   },
+        //   icon: const Icon(Icons.copy_rounded),
+        //   tooltip: AppBarConst.randomDrawTooltip,
+        // ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              keyboardNotifier.value = Const.emptyString;
+              BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
+            },
+            tooltip: Const.randomDrawTooltip,
+            child: const Icon(Icons.refresh_rounded),
+          ),
         ),
       );
     });
@@ -138,14 +154,6 @@ class _HomeViewState extends State<HomeView> {
           tooltip: Theme.of(context).brightness == Brightness.light
               ? AppBarConst.dartModeTooltip
               : AppBarConst.lightModeTooltip,
-        ),
-        IconButton(
-          onPressed: () {
-            keyboardNotifier.value = Const.emptyString;
-            BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
-          },
-          icon: const Icon(Icons.copy_rounded),
-          tooltip: AppBarConst.randomDrawTooltip,
         ),
       ],
     );

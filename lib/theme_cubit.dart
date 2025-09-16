@@ -13,10 +13,18 @@ class ThemeCubit extends Cubit<ThemeData> {
       backgroundColor: Colors.blue,
       foregroundColor: Colors.white,
     ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData().copyWith(
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
+    ),
   );
 
   static final _darkTheme = ThemeData.dark().copyWith(
     appBarTheme: const AppBarTheme().copyWith(
+      backgroundColor: Colors.amber,
+      foregroundColor: Colors.black,
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData().copyWith(
       backgroundColor: Colors.amber,
       foregroundColor: Colors.black,
     ),
