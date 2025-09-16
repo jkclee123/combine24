@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:combine24/pages/home/views/formula_keyboard.dart';
+import 'package:combine24/pages/home/views/card_keyboard.dart';
 import 'package:combine24/services/impl/default_translate_service.dart';
 import 'package:combine24/services/translate_service.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +115,7 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  KeyboardActionsConfig _buildConfig(BuildContext context) {
+  KeyboardActionsConfig _buildFormulaKeyboardConfig(BuildContext context) {
     List<String> cardList = BlocProvider.of<HomeBloc>(context).state.cardList;
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
@@ -131,6 +132,35 @@ class _HomeViewState extends State<HomeView> {
         ),
       ],
     );
+  }
+
+  KeyboardActionsConfig _buildCardKeyboardConfig(BuildContext context) {
+    List<String> selectedCards = _extractSelectedCards(keyboardNotifier.value);
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: focusNode,
+          displayActionBar: false,
+          footerBuilder: (context) => CardKeyboard(
+              key: ValueKey(_keyboardOpenTick),
+              notifier: keyboardNotifier,
+              focusNode: focusNode,
+              selectedCards: selectedCards,
+              context: context),
+        ),
+      ],
+    );
+  }
+
+  List<String> _extractSelectedCards(String formula) {
+    List<String> selectedCards = [];
+    for (String card in Const.deckList) {
+      if (formula.contains(card)) {
+        selectedCards.add(card);
+      }
+    }
+    return selectedCards;
   }
 
   AppBar _buildAppBar(BuildContext context) {
@@ -154,7 +184,9 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildHandView(BuildContext context) {
     HomeState state = BlocProvider.of<HomeBloc>(context).state;
     double width = MediaQuery.of(context).size.width;
-    return ResponsiveGridList(
+    return GestureDetector( 
+      onTap: () => BlocProvider.of<HomeBloc>(context).add(HomePickCardEvent()),
+      child: ResponsiveGridList(
       desiredItemWidth: min(width * HandViewConst.desiredItemWidthWeight,
           HandViewConst.minDesiredItemWidth),
       squareCells: true,
@@ -175,7 +207,7 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
       ],
-    );
+    ));
   }
 
   Widget _buildDisplayView(BuildContext context) {
@@ -224,7 +256,7 @@ class _HomeViewState extends State<HomeView> {
         autoScroll: false,
         tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
         isDialog: false,
-        config: _buildConfig(context),
+        config: _buildFormulaKeyboardConfig(context),
         child: KeyboardCustomInput<String>(
           focusNode: focusNode,
           notifier: keyboardNotifier,

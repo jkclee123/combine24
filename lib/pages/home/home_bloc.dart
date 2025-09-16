@@ -25,6 +25,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeSubmitEvent>(_submit);
     on<HomeTestEvent>(_test);
     on<HomeResetEvent>(_reset);
+    on<HomePickCardEvent>(_pickCard);
+  }
+
+  void _pickCard(HomePickCardEvent event, Emitter<HomeState> emit) {
+    emit(HomeInitState());
   }
 
   void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) {

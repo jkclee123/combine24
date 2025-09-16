@@ -74,10 +74,19 @@ class _CardKeyboardState extends State<CardKeyboard> {
 
   bool canSelectCard(int index) => availCard[index] && widget.selectedCards.length < 4;
 
-  bool get canEnter => widget.selectedCards.length == 4;
+  bool get canBackspace => widget.selectedCards.isNotEmpty;
 
   void onTapCard(int index) {
     widget.updateValue("${widget.notifier.value}${Const.deckList[index]}");
+  }
+
+  void onTapBackspace() {
+    String currVal = widget.notifier.value;
+    if (currVal.endsWith(Const.space)) {
+      widget.updateValue(currVal.substring(0, currVal.length - 3));
+    } else if (currVal.isNotEmpty) {
+      widget.updateValue(currVal.substring(0, currVal.length - 1));
+    }
   }
 
   @override
@@ -126,7 +135,10 @@ class _CardKeyboardState extends State<CardKeyboard> {
                   isEnabled: canSelectCard(12),
                   callback: () => onTapCard(12)),
               buildButton(text: "", isEnabled: false, callback: (){}),
-              buildButton(text: "", isEnabled: false, callback: (){}),
+              buildButton(
+                  icon: Icons.backspace_outlined,
+                  isEnabled: canBackspace,
+                  callback: () => onTapBackspace()),
             ],
           ),
         ),
