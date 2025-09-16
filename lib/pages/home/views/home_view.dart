@@ -29,9 +29,6 @@ class _HomeViewState extends State<HomeView> {
   late final ValueNotifier<String> cardKeyboardNotifier;
   late final TextEditingController answerController;
   late final TranslateService translateService;
-  int _formulaKeyboardOpenTick = 0;
-  int _cardKeyboardOpenTick = 0;
-  bool _previousHasFocus = false;
 
   @override
   void initState() {
@@ -138,7 +135,7 @@ class _HomeViewState extends State<HomeView> {
           focusNode: formulaFocusNode,
           displayActionBar: false,
           footerBuilder: (context) => FormulaKeyboard(
-              key: ValueKey(_formulaKeyboardOpenTick),
+              key: const ValueKey("formula"),
               focusNode: formulaFocusNode,
               notifier: formulaKeyboardNotifier,
               cardList: cardList,
@@ -156,7 +153,7 @@ class _HomeViewState extends State<HomeView> {
           focusNode: cardFocusNode,
           displayActionBar: false,
           footerBuilder: (context) => CardKeyboard(
-              key: ValueKey(_cardKeyboardOpenTick),
+              key: const ValueKey("card"),
               notifier: cardKeyboardNotifier,
               focusNode: cardFocusNode,
               context: context),
@@ -195,13 +192,9 @@ class _HomeViewState extends State<HomeView> {
         focusNode: cardFocusNode,
         notifier: cardKeyboardNotifier,
         builder: (context, val, hasFocus) {
-          if (hasFocus == true && !_previousHasFocus) {
-            _cardKeyboardOpenTick++;
-          }
-          _previousHasFocus = hasFocus == true;
           return GestureDetector(
             onTap: () {
-              BlocProvider.of<HomeBloc>(context).add(HomeResetEvent());
+              BlocProvider.of<HomeBloc>(context).add(HomeStartPickCardEvent());
               formulaKeyboardNotifier.value = Const.emptyString;
               cardKeyboardNotifier.value = Const.emptyString;
               if (!cardFocusNode.hasFocus) {
@@ -288,10 +281,6 @@ class _HomeViewState extends State<HomeView> {
           focusNode: formulaFocusNode,
           notifier: formulaKeyboardNotifier,
           builder: (context, val, hasFocus) {
-            if (hasFocus == true && !_previousHasFocus) {
-              _formulaKeyboardOpenTick++;
-            }
-            _previousHasFocus = hasFocus == true;
             return TextField(
               showCursor: false,
               readOnly: true,

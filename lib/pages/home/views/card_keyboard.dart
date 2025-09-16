@@ -128,7 +128,6 @@ class _CardKeyboardState extends State<CardKeyboard> {
       color: isEnabled ? Colors.blueGrey : Colors.grey[850],
       elevation: Const.elevation,
       child: InkWell(
-        onTapDown: isEnabled ? (_) { if (!widget.focusNode.hasFocus) widget.focusNode.requestFocus(); } : null,
         onTap: isEnabled ? callback : null,
         child: FittedBox(
           child: Padding(
