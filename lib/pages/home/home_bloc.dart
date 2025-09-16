@@ -56,9 +56,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) {
-    List<String> cardList = List<String>.from(state.cardList);
+    List<String> cardList = <String>[];
     try {
-      emit(HomeLoadingState(cardList: cardList));
+      emit(HomeLoadingState(cardList: <String>[]));
       Random rng = Random();
       List<String> solutionList = <String>[];
       while (solutionList.isEmpty) {
