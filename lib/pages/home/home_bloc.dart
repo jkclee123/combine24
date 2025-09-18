@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:combine24/config/const.dart';
-import 'package:combine24/services/answer_service.dart';
-import 'package:combine24/services/impl/default_answer_service.dart';
+import 'package:combine24/services/schema_service.dart';
+import 'package:combine24/services/impl/default_schema_service.dart';
 import 'package:combine24/services/impl/default_translate_service.dart';
 import 'package:combine24/services/translate_service.dart';
 import 'package:combine24/utils/cal_util.dart';
@@ -16,7 +16,7 @@ import 'package:combine24/services/solution_service.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final Completer _completer = Completer();
   final SolutionService _solutionService = DefaultSolutionService();
-  final AnswerService _answerService = DefaultAnswerService();
+  final SchemaService _schemaService = DefaultSchemaService();
   final TranslateService _translateService = DefaultTranslateService();
 
   HomeBloc() : super(HomeInitState()) {
@@ -97,7 +97,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (!CalUtil.canCombine24(calAnswer)) {
           emit(oldState.copyWith(wrongAnswer: true));
         } else {
-          int index = _answerService.matchAnswer(answer, oldState.solutionList);
+          int index = _schemaService.matchFormula(answer, oldState.solutionList);
           if (!index.isNegative) {
             List<bool> solutionMaskList =
                 List<bool>.from(oldState.solutionMaskList);

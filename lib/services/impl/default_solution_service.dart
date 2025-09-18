@@ -1,5 +1,7 @@
 import 'package:combine24/config/const.dart';
 import 'package:combine24/services/impl/default_translate_service.dart';
+import 'package:combine24/services/schema_service.dart';
+import 'package:combine24/services/impl/default_schema_service.dart';
 import 'package:combine24/services/solution_service.dart';
 import 'package:combine24/services/translate_service.dart';
 import 'package:combine24/utils/cal_util.dart';
@@ -8,6 +10,7 @@ import 'package:tuple/tuple.dart';
 
 class DefaultSolutionService implements SolutionService {
   TranslateService translateService = DefaultTranslateService();
+  SchemaService schemaService = DefaultSchemaService();
   static const String hintRegExp = r' .*? .*? ';
 
   bool isValidFormula(String formula1, String formula2, String op) =>
@@ -46,8 +49,10 @@ class DefaultSolutionService implements SolutionService {
     solutionList.addAll(buildHighPairSolutionList(pairSingleMap));
     solutionList.addAll(buildTwoPairSolutionList(twoPairMap));
     solutionList = translateService.cal2ReadFormulaList(solutionList);
+    solutionList = schemaService.removeSameSchema(solutionList);
     return solutionList;
   }
+
 
   @override
   List<String> extractHint(List<String> solutionList) {

@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:combine24/config/const.dart';
-import 'package:combine24/services/answer_service.dart';
 import 'package:collection/collection.dart';
+import 'package:combine24/config/const.dart';
+import 'package:combine24/services/schema_service.dart';
 import 'package:combine24/services/impl/default_translate_service.dart';
 import 'package:combine24/services/translate_service.dart';
 import 'package:combine24/utils/cal_util.dart';
 import 'package:combine24/utils/op_util.dart';
 
-class DefaultAnswerService implements AnswerService {
+class DefaultSchemaService implements SchemaService {
   TranslateService translateService = DefaultTranslateService();
   static Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
   static const String bracketSplitRegExp = r"(?<=\))|(?=\()";
@@ -18,20 +18,6 @@ class DefaultAnswerService implements AnswerService {
 
   String getHeadOp(String op) =>
       OpUtil.isHighOp(op) ? OpConst.calMulOp : OpConst.addOp;
-
-  @override
-  int matchAnswer(String answer, List<String> solutionList) {
-    Object answerSchema = buildFormulaSchema(answer);
-    List<Object> solutionSchemaList =
-        solutionList.map((s) => buildFormulaSchema(s)).toList();
-    for (int index = 0; index < solutionSchemaList.length; index++) {
-      Object solutionSchema = solutionSchemaList[index];
-      if (unOrdDeepEq(answerSchema, solutionSchema)) {
-        return index;
-      }
-    }
-    return -1;
-  }
 
   @override
   Object buildFormulaSchema(String formula) {
@@ -154,5 +140,40 @@ class DefaultAnswerService implements AnswerService {
       }
     }
     return partList.join();
+  }
+
+  @override
+  List<String> removeSameSchema(List<String> formulaList) {
+    List<String> resultList = <String>[];
+    List<Object> schemaList = <Object>[];
+    for (String formula in formulaList) {
+      Object nextSchema = buildFormulaSchema(formula);
+      bool isSame = false;
+      for (Object schema in schemaList) {
+        if (unOrdDeepEq(nextSchema, schema)) {
+          isSame = true;
+          break;
+        }
+      }
+      if (!isSame) {
+        schemaList.add(nextSchema);
+        resultList.add(formula);
+      }
+    }
+    return resultList;
+  }
+
+  @override
+  int matchFormula(String formula, List<String> formulaList) {
+    Object answerSchema = buildFormulaSchema(formula);
+    List<Object> solutionSchemaList =
+        formulaList.map((s) => buildFormulaSchema(s)).toList();
+    for (int index = 0; index < solutionSchemaList.length; index++) {
+      Object solutionSchema = solutionSchemaList[index];
+      if (unOrdDeepEq(answerSchema, solutionSchema)) {
+        return index;
+      }
+    }
+    return -1;
   }
 }
