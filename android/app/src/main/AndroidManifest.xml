@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.combine24">
    <application
-        android:label="combine24"
+        android:label="合廿四"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
