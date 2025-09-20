@@ -71,7 +71,7 @@ class HandViewConst {
 }
 
 class ErrorConst {
-  static const String errorMsg = "你個嘢壞咗呀☹";
+  static const String errorMsg = "你個嘢壞咗呀🥹";
 }
 
 class SolutionStateViewConst {
