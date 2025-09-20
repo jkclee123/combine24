@@ -15,9 +15,14 @@ import 'package:combine24/services/solution_service.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final Completer _completer = Completer();
-  final SolutionService _solutionService = DefaultSolutionService();
-  final SchemaService _schemaService = DefaultSchemaService();
-  final TranslateService _translateService = DefaultTranslateService();
+  late final SolutionService _solutionService;
+  late final SchemaService _schemaService;
+  late final TranslateService _translateService;
+
+  // Lazy initialization of heavy services
+  SolutionService get solutionService => _solutionService ??= DefaultSolutionService();
+  SchemaService get schemaService => _schemaService ??= DefaultSchemaService();
+  TranslateService get translateService => _translateService ??= DefaultTranslateService();
 
   HomeBloc() : super(HomeInitState()) {
     on<HomeRandomDrawEvent>(_randomDraw);
@@ -29,14 +34,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeStartPickCardEvent>(_startPickCard);
   }
 
-  void _pickCard(HomePickCardEvent event, Emitter<HomeState> emit) {
+  void _pickCard(HomePickCardEvent event, Emitter<HomeState> emit) async {
     try {
       List<String> cardList = event.buffer.split('');
       cardList = cardList.map((card) => card == 'T' ? '10' : card).toList();
-      
+
       if (cardList.length == 4) {
-        final List<String> solutionList = _solutionService.findSolutions(cardList);
-        final List<String> hintList = _solutionService.extractHint(solutionList);
+        // Prevent computation while already loading
+        if (state is HomeLoadingState) return;
+
+        emit(HomeLoadingState(cardList: cardList));
+        // Small delay to show loading state
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final List<String> solutionList = solutionService.findSolutions(cardList);
+        final List<String> hintList = solutionService.extractHint(solutionList);
         emit(HomeSolutionState(
             cardList: cardList, solutionList: solutionList, hintList: hintList));
       } else {
@@ -55,20 +67,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomePickCardState(cardList: <String>[]));
   }
 
-  void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) {
+  void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) async {
+    // Prevent multiple simultaneous random draws
+    if (state is HomeLoadingState) return;
+
     List<String> cardList = <String>[];
     try {
       emit(HomeLoadingState(cardList: <String>[]));
       Random rng = Random();
       List<String> solutionList = <String>[];
+
+      // Add small delay to show loading state
+      await Future.delayed(const Duration(milliseconds: 100));
+
       while (solutionList.isEmpty) {
         cardList.clear();
         for (int index = 0; index < 4; index++) {
           cardList.add(Const.deckList[rng.nextInt(13)]);
         }
-        solutionList = _solutionService.findSolutions(cardList);
+        solutionList = solutionService.findSolutions(cardList);
       }
-      List<String> hintList = _solutionService.extractHint(solutionList);
+      List<String> hintList = solutionService.extractHint(solutionList);
       emit(HomeSolutionState(
           cardList: cardList, solutionList: solutionList, hintList: hintList));
     } catch (e, stacktrace) {
@@ -93,11 +112,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         HomeSolutionState oldState = (state as HomeSolutionState);
         String answer = event.answer
             .replaceAll(FormulaKeyboardConst.eof, Const.emptyString);
-        String calAnswer = _translateService.read2CalFormula(answer);
+        String calAnswer = translateService.read2CalFormula(answer);
         if (!CalUtil.canCombine24(calAnswer)) {
           emit(oldState.copyWith(wrongAnswer: true));
         } else {
-          int index = _schemaService.matchFormula(answer, oldState.solutionList);
+          int index = schemaService.matchFormula(answer, oldState.solutionList);
           if (!index.isNegative) {
             List<bool> solutionMaskList =
                 List<bool>.from(oldState.solutionMaskList);
