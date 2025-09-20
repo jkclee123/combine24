@@ -39,8 +39,9 @@
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
   <script type="text/javascript">
-    // Use CanvasKit renderer for better performance with complex apps
-    window.flutterWebRenderer = "canvaskit";
+    engineInitializer.initializeEngine({
+      renderer: "canvaskit"
+    });   
   </script>
   <script>
     var serviceWorkerVersion = '{{flutter_service_worker_version}}';

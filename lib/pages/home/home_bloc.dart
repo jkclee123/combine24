@@ -15,9 +15,11 @@ import 'package:combine24/services/solution_service.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final Completer _completer = Completer();
-  late final SolutionService _solutionService;
-  late final SchemaService _schemaService;
-  late final TranslateService _translateService;
+
+  // Lazy initialization backing fields
+  SolutionService? _solutionService;
+  SchemaService? _schemaService;
+  TranslateService? _translateService;
 
   // Lazy initialization of heavy services
   SolutionService get solutionService => _solutionService ??= DefaultSolutionService();
