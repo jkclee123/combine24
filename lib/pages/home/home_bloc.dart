@@ -103,15 +103,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     return List.generate(4, (_) => Const.deckList[random.nextInt(13)]);
   }
 
-  void _openHint(HomeOpenHintEvent event, Emitter<HomeState> emit) {
-    if (state is HomeSolutionState) {
-      HomeSolutionState oldState = (state as HomeSolutionState);
-      List<bool> hintMaskList = List<bool>.from(oldState.hintMaskList);
-      hintMaskList[event.index] = true;
-      emit(oldState.copyWith(hintMaskList: hintMaskList));
-    }
-  }
-
   void _submit(HomeSubmitEvent event, Emitter<HomeState> emit) {
     if (state is! HomeSolutionState) return;
 
@@ -135,6 +126,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e, stackTrace) {
       emit(HomeErrorState(cardList: cardList));
       _completer.completeError(e, stackTrace);
+    }
+  }
+
+  void _openHint(HomeOpenHintEvent event, Emitter<HomeState> emit) {
+    if (state is HomeSolutionState) {
+      HomeSolutionState oldState = (state as HomeSolutionState);
+      List<bool> hintMaskList = List<bool>.from(oldState.hintMaskList);
+      hintMaskList[event.index] = true;
+      emit(oldState.copyWith(hintMaskList: hintMaskList, copiedHint: oldState.hintList[event.index]));
     }
   }
 
