@@ -135,12 +135,22 @@ class _FormulaKeyboardState extends State<FormulaKeyboard> {
   }
 
   void onTapBackspace() {
-    String currVal = widget.notifier.value;
-    if (currVal.endsWith(Const.space)) {
-      widget.updateValue(currVal.substring(0, currVal.length - 3));
-    } else if (currVal.isNotEmpty) {
-      widget.updateValue(currVal.substring(0, currVal.length - 1));
+    final currentValue = widget.notifier.value;
+    if (currentValue.isEmpty) return;
+    // Remove operator with surrounding spaces (" + ")
+    if (currentValue.endsWith(Const.space)) {
+      widget.updateValue(currentValue.substring(0, currentValue.length - 3));
+      return;
     }
+    // Remove multi-character card (like "10") if present at the end
+    for (final card in widget.cardList) {
+      if (card.length > 1 && currentValue.endsWith(card)) {
+        widget.updateValue(currentValue.substring(0, currentValue.length - card.length));
+        return;
+      }
+    }
+    // Remove single character
+    widget.updateValue(currentValue.substring(0, currentValue.length - 1));
   }
 
   void onTapSubmit() {
