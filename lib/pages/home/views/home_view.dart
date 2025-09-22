@@ -61,8 +61,9 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void onCardChanged() {
-    BlocProvider.of<HomeBloc>(context).add(HomePickCardEvent(buffer: cardKeyboardNotifier.value));
-    if (cardKeyboardNotifier.value.length == 4) {
+    String buffer = cardKeyboardNotifier.value;
+    BlocProvider.of<HomeBloc>(context).add(HomePickCardEvent(buffer: buffer));
+    if (buffer.length == 4) {
       cardKeyboardNotifier.value = Const.emptyString;
       cardFocusNode.unfocus();
     }
@@ -193,10 +194,10 @@ class _HomeViewState extends State<HomeView> {
         notifier: cardKeyboardNotifier,
         builder: (context, val, hasFocus) {
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
-              BlocProvider.of<HomeBloc>(context).add(HomeStartPickCardEvent());
+              BlocProvider.of<HomeBloc>(context).add(HomePickCardEvent(buffer: cardKeyboardNotifier.value));
               formulaKeyboardNotifier.value = Const.emptyString;
-              cardKeyboardNotifier.value = Const.emptyString;
               if (!cardFocusNode.hasFocus) {
                 cardFocusNode.requestFocus();
               }

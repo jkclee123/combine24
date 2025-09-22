@@ -33,18 +33,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeTestEvent>(_test);
     on<HomeResetEvent>(_reset);
     on<HomePickCardEvent>(_pickCard);
-    on<HomeStartPickCardEvent>(_startPickCard);
   }
 
   void _pickCard(HomePickCardEvent event, Emitter<HomeState> emit) async {
+    if (state is HomeLoadingState) return;
+    if (state is HomeInitState || state is HomeSolutionState) {
+        emit(HomePickCardState(cardList: <String>[]));
+        return;
+    }
+
     try {
-      List<String> cardList = event.buffer.split('');
-      cardList = cardList.map((card) => card == 'T' ? '10' : card).toList();
+      final List<String> cardList = event.buffer
+          .split('')
+          .map((card) => card == 'T' ? '10' : card)
+          .toList();
 
       if (cardList.length == 4) {
-        // Prevent computation while already loading
-        if (state is HomeLoadingState) return;
-
         emit(HomeLoadingState(cardList: cardList));
         // Small delay to show loading state
         await Future.delayed(const Duration(milliseconds: 50));
@@ -53,20 +57,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final List<String> hintList = solutionService.extractHint(solutionList);
         emit(HomeSolutionState(
             cardList: cardList, solutionList: solutionList, hintList: hintList));
-      } else {
-        if (state is HomePickCardState) {
-          HomePickCardState oldState = (state as HomePickCardState);
-          emit(oldState.copyWith(cardList: cardList));
-        }
+        return;
+      } 
+      if (state is HomePickCardState) {
+          emit((state as HomePickCardState).copyWith(cardList: cardList));
       }
     } catch (e, stacktrace) {
       emit(HomeErrorState(cardList: state.cardList));
       _completer.completeError(e, stacktrace);
     }
-  }
-
-  void _startPickCard(HomeStartPickCardEvent event, Emitter<HomeState> emit) {
-    emit(HomePickCardState(cardList: <String>[]));
   }
 
   void _randomDraw(HomeRandomDrawEvent event, Emitter<HomeState> emit) async {
@@ -76,11 +75,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     List<String> cardList = <String>[];
     try {
       emit(HomeLoadingState(cardList: <String>[]));
-      Random rng = Random();
-      List<String> solutionList = <String>[];
-
       // Add small delay to show loading state
       await Future.delayed(const Duration(milliseconds: 100));
+      Random rng = Random();
+      List<String> solutionList = <String>[];
 
       while (solutionList.isEmpty) {
         cardList.clear();
