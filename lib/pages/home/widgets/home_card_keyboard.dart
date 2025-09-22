@@ -4,7 +4,7 @@ import 'package:combine24/config/const.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
-class CardKeyboard extends StatefulWidget
+class HomeCardKeyboard extends StatefulWidget
     with KeyboardCustomPanelMixin<String>
     implements PreferredSizeWidget {
   @override
@@ -17,7 +17,7 @@ class CardKeyboard extends StatefulWidget
     notifier.value = value;
   }
 
-  CardKeyboard({
+  const HomeCardKeyboard({
     super.key,
     required this.notifier,
     required this.focusNode,
@@ -37,10 +37,10 @@ class CardKeyboard extends StatefulWidget
   Size get preferredSize => Size.fromHeight(preferredHeight);
 
   @override
-  State<CardKeyboard> createState() => _CardKeyboardState();
+  State<HomeCardKeyboard> createState() => _HomeCardKeyboardState();
 }
 
-class _CardKeyboardState extends State<CardKeyboard> {
+class _HomeCardKeyboardState extends State<HomeCardKeyboard> {
   List<bool> availCard = List<bool>.filled(Const.deckList.length, true);
 
   @override

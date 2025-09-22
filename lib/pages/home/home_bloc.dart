@@ -30,6 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeRandomDrawEvent>(_randomDraw);
     on<HomeOpenHintEvent>(_openHint);
     on<HomeSubmitEvent>(_submit);
+    on<HomeCopyHintEvent>(_copyHint);
     on<HomeTestEvent>(_test);
     on<HomeResetEvent>(_reset);
     on<HomePickCardEvent>(_pickCard);
@@ -122,7 +123,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final calculationFormula = translateService.read2CalFormula(cleanAnswer);
 
       if (!CalUtil.canCombine24(calculationFormula)) {
-        emit(currentState.copyWith(wrongAnswer: true));
+        // TODO: Handle wrong answer state
         return;
       }
 
@@ -135,6 +136,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e, stackTrace) {
       emit(HomeErrorState(cardList: cardList));
       _completer.completeError(e, stackTrace);
+    }
+  }
+
+  void _copyHint(HomeCopyHintEvent event, Emitter<HomeState> emit) {
+    if (state is HomeSolutionState) {
+      final currentState = state as HomeSolutionState;
+      emit(currentState.copyWith(copiedHint: event.hint));
     }
   }
 

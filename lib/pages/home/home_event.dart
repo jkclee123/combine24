@@ -31,6 +31,12 @@ class HomeSubmitEvent extends HomeEvent {
 }
 
 @immutable
+class HomeCopyHintEvent extends HomeEvent {
+  final String hint;
+  HomeCopyHintEvent({required this.hint});
+}
+
+@immutable
 class HomeTestEvent extends HomeEvent {}
 
 @immutable

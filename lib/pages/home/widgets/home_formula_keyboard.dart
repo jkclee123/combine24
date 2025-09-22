@@ -5,7 +5,7 @@ import 'package:combine24/utils/op_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
-class FormulaKeyboard extends StatefulWidget
+class HomeFormulaKeyboard extends StatefulWidget
     with KeyboardCustomPanelMixin<String>
     implements PreferredSizeWidget {
   @override
@@ -18,7 +18,8 @@ class FormulaKeyboard extends StatefulWidget
   void updateValue(String value) {
     notifier.value = value;
   }
-  FormulaKeyboard({
+
+  const HomeFormulaKeyboard({
     super.key,
     required this.notifier,
     required this.focusNode,
@@ -39,10 +40,10 @@ class FormulaKeyboard extends StatefulWidget
   Size get preferredSize => Size.fromHeight(preferredHeight);
 
   @override
-  State<FormulaKeyboard> createState() => _FormulaKeyboardState();
+  State<HomeFormulaKeyboard> createState() => _HomeFormulaKeyboardState();
 }
 
-class _FormulaKeyboardState extends State<FormulaKeyboard> {
+class _HomeFormulaKeyboardState extends State<HomeFormulaKeyboard> {
   bool isNextCard = true;
   bool isInBracket = false;
   int lenFromBracket = 0;
