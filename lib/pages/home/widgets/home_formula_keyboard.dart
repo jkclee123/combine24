@@ -185,13 +185,13 @@ class _HomeFormulaKeyboardState extends State<HomeFormulaKeyboard> {
                 isEnabled: true,
                 callback: () => onTapAllClear()),
             buildButton(
-                text: OpConst.readDivOp,
-                isEnabled: canAddOp,
-                callback: () => onTapOp(OpConst.readDivOp)),
+                text: FormulaKeyboardConst.bracket,
+                isEnabled: canAddBracket,
+                callback: () => onTapBracket()),
             buildButton(
-                text: OpConst.readMulOp,
+                text: OpConst.addOp,
                 isEnabled: canAddOp,
-                callback: () => onTapOp(OpConst.readMulOp)),
+                callback: () => onTapOp(OpConst.addOp)),
             buildButton(
                 text: OpConst.minusOp,
                 isEnabled: canAddOp,
@@ -205,13 +205,13 @@ class _HomeFormulaKeyboardState extends State<HomeFormulaKeyboard> {
                 isEnabled: canAddCard(1),
                 callback: () => onTapCard(1)),
             buildButton(
-                text: FormulaKeyboardConst.bracket,
-                isEnabled: canAddBracket,
-                callback: () => onTapBracket()),
-            buildButton(
-                text: OpConst.addOp,
+                text: OpConst.readMulOp,
                 isEnabled: canAddOp,
-                callback: () => onTapOp(OpConst.addOp)),
+                callback: () => onTapOp(OpConst.readMulOp)),
+            buildButton(
+                text: OpConst.readDivOp,
+                isEnabled: canAddOp,
+                callback: () => onTapOp(OpConst.readDivOp)),
             buildButton(
                 text: widget.cardList[2],
                 isEnabled: canAddCard(2),
