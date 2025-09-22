@@ -117,6 +117,7 @@ class _HomeViewState extends State<HomeView> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               formulaKeyboardNotifier.value = Const.emptyString;
+              cardKeyboardNotifier.value = Const.emptyString;
               BlocProvider.of<HomeBloc>(context).add(HomeRandomDrawEvent());
             },
             tooltip: Const.randomDrawTooltip,
