@@ -16,7 +16,6 @@ class HomeSideEffectsListener extends StatelessWidget {
     return BlocListener<HomeBloc, HomeState>(
       listener: (context, state) {
         // Handle side effects here
-        // TODO: Add side effect handling based on state changes
       },
       child: child,
     );

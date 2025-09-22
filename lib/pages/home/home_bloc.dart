@@ -123,7 +123,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final calculationFormula = translateService.read2CalFormula(cleanAnswer);
 
       if (!CalUtil.canCombine24(calculationFormula)) {
-        // TODO: Handle wrong answer state
         return;
       }
 
