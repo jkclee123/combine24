@@ -75,7 +75,7 @@ class ErrorConst {
 }
 
 class SolutionStateViewConst {
-  static const String answerLabelText = "輸入答案";
+  static const String answerHintText = "輸入答案";
   static const double widthWeight = 1 / 4;
   static const double widthBias = 200;
   static const double borderRadius = 15;

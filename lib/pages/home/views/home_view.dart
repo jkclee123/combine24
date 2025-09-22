@@ -290,7 +290,7 @@ class _HomeViewState extends State<HomeView> {
               keyboardType: TextInputType.none,
               controller: answerController,
               decoration: InputDecoration(
-                labelText: SolutionStateViewConst.answerLabelText,
+                hintText: SolutionStateViewConst.answerHintText,
                 border: const OutlineInputBorder(),
                 counterText: subTotal(answerController.text),
               ),
