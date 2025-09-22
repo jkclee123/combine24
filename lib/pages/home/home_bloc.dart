@@ -48,19 +48,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           .map((card) => card == 'T' ? '10' : card)
           .toList();
 
-      if (cardList.length == 4) {
-        emit(HomeLoadingState(cardList: cardList));
-        // Small delay to show loading state
-        await Future.delayed(const Duration(milliseconds: 50));
-
-        final List<String> solutionList = solutionService.findSolutions(cardList);
-        final List<String> hintList = solutionService.extractHint(solutionList);
-        emit(HomeSolutionState(
-            cardList: cardList, solutionList: solutionList, hintList: hintList));
-        return;
-      } 
       if (state is HomePickCardState) {
-          emit((state as HomePickCardState).copyWith(cardList: cardList));
+        if (cardList.length == 4) {
+          emit(HomeLoadingState(cardList: cardList));
+          // Small delay to show loading state
+          await Future.delayed(const Duration(milliseconds: 50));
+
+          final List<String> solutionList = solutionService.findSolutions(cardList);
+          final List<String> hintList = solutionService.extractHint(solutionList);
+          emit(HomeSolutionState(
+              cardList: cardList, solutionList: solutionList, hintList: hintList));
+          return;
+        } 
+        emit((state as HomePickCardState).copyWith(cardList: cardList));
       }
     } catch (e, stacktrace) {
       emit(HomeErrorState(cardList: state.cardList));
@@ -72,28 +72,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     // Prevent multiple simultaneous random draws
     if (state is HomeLoadingState) return;
 
-    List<String> cardList = <String>[];
     try {
       emit(HomeLoadingState(cardList: <String>[]));
       // Add small delay to show loading state
-      await Future.delayed(const Duration(milliseconds: 100));
-      Random rng = Random();
-      List<String> solutionList = <String>[];
+      await Future.delayed(const Duration(milliseconds: 50));
 
-      while (solutionList.isEmpty) {
-        cardList.clear();
-        for (int index = 0; index < 4; index++) {
-          cardList.add(Const.deckList[rng.nextInt(13)]);
-        }
+      List<String> cardList;
+      List<String> solutionList = [];
+
+      do {
+        cardList = _generateRandomCards();
         solutionList = solutionService.findSolutions(cardList);
-      }
-      List<String> hintList = solutionService.extractHint(solutionList);
+      } while (solutionList.isEmpty);
+
+      final hints = solutionService.extractHint(solutionList);
       emit(HomeSolutionState(
-          cardList: cardList, solutionList: solutionList, hintList: hintList));
-    } catch (e, stacktrace) {
-      emit(HomeErrorState(cardList: cardList));
-      _completer.completeError(e, stacktrace);
+        cardList: cardList,
+        solutionList: solutionList,
+        hintList: hints,
+      ));
+    } catch (e, stackTrace) {
+      emit(HomeErrorState(cardList: []));
+      _completer.completeError(e, stackTrace);
     }
+  }
+
+  List<String> _generateRandomCards() {
+    final random = Random();
+    return List.generate(4, (_) => Const.deckList[random.nextInt(13)]);
   }
 
   void _openHint(HomeOpenHintEvent event, Emitter<HomeState> emit) {
@@ -106,28 +112,29 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _submit(HomeSubmitEvent event, Emitter<HomeState> emit) {
-    List<String> cardList = List<String>.from(state.cardList);
-    if (state is HomeSolutionState) {
-      try {
-        HomeSolutionState oldState = (state as HomeSolutionState);
-        String answer = event.answer
-            .replaceAll(FormulaKeyboardConst.eof, Const.emptyString);
-        String calAnswer = translateService.read2CalFormula(answer);
-        if (!CalUtil.canCombine24(calAnswer)) {
-          emit(oldState.copyWith(wrongAnswer: true));
-        } else {
-          int index = schemaService.matchFormula(answer, oldState.solutionList);
-          if (!index.isNegative) {
-            List<bool> solutionMaskList =
-                List<bool>.from(oldState.solutionMaskList);
-            solutionMaskList[index] = true;
-            emit(oldState.copyWith(solutionMaskList: solutionMaskList));
-          }
-        }
-      } catch (e, stacktrace) {
-        emit(HomeErrorState(cardList: cardList));
-        _completer.completeError(e, stacktrace);
+    if (state is! HomeSolutionState) return;
+
+    final currentState = state as HomeSolutionState;
+    final cardList = List<String>.from(state.cardList);
+
+    try {
+      final cleanAnswer = event.answer.replaceAll(FormulaKeyboardConst.eof, Const.emptyString);
+      final calculationFormula = translateService.read2CalFormula(cleanAnswer);
+
+      if (!CalUtil.canCombine24(calculationFormula)) {
+        emit(currentState.copyWith(wrongAnswer: true));
+        return;
       }
+
+      final matchedIndex = schemaService.matchFormula(cleanAnswer, currentState.solutionList);
+      if (matchedIndex != -1) {
+        final updatedSolutionMask = List<bool>.from(currentState.solutionMaskList);
+        updatedSolutionMask[matchedIndex] = true;
+        emit(currentState.copyWith(solutionMaskList: updatedSolutionMask));
+      }
+    } catch (e, stackTrace) {
+      emit(HomeErrorState(cardList: cardList));
+      _completer.completeError(e, stackTrace);
     }
   }
 
