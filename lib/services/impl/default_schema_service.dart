@@ -107,16 +107,20 @@ class DefaultSchemaService implements SchemaService {
     return partList.join();
   }
 
+  bool _shouldCleanBrackets(List<String> partList, int index) {
+    return partList[index].contains(OpConst.openBracket) &&
+        (!OpUtil.containsLowOp(partList[index]) ||
+            (OpUtil.containsLowOp(partList[index]) &&
+                (index - 1 < 0 ||
+                    !OpUtil.connectOpIsHighOp(partList[index - 1])) &&
+                (index + 1 >= partList.length ||
+                    !OpUtil.connectOpIsHighOp(partList[index + 1]))));
+  }
+
   String cleanUnusedBracket(String formula) {
     List<String> partList = formula.split(RegExp(bracketSplitRegExp));
     for (int index = 0; index < partList.length; index++) {
-      if (partList[index].contains(OpConst.openBracket) &&
-          (!OpUtil.containsLowOp(partList[index]) ||
-              (OpUtil.containsLowOp(partList[index]) &&
-                  (index - 1 < 0 ||
-                      !OpUtil.containsHighOp(partList[index - 1])) &&
-                  (index + 1 >= partList.length ||
-                      !OpUtil.containsHighOp(partList[index + 1]))))) {
+      if (_shouldCleanBrackets(partList, index)) {
         partList[index] =
             partList[index].replaceAll(OpConst.openBracket, Const.emptyString);
         partList[index] =
@@ -173,6 +177,16 @@ class DefaultSchemaService implements SchemaService {
       if (unOrdDeepEq(answerSchema, solutionSchema)) {
         return index;
       }
+    }
+    return -1;
+  }
+
+  @override
+  int matchSingleFormula(String formula1, String formula2) {
+    Object answerSchema = buildFormulaSchema(formula1);
+    Object solutionSchema = buildFormulaSchema(formula2);
+    if (unOrdDeepEq(answerSchema, solutionSchema)) {
+      return 1;
     }
     return -1;
   }

@@ -43,4 +43,7 @@ class OpUtil {
 
   static bool containsHighOp(String formula) =>
       formula.contains(OpConst.calMulOp) || formula.contains(OpConst.calDivOp);
+
+  static bool connectOpIsHighOp(String formula) =>
+      formula.startsWith(OpConst.calMulOp) || formula.startsWith(OpConst.calDivOp) || formula.endsWith(OpConst.calMulOp) || formula.endsWith(OpConst.calDivOp);
 }
