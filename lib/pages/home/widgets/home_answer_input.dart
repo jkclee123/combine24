@@ -42,8 +42,8 @@ class HomeAnswerInputWithBloc extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<HomeBloc, HomeState>(
       listenWhen: (previous, current) {
-        if (previous is HomeSolutionState && current is HomeSolutionState) {
-          return previous.copiedHint != current.copiedHint && current.copiedHint != null;
+        if (current is HomeSolutionState) {
+          return current.copiedHint != null;
         }
         return false;
       },

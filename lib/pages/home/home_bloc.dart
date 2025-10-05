@@ -121,7 +121,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (matchedIndex != -1) {
         final updatedSolutionMask = List<bool>.from(currentState.solutionMaskList);
         updatedSolutionMask[matchedIndex] = true;
-        emit(currentState.copyWith(solutionMaskList: updatedSolutionMask));
+        emit(currentState.copyWith(solutionMaskList: updatedSolutionMask, copiedHint: ""));
       }
     } catch (e, stackTrace) {
       emit(HomeErrorState(cardList: cardList));
@@ -141,7 +141,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _copyHint(HomeCopyHintEvent event, Emitter<HomeState> emit) {
     if (state is HomeSolutionState) {
       final currentState = state as HomeSolutionState;
-      emit(currentState.copyWith(copiedHint: event.hint));
+      emit(currentState.copyWith(copiedHint: event.hint, copyCounter: currentState.copyCounter + 1));
     }
   }
 

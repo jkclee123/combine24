@@ -43,6 +43,7 @@ class HomeSolutionState extends HomeState {
   late final List<bool> solutionMaskList;
   late final List<bool> hintMaskList;
   late final String? copiedHint;
+  late final int copyCounter;
 
   HomeSolutionState(
       {required List<String> cardList,
@@ -50,12 +51,14 @@ class HomeSolutionState extends HomeState {
       required this.hintList,
       List<bool>? solutionMaskList,
       List<bool>? hintMaskList,
-      this.copiedHint}) {
+      this.copiedHint,
+      int? copyCounter}) {
     this.cardList = cardList;
     this.solutionMaskList =
         solutionMaskList ?? List.generate(solutionList.length, (_) => false);
     this.hintMaskList =
         hintMaskList ?? List.generate(hintList.length, (_) => false);
+    this.copyCounter = copyCounter ?? 0;
   }
 
   HomeSolutionState copyWith(
@@ -64,14 +67,16 @@ class HomeSolutionState extends HomeState {
       List<String>? hintList,
       List<bool>? solutionMaskList,
       List<bool>? hintMaskList,
-      String? copiedHint}) {
+      String? copiedHint,
+      int? copyCounter}) {
     return HomeSolutionState(
         cardList: cardList ?? this.cardList,
         solutionList: solutionList ?? this.solutionList,
         hintList: hintList ?? this.hintList,
         solutionMaskList: solutionMaskList ?? this.solutionMaskList,
         hintMaskList: hintMaskList ?? this.hintMaskList,
-        copiedHint: copiedHint);
+        copiedHint: copiedHint ?? this.copiedHint,
+       copyCounter: copyCounter ?? this.copyCounter);
   }
 
   @override
@@ -82,6 +87,7 @@ class HomeSolutionState extends HomeState {
         solutionMaskList,
         hintMaskList,
         copiedHint ?? '',
+       copyCounter,
       ];
 }
 
