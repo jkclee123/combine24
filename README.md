@@ -19,12 +19,12 @@ Enter expressions using the on-screen formula keyboard to solve the puzzle. The 
 
 ## How to Play
 
-1. **Random draw**: Tap the floating action button (bottom right) to get four random cards
-2. **Manual selection**: Tap the card area to manually pick your own four numbers
-3. **Use each card once**: Each number can only be used exactly once
-4. **Calculate 24**: Combine numbers with +, −, ×, ÷ and parentheses to make exactly 24
-5. **Input expressions**: Use the on-screen formula keyboard to enter your mathematical expressions
-6. **Get hints**: When stuck, tap hint cards to reveal partial solutions
+- **Random draw**: Tap the floating action button (bottom right) to get four random cards
+- **Manual selection**: Tap the card area to manually pick your own four numbers
+- **Use each card once**: Each number can only be used exactly once
+- **Calculate 24**: Combine numbers with +, −, ×, ÷ and parentheses to make exactly 24
+- **Input expressions**: Use the on-screen formula keyboard to enter your mathematical expressions
+- **Get hints**: When stuck, tap hint cards to reveal partial solutions
 
 ## Solution Deduplication & Normalization
 
@@ -43,10 +43,10 @@ Enter expressions using the on-screen formula keyboard to solve the puzzle. The 
   </tr>
 </table>
 
-1. **Filter invalid solutions**: Remove expressions that produce fractional or negative intermediate results during calculation
-2. **Consolidate trivial operations**: Group together mathematically meaningless operations like multiplying or dividing by 1
-3. **Normalize equivalent expressions**: Treat mathematically identical solutions as the same, regardless of operand order for commutative operations (+ and ×)
-4. **Handle input variations**: Recognize mathematically equivalent answers regardless of operation order or parentheses placement
+- **Filter invalid solutions**: Remove expressions that produce fractional or negative intermediate results during calculation
+- **Consolidate trivial operations**: Group together mathematically meaningless operations like multiplying or dividing by 1
+- **Normalize equivalent expressions**: Treat mathematically identical solutions as the same, regardless of operand order for commutative operations (+ and ×)
+- **Handle input variations**: Recognize mathematically equivalent answers regardless of operation order or parentheses placement
 
 ## Local Development
 
