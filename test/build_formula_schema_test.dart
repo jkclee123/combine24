@@ -164,5 +164,38 @@ void main() {
         true,
       );
     });
+
+    test('test 10: 12 x (11 - 9 x 1)', () {
+      final result = schemaService.buildFormulaSchema('12 x (11 - 9 x 1)');
+      final expected = [
+        ['*', '1'], 
+        ['*', '12'], 
+        ['*', [
+          ['+', '11'], 
+          ['-', '9']
+        ]]
+      ];
+      expect(
+        DefaultSchemaService.unOrdDeepEq(result, expected),
+        true,
+      );
+    });
+
+    test('test 11: 12 x (11 ÷ 1 - 9)', () {
+      final result = schemaService.buildFormulaSchema('12 x (11 ÷ 1 - 9)');
+      final expected = [
+        ['*', '1'], 
+        ['*', '12'], 
+        ['*', [
+          ['+', '11'], 
+          ['-', '9']
+        ]]
+      ];
+      expect(
+        DefaultSchemaService.unOrdDeepEq(result, expected),
+        true,
+      );
+    });
+    
   });
 }

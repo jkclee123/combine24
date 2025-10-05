@@ -24,6 +24,7 @@ class DefaultSchemaService implements SchemaService {
     formula = translateService.read2CalFormula(formula);
     formula = cleanUnusedBracket(formula);
     formula = handleDivOne(formula);
+    formula = extractOneFactorsToOutermost(formula);
     return formula;
   }
 
@@ -66,7 +67,7 @@ class DefaultSchemaService implements SchemaService {
   /// Higher-precedence operations are grouped first, creating a tree structure.
   @override
   Object buildFormulaSchema(String formula) {
-    final normalizedFormula = _normalizeFormula(formula);
+    String normalizedFormula = _normalizeFormula(formula);
     final tokenization = _tokenize(normalizedFormula);
     final operandTokens = tokenization.operands;
     final operatorTokens = tokenization.operators;
@@ -104,6 +105,67 @@ class DefaultSchemaService implements SchemaService {
     if (operandTokens.isEmpty) return Const.emptyString;
     if (operandTokens.length == 1 && operandTokens[0] == Const.emptyString) return Const.emptyString;
     return operandTokens[0];
+  }
+
+  /// Moves all occurrences of "*1" (and previously normalized "/1") from any
+  /// nested position to the outermost level by removing them in place and
+  /// prefixing the expression with corresponding "1*" factors.
+  ///
+  /// Assumptions:
+  /// - Input is already in calculation symbols and "/1" has been converted to
+  ///   "*1" by [_normalizeFormula] via [handleDivOne].
+  /// - Numbers can be multi-digit (10, 11, 12, 13). We only match a standalone
+  ///   digit '1' immediately following a '*' and immediately followed by a
+  ///   boundary (end, operator, or ')').
+  String extractOneFactorsToOutermost(String formula) {
+    if (formula.isEmpty) return formula;
+
+    final StringBuffer rebuilt = StringBuffer();
+    int oneFactorCount = 0;
+    int index = 0;
+
+    bool isBoundaryAfterOne(int pos) {
+      // pos points to the index right AFTER the '1'.
+      if (pos >= formula.length) return true; // end of string
+      final String ch = formula[pos];
+      // Operators or closing bracket are boundaries; otherwise digits/letters
+      // indicate part of a larger token like 10, 11, 12, 13, or letters.
+      return ch == OpConst.addOp ||
+          ch == OpConst.minusOp ||
+          ch == OpConst.calMulOp ||
+          ch == OpConst.calDivOp ||
+          ch == OpConst.closeBracket;
+    }
+
+    while (index < formula.length) {
+      final String ch = formula[index];
+      if (ch == OpConst.calMulOp && index + 1 < formula.length) {
+        // Potential match for "*1" if next char is '1' and followed by boundary
+        final String nextCh = formula[index + 1];
+        if (nextCh == '1' && isBoundaryAfterOne(index + 2)) {
+          // Skip "*1" and count one factor; do not append to buffer
+          oneFactorCount++;
+          index += 2;
+          continue;
+        }
+      }
+      // Normal copy
+      rebuilt.write(ch);
+      index++;
+    }
+
+    if (oneFactorCount == 0) {
+      return rebuilt.toString();
+    }
+
+    // Prefix with "1*" repeated count times
+    final StringBuffer result = StringBuffer();
+    for (int i = 0; i < oneFactorCount; i++) {
+      result.write('1');
+      result.write(OpConst.calMulOp);
+    }
+    result.write(rebuilt.toString());
+    return result.toString();
   }
 
   /// Computes operator precedence order for each operator in the formula.

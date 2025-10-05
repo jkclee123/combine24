@@ -26,36 +26,27 @@ Enter expressions using the on-screen formula keyboard to solve the puzzle. The 
 5. **Input expressions**: Use the on-screen formula keyboard to enter your mathematical expressions
 6. **Get hints**: When stuck, tap hint cards to reveal partial solutions
 
-## How It Handles Equivalent Solutions
+## Solution Deduplication & Normalization
 
-A unique feature of this app is its ability to recognize that different-looking formulas are mathematically equivalent. For example, with the numbers 3, 8, 6, and 7, the solutions 3+8+6+7 and 3+6+7+8 are considered the same. This is achieved by converting every formula into a standardized, order-independent "schema" before comparison.
+<table>
+  <tr>
+    <td align="center">
+      <img src="assets/duplicated_solutions.png" alt="simple permutation of cards and operations" width="400"/>
+      <br>
+      <em>Simple permutation of cards and operations</em>
+    </td>
+    <td align="center">
+      <img src="assets/clean_solution.png" alt="cleaned up solution" width="400"/>
+      <br>
+      <em>Cleaned up solution</em>
+    </td>
+  </tr>
+</table>
 
-Here’s a deeper look at how this works:
-
-### For Commutative Operations (+ and ×)
-
-Addition and multiplication are commutative, meaning the order of the numbers doesn't change the result (e.g., 2 * 3 is the same as 3 * 2). The app's schema represents these operations as an unordered group.
-- Example with cards 2, 3, 4, 6:
-  - The answers (2 * 4) + (3 * 6) and (6 * 3) + (4 * 2) both equal 24.
-  - The app sees both of these as a sum of two products, and since both addition and multiplication are commutative, it treats them as the same fundamental solution.
-
-### For Non-Commutative Operations (- and ÷)
-
-Subtraction and division are not commutative, so order matters. The schema preserves the order for these operations.
-- Example with cards 2, 4, 6, 8:
-  - The solution 6 * 8 / (4 - 2) is valid.
-  - However, (4 - 2) / (6 * 8) is a different calculation and gives a different result. The app's schema will treat these as distinct, ensuring that only mathematically correct variations are accepted.
-
-### How Parentheses and Precedence Are Handled
-The app correctly respects the order of operations, where expressions in parentheses are evaluated first, followed by multiplication/division, and then addition/subtraction. This is built into the schema generation.
-
-- Example with cards 1, 2, 3, 4:
-  - The solution (1 + 2 + 3) * 4 forces the additions to happen before the multiplication.
-  - The schema for this would be different from 1 + 2 + (3 * 4), reflecting the different structure of the calculation.
-
-However, the app would correctly identify 4 * (3 + 2 + 1) as being equivalent to the first solution, since the order of numbers in the addition part and the order of the two main groups in the multiplication don't change the outcome.
-
-This smart comparison system ensures that you are credited for a correct solution, no matter how you've arranged the numbers, as long as the underlying mathematical structure is the same as one of the valid solutions.
+1. **Filter invalid solutions**: Remove expressions that produce fractional or negative intermediate results during calculation
+2. **Consolidate trivial operations**: Group together mathematically meaningless operations like multiplying or dividing by 1
+3. **Normalize equivalent expressions**: Treat mathematically identical solutions as the same, regardless of operand order for commutative operations (+ and ×)
+4. **Handle input variations**: Recognize mathematically equivalent answers regardless of operation order or parentheses placement
 
 ## Local Development
 
