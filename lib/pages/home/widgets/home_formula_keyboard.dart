@@ -67,9 +67,9 @@ class _HomeFormulaKeyboardState extends State<HomeFormulaKeyboard> {
     bool isInBracketCopy = false;
     int lenFromBracketCopy = 0;
     List<bool> availCardCopy = [true, true, true, true];
-    ans = ans.replaceAll("10", "T");
+    ans = convertNumberToLetter(ans);
     for (String char in ans.split(Const.emptyString)) {
-      char = char.replaceAll("T", "10");
+      char = convertLetterToNumber(char);
       if (OpUtil.isOpenBracket(char)) {
         isInBracketCopy = true;
         lenFromBracketCopy = 0;
@@ -98,6 +98,22 @@ class _HomeFormulaKeyboardState extends State<HomeFormulaKeyboard> {
       lenFromBracket = lenFromBracketCopy;
       availCard = List<bool>.from(availCardCopy);
     });
+  }
+
+  String convertNumberToLetter(String input) {
+    return input
+        .replaceAll("10", "T")
+        .replaceAll("11", "J")
+        .replaceAll("12", "Q")
+        .replaceAll("13", "K");
+  }
+
+  String convertLetterToNumber(String input) {
+    return input
+        .replaceAll("T", "10")
+        .replaceAll("J", "11")
+        .replaceAll("Q", "12")
+        .replaceAll("K", "13");
   }
 
   bool get noAvailCard => availCard.every((avail) => !avail);

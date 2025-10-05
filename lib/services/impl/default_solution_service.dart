@@ -41,14 +41,13 @@ class DefaultSolutionService implements SolutionService {
   @override
   List<String> findSolutions(List<String> cardList) {
     List<String> solutionList = <String>[];
-    List<String> mathCardList = _translateService.read2CalCard(cardList);
-    mathCardList
+    cardList
         .sort((card1, card2) => int.parse(card1).compareTo(int.parse(card2)));
-    Map<Tuple2<String, String>, List<String>> pairSingleMap = _buildPairSingleMap(mathCardList);
+    Map<Tuple2<String, String>, List<String>> pairSingleMap = _buildPairSingleMap(cardList);
     Map<Tuple2<String, String>, Tuple2<String, String>> twoPairMap = _buildTwoPairMap(pairSingleMap);
-    Map<Tuple3<String, String, String>, String> tripletSingleMap = _buildTripletSingleMap(mathCardList);
-    solutionList.addAll(_buildAllLowSolutionList(mathCardList));
-    solutionList.addAll(_buildAllHighSolutionList(mathCardList));
+    Map<Tuple3<String, String, String>, String> tripletSingleMap = _buildTripletSingleMap(cardList);
+    solutionList.addAll(_buildAllLowSolutionList(cardList));
+    solutionList.addAll(_buildAllHighSolutionList(cardList));
     solutionList.addAll(_buildLowTripletSolutionList(tripletSingleMap));
     solutionList.addAll(_buildHighTripletSolutionList(tripletSingleMap));
     solutionList.addAll(_buildLowPairSolutionList(pairSingleMap));

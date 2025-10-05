@@ -9,7 +9,7 @@ class Const {
   static const double elevation = 10.0;
   static const double opacity = 0.5;
   static const List<String> deckList = [
-    "A",
+    "1",
     "2",
     "3",
     "4",
@@ -19,9 +19,9 @@ class Const {
     "8",
     "9",
     "10",
-    "J",
-    "Q",
-    "K"
+    "11",
+    "12",
+    "13"
   ];
 }
 

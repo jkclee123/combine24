@@ -25,10 +25,10 @@ void main() {
       expect(result..sort(), equals(expected..sort()));
     });
 
-    test('test 3: [K, J, K, K] returns valid solutions', () {
-      final input = ['K', 'J', 'K', 'K'];
+    test('test 3: [13, 11, 13, 13] returns valid solutions', () {
+      final input = ['13', '11', '13', '13'];
       final result = solutionService.findSolutions(input);
-      final expected = ['J + K + K - K', 'K x K ÷ K + J', 'J x K ÷ K + K'];
+      final expected = ['11 + 13 + 13 - 13', '13 x 13 ÷ 13 + 11', '11 x 13 ÷ 13 + 13'];
 
       expect(result..sort(), equals(expected..sort()));
     });
@@ -41,7 +41,7 @@ void main() {
     });
 
     test('handles mixed numbers and face cards', () {
-      final input = ['A', '2', '3', '4'];
+      final input = ['1', '2', '3', '4'];
       final result = solutionService.findSolutions(input);
 
       // Should return some solutions that evaluate to 24

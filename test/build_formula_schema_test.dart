@@ -25,8 +25,8 @@ void main() {
       );
     });
 
-    test('test 2: A x 2 x 3 x 4', () {
-      final result = schemaService.buildFormulaSchema('A x 2 x 3 x 4');
+    test('test 2: 1 x 2 x 3 x 4', () {
+      final result = schemaService.buildFormulaSchema('1 x 2 x 3 x 4');
       final expected = [
         ['*', '1'],
         ['*', '2'],
@@ -40,8 +40,8 @@ void main() {
       );
     });
 
-    test('test 3: (A + 2 + 3) x 4', () {
-      final result = schemaService.buildFormulaSchema('(A + 2 + 3) x 4');
+    test('test 3: (1 + 2 + 3) x 4', () {
+      final result = schemaService.buildFormulaSchema('(1 + 2 + 3) x 4');
       final expected = [
         ['*', [
             ['+', '1'],
@@ -57,8 +57,8 @@ void main() {
       );
     });
 
-    test('test 4: (A + 3) x (2 + 4)', () {
-      final result = schemaService.buildFormulaSchema('(A + 3) x (2 + 4)');
+    test('test 4: (1 + 3) x (2 + 4)', () {
+      final result = schemaService.buildFormulaSchema('(1 + 3) x (2 + 4)');
       final expected = [
         ['*', [
           ['+', '1'],
@@ -93,8 +93,8 @@ void main() {
       );
     });
 
-    test('test 6: (Q + 10 + 2) ÷ A', () {
-      final result = schemaService.buildFormulaSchema('(Q + 10 + 2) ÷ A');
+    test('test 6: (12 + 10 + 2) ÷ 1', () {
+      final result = schemaService.buildFormulaSchema('(12 + 10 + 2) ÷ 1');
       final expected = [
         ['*', [
           ['+', '12'],
@@ -110,8 +110,8 @@ void main() {
       );
     });
 
-    test('test 7: (Q + Q) ÷ (5 ÷ 5)', () {
-      final result = schemaService.buildFormulaSchema('(Q + Q) ÷ (5 ÷ 5)');
+    test('test 7: (12 + 12) ÷ (5 ÷ 5)', () {
+      final result = schemaService.buildFormulaSchema('(12 + 12) ÷ (5 ÷ 5)');
       final expected = [
         ['*', [
           ['+', '12'],
@@ -127,8 +127,8 @@ void main() {
       );
     });
 
-    test('test 8: K x (10 - 8) - 2', () {
-      final result = schemaService.buildFormulaSchema('K x (10 - 8) - 2');
+    test('test 8: 13 x (10 - 8) - 2', () {
+      final result = schemaService.buildFormulaSchema('13 x (10 - 8) - 2');
       final expected = [
         ['+', [
           ['*', '13'],
