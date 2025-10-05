@@ -61,6 +61,17 @@ class OpConst {
 class AppBarConst {
   static const String lightModeTooltip = "淺色模式";
   static const String dartModeTooltip = "深色模式";
+  static const String helpTooltip = "遊戲說明";
+  static const String helpDialogTitle = "遊戲說明";
+  static const String helpDialogContent = """
+1. 隨機出題：點擊右下角按鈕
+2. 自選題目：點擊牌區
+3. 每張牌只能使用一次
+4. 搭配 + − × ÷ 和括號計算出24
+5. 使用螢幕上的公式鍵盤輸入算式
+6. 提示：點擊提示查看部分解法
+""";
+  static const String helpDialogButtonText = "明晒";
 }
 
 class HandViewConst {
