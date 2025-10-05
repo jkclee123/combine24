@@ -50,7 +50,7 @@ class _HomeCardKeyboardState extends State<HomeCardKeyboard> {
 
   void onTapCard(int index) {
     // index 9 is 10
-    String newCard = index == 9 ? 'T' : Const.deckList[index];
+    String newCard = Const.singleCharDeckList[index];
     widget.updateValue("${widget.notifier.value}$newCard");
   }
 
@@ -95,15 +95,15 @@ class _HomeCardKeyboardState extends State<HomeCardKeyboard> {
                   callback: () => onTapCard(index + 5))),
               // Third row: J, Q, K, Enter, empty
               buildButton(
-                  text: Const.deckList[10], // J
+                  text: Const.deckList[10],
                   isEnabled: true,
                   callback: () => onTapCard(10)),
               buildButton(
-                  text: Const.deckList[11], // Q
+                  text: Const.deckList[11],
                   isEnabled: true,
                   callback: () => onTapCard(11)),
               buildButton(
-                  text: Const.deckList[12], // K
+                  text: Const.deckList[12],
                   isEnabled: true,
                   callback: () => onTapCard(12)),
               buildButton(text: "", isEnabled: false, callback: (){}),

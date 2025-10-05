@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:combine24/config/const.dart';
+import 'package:combine24/services/translate_service.dart';
 import 'package:combine24/utils/op_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -13,6 +14,7 @@ class HomeFormulaKeyboard extends StatefulWidget
   final FocusNode focusNode;
   final List<String> cardList;
   final BuildContext context;
+  final TranslateService translateService;
 
   @override
   void updateValue(String value) {
@@ -25,6 +27,7 @@ class HomeFormulaKeyboard extends StatefulWidget
     required this.focusNode,
     required this.cardList,
     required this.context,
+    required this.translateService,
   });
 
   double get preferredHeight {
@@ -67,9 +70,9 @@ class _HomeFormulaKeyboardState extends State<HomeFormulaKeyboard> {
     bool isInBracketCopy = false;
     int lenFromBracketCopy = 0;
     List<bool> availCardCopy = [true, true, true, true];
-    ans = convertNumberToLetter(ans);
+    ans = widget.translateService.convertNumberToLetter(ans);
     for (String char in ans.split(Const.emptyString)) {
-      char = convertLetterToNumber(char);
+      char = widget.translateService.convertLetterToNumber(char);
       if (OpUtil.isOpenBracket(char)) {
         isInBracketCopy = true;
         lenFromBracketCopy = 0;
@@ -100,21 +103,6 @@ class _HomeFormulaKeyboardState extends State<HomeFormulaKeyboard> {
     });
   }
 
-  String convertNumberToLetter(String input) {
-    return input
-        .replaceAll("10", "T")
-        .replaceAll("11", "J")
-        .replaceAll("12", "Q")
-        .replaceAll("13", "K");
-  }
-
-  String convertLetterToNumber(String input) {
-    return input
-        .replaceAll("T", "10")
-        .replaceAll("J", "11")
-        .replaceAll("Q", "12")
-        .replaceAll("K", "13");
-  }
 
   bool get noAvailCard => availCard.every((avail) => !avail);
 

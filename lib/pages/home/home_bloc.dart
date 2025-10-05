@@ -46,7 +46,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final List<String> cardList = event.buffer
           .split('')
-          .map((card) => card == 'T' ? '10' : card)
+          .map((card) => translateService.convertLetterToNumber(card))
           .toList();
 
       if (state is HomePickCardState) {

@@ -34,4 +34,22 @@ class DefaultTranslateService implements TranslateService {
       return solution;
     }).toList();
   }
+
+  @override
+  String convertNumberToLetter(String input) {
+    return input
+        .replaceAll("10", "T")
+        .replaceAll("11", "J")
+        .replaceAll("12", "Q")
+        .replaceAll("13", "K");
+  }
+
+  @override
+  String convertLetterToNumber(String input) {
+    return input
+        .replaceAll("T", "10")
+        .replaceAll("J", "11")
+        .replaceAll("Q", "12")
+        .replaceAll("K", "13");
+  }
 }

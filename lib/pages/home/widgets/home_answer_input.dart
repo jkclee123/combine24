@@ -126,7 +126,8 @@ class _HomeAnswerInputState extends State<HomeAnswerInput> {
               focusNode: widget.formulaFocusNode,
               notifier: widget.formulaKeyboardNotifier,
               cardList: widget.cardList,
-              context: context),
+              context: context,
+              translateService: translateService),
         ),
       ],
     );

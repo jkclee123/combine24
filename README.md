@@ -19,17 +19,14 @@ Enter expressions using the on-screen formula keyboard to solve the puzzle. The 
 
 ## How to Play
 
-1. **Get your cards**: Choose between two options:
-   - **Random draw**: Tap the floating action button (▶️) to get four random cards between A-K
-   - **Manual pick**: Tap on the card display area to manually select your own four cards using the on-screen card keyboard
-2. **Build your expression**: Use each number exactly once, combining them with +, −, ×, ÷, and parentheses to make exactly 24.
-3. **Use the keyboard**: Enter your mathematical expression using the on-screen formula keyboard.
-4. **Get hints**: When stuck, tap the hint cards to reveal partial solutions. Tap any hint to copy it directly into your input field.
-5. **Submit & verify**: Press Submit to check your answer. The app will validate and show if you're correct.
+1. **Random draw**: Tap the floating action button (bottom right) to get four random cards
+2. **Manual selection**: Tap the card area to manually pick your own four numbers
+3. **Use each card once**: Each number can only be used exactly once
+4. **Calculate 24**: Combine numbers with +, −, ×, ÷ and parentheses to make exactly 24
+5. **Input expressions**: Use the on-screen formula keyboard to enter your mathematical expressions
+6. **Get hints**: When stuck, tap hint cards to reveal partial solutions
 
 ## How It Handles Equivalent Solutions
-
-- Interactive explaination: [equivalent-solutions.html](https://html-preview.github.io/?url=https://github.com/jkclee123/combine24/blob/main/equivalent-solutions.html)
 
 A unique feature of this app is its ability to recognize that different-looking formulas are mathematically equivalent. For example, with the numbers 3, 8, 6, and 7, the solutions 3+8+6+7 and 3+6+7+8 are considered the same. This is achieved by converting every formula into a standardized, order-independent "schema" before comparison.
 
