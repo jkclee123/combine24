@@ -24,7 +24,7 @@ class Const {
     "13"
   ];
   static const List<String> singleCharDeckList = [
-    "A",
+    "1",
     "2",
     "3",
     "4",
