@@ -43,9 +43,8 @@ Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
   </tr>
 </table>
 
-- **Filter invalid solutions**: Remove expressions that produce fractional or negative intermediate results during calculation
-- **Consolidate trivial operations**: Group together mathematically meaningless operations like multiplying or dividing by 1
 - **Normalize equivalent expressions**: Treat mathematically identical solutions as the same, regardless of operand order for commutative operations (+ and ×)
+- **Consolidate trivial operations**: Group together mathematically meaningless operations like multiplying or dividing by 1
 - **Handle input variations**: Recognize mathematically equivalent answers regardless of operation order or parentheses placement
 
 ## Local Development
