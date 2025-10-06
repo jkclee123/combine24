@@ -41,13 +41,13 @@ class DefaultSolutionService implements SolutionService {
   @override
   List<String> findSolutions(List<String> cardList) {
     List<String> solutionList = <String>[];
-    cardList
-        .sort((card1, card2) => int.parse(card1).compareTo(int.parse(card2)));
-    Map<Tuple2<String, String>, List<String>> pairSingleMap = _buildPairSingleMap(cardList);
+    List<String> sortedCardList = List<String>.from(cardList)
+        ..sort((card1, card2) => int.parse(card2).compareTo(int.parse(card1)));
+    Map<Tuple2<String, String>, List<String>> pairSingleMap = _buildPairSingleMap(sortedCardList);
     Map<Tuple2<String, String>, Tuple2<String, String>> twoPairMap = _buildTwoPairMap(pairSingleMap);
-    Map<Tuple3<String, String, String>, String> tripletSingleMap = _buildTripletSingleMap(cardList);
-    solutionList.addAll(_buildAllLowSolutionList(cardList));
-    solutionList.addAll(_buildAllHighSolutionList(cardList));
+    Map<Tuple3<String, String, String>, String> tripletSingleMap = _buildTripletSingleMap(sortedCardList);
+    solutionList.addAll(_buildAllLowSolutionList(sortedCardList));
+    solutionList.addAll(_buildAllHighSolutionList(sortedCardList));
     solutionList.addAll(_buildLowTripletSolutionList(tripletSingleMap));
     solutionList.addAll(_buildHighTripletSolutionList(tripletSingleMap));
     solutionList.addAll(_buildLowPairSolutionList(pairSingleMap));
@@ -119,6 +119,7 @@ class DefaultSolutionService implements SolutionService {
     return tripletSingleMap;
   }
 
+  // A + B - C + D (all cards combined with low operations: +, -, *, /)
   List<String> _buildAllLowSolutionList(List<String> mathCardList) {
     Set<String> formulaSet = <String>{};
     List<List<String>> opCard2dList = [
@@ -142,6 +143,7 @@ class DefaultSolutionService implements SolutionService {
         .toList();
   }
 
+  // A × B ÷ C × D (all cards combined with high operations: *, /, avoiding division by 1)
   List<String> _buildAllHighSolutionList(List<String> mathCardList) {
     Set<String> formulaSet = <String>{};
     List<List<String>> opCard2dList = [
@@ -166,6 +168,7 @@ class DefaultSolutionService implements SolutionService {
         .toList();
   }
 
+  // (A + B - C) × D (3 cards combined with low operations, then with single card using high operations)
   List<String> _buildLowTripletSolutionList(
       Map<Tuple3<String, String, String>, String> tripletSingleMap) {
     Set<String> formulaSet = <String>{};
@@ -195,6 +198,7 @@ class DefaultSolutionService implements SolutionService {
         .toList();
   }
 
+  // A × B ÷ C + D (3 cards combined with high operations, then with single card using low operations)
   List<String> _buildHighTripletSolutionList(
       Map<Tuple3<String, String, String>, String> tripletSingleMap) {
     Set<String> formulaSet = <String>{};
@@ -224,6 +228,7 @@ class DefaultSolutionService implements SolutionService {
         .toList();
   }
 
+  // ((A + B) × C) + D (pair combined with low op, then with single using high op, then with last card using low op)
   List<String> _buildLowPairSolutionList(
       Map<Tuple2<String, String>, List<String>> pairSingleMap) {
     Set<String> formulaSet = <String>{};
@@ -257,7 +262,7 @@ class DefaultSolutionService implements SolutionService {
         .toList();
   }
 
-  // (2 high 1 low) 1 high
+  // (A × B + C) × D (pair combined with high op, then with single using low op in brackets, then with last card using high op)
   List<String> _buildHighPairSolutionList(
       Map<Tuple2<String, String>, List<String>> pairSingleMap) {
     Set<String> formulaSet = <String>{};
@@ -292,6 +297,12 @@ class DefaultSolutionService implements SolutionService {
         .toList();
   }
 
+  /// Builds solutions by combining two pairs of cards with operations.
+  ///
+  /// For four cards split into two pairs ((A,B) and (C,D)), generates formulas like:
+  /// (A + B) × (C + D) - pairs combined with bracketing based on operator precedence
+  /// A × B - C + D - flattened operations without bracketing
+  /// A - B + C ÷ D - mixed operations with appropriate precedence handling
   List<String> _buildTwoPairSolutionList(
       Map<Tuple2<String, String>, Tuple2<String, String>> twoPairMap) {
     Set<String> formulaSet = <String>{};
