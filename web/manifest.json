@@ -5,8 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Interactive 24 Game solver - use four numbers exactly once with arithmetic operations to make exactly 24. Features hints, live preview, and dual card selection modes.",
-    "orientation": "portrait-primary",
+    "description": "24點遊戲",
     "prefer_related_applications": false,
     "icons": [
         {
