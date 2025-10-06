@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:combine24/config/const.dart';
 import 'package:combine24/pages/home/home_page.dart';
 import 'package:combine24/utils/text_warmer.dart';
 import 'package:flutter/material.dart';

@@ -2,9 +2,9 @@
 
 combine24 (合廿四) is an interactive "24 game" solver built with Flutter. The Chinese name means "combine 24" - the classic mathematical puzzle where you must use each of four given numbers exactly once, combining them with addition, subtraction, multiplication, division, and parentheses to make exactly 24.
 
-Enter expressions using the on-screen formula keyboard to solve the puzzle. The app provides live hints, validates your answers, and shows all possible solutions when available.
+Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
 
-- Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
+![home screen](assets/home_screen.png)
 
 ## Features
 
