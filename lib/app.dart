@@ -1,5 +1,5 @@
 import 'package:combine24/config/const.dart';
-import 'package:combine24/pages/home/home_page.dart';
+import 'package:combine24/widgets/animated_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:combine24/theme_cubit.dart';
@@ -16,7 +16,7 @@ class App extends StatelessWidget {
           return MaterialApp(
             title: Const.title,
             theme: theme,
-            home: const HomePage(),
+            home: const AnimatedSplash(),
           );
         },
       ),
