@@ -110,27 +110,14 @@ class _AnimatedSplashState extends State<AnimatedSplash>
                     child: Opacity(
                       opacity: _opacityAnimation.value,
                       child: Icon(
-                        Icons.calculate,
-                        size: 80,
+                        Icons.calculate_rounded,
+                        size: 100,
                         color: Colors.amber,
                       ),
                     ),
                   ),
                 );
               },
-            ),
-            const SizedBox(height: 24),
-            // Animated app title
-            FadeTransition(
-              opacity: _opacityAnimation,
-              child: Text(
-                Const.title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
             ),
           ],
         ),
