@@ -74,6 +74,7 @@ class OpConst {
 }
 
 class AppBarConst {
+  static const String title = "合廿四";
   static const String lightModeTooltip = "淺色模式";
   static const String dartModeTooltip = "深色模式";
   static const String helpTooltip = "遊戲說明";

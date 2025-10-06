@@ -31,7 +31,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text(Const.title),
+      title: const Text(AppBarConst.title),
       centerTitle: true,
       leading: IconButton(
         onPressed: () => _showHelpDialog(context),
