@@ -26,7 +26,7 @@ class ThemeCubit extends Cubit<ThemeData> {
 
   static final _darkTheme = ThemeData.dark().copyWith(
     appBarTheme: const AppBarTheme().copyWith(
-      backgroundColor: Colors.black26,
+      backgroundColor: Colors.black38,
       foregroundColor: Colors.amber,
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData().copyWith(
