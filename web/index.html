@@ -23,9 +23,25 @@
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="合廿四">
   <link rel="apple-touch-icon" href="icons/24-192.png">
+
+  <style>
+    /* Control browser UI colors to match app theme */
+    body {
+      background-color: #141218;
+    }
+    /* Hide scrollbars for cleaner look */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Remove tap highlight */
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"/>
@@ -39,11 +55,6 @@
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
-  <script type="text/javascript">
-    engineInitializer.initializeEngine({
-      renderer: "canvaskit"
-    });   
-  </script>
   <script>
     var serviceWorkerVersion = '{{flutter_service_worker_version}}';
     var scriptLoaded = false;
@@ -84,6 +95,32 @@
       // Service workers not supported. Just drop the <script> tag.
       loadMainDartJs();
     }
+  </script>
+
+  <script>
+    // Dynamic theme adjustment for better mobile browser integration
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if running in PWA mode
+      if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+        // Running as PWA - enhance theming
+        document.documentElement.style.setProperty('--theme-color', '#FFC107');
+        document.body.style.backgroundColor = '#141218';
+      }
+
+      // Listen for Flutter app theme changes (if supported)
+      window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'theme-change') {
+          const theme = event.data.theme;
+          if (theme === 'dark') {
+            document.documentElement.style.setProperty('--theme-color', '#FFC107');
+            document.body.style.backgroundColor = '#141218';
+          } else {
+            document.documentElement.style.setProperty('--theme-color', '#2196F3');
+            document.body.style.backgroundColor = '#fef7ff';
+          }
+        }
+      });
+    });
   </script>
 </body>
 </html>

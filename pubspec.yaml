@@ -37,6 +37,7 @@ dependencies:
   tuple: any
   collection: any
   keyboard_actions: any
+  web: any
 
 dev_dependencies:
   flutter_test:

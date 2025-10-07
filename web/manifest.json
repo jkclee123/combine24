@@ -3,8 +3,8 @@
     "short_name": "合廿四",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
+    "background_color": "#141218",
+    "theme_color": "#FFC107",
     "description": "24點遊戲",
     "prefer_related_applications": false,
     "icons": [
