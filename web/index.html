@@ -100,22 +100,12 @@
   <script>
     // Dynamic theme adjustment for better mobile browser integration
     document.addEventListener('DOMContentLoaded', function() {
-      // Check if running in PWA mode
-      if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
-        // Running as PWA - enhance theming
-        document.documentElement.style.setProperty('--theme-color', '#FFC107');
-        document.body.style.backgroundColor = '#141218';
-      }
-
-      // Listen for Flutter app theme changes (if supported)
       window.addEventListener('message', function(event) {
         if (event.data && event.data.type === 'theme-change') {
           const theme = event.data.theme;
           if (theme === 'dark') {
-            document.documentElement.style.setProperty('--theme-color', '#FFC107');
             document.body.style.backgroundColor = '#141218';
           } else {
-            document.documentElement.style.setProperty('--theme-color', '#2196F3');
             document.body.style.backgroundColor = '#fef7ff';
           }
         }

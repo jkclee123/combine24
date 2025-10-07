@@ -58,7 +58,7 @@ class _HomeViewState extends State<HomeView> {
               body: SafeArea(
                 child: ListView(
                   padding: const EdgeInsets.all(Const.edgeInsets),
-                  physics: const AlwaysScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   children: <Widget>[
                     HomeHandSection(
                       cardFocusNode: cardFocusNode,
