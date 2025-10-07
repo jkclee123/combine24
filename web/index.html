@@ -21,6 +21,10 @@
   <meta name="description" content="24點遊戲">
   <meta name="google-site-verification" content="HxVMPzSeSmu5iillj6wIykv7tb4vIueRzq2ROBZTFLo" />
 
+  <meta name="theme-color" content="#0F0D12">
+  <!-- Ensure proper viewport handling for iOS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -103,10 +107,13 @@
       window.addEventListener('message', function(event) {
         if (event.data && event.data.type === 'theme-change') {
           const theme = event.data.theme;
+          const meta = document.querySelector('meta[name="theme-color"]');
           if (theme === 'dark') {
             document.body.style.backgroundColor = '#141218';
+            meta.setAttribute('content', '#0F0D12');
           } else {
             document.body.style.backgroundColor = '#fef7ff';
+            meta.setAttribute('content', '#2196F3');
           }
         }
       });
