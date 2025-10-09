@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formula Schema: Recognizing Mathematically Identical Formulas</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --accent-color: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, var(--background-color) 0%, #f1f5f9 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 1s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        .section:nth-child(5) { animation-delay: 0.5s; }
+
+        .section h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .definition-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .definition-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .definition-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .definition-term {
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+
+        .definition-desc {
+            color: var(--text-color);
+        }
+
+        .example {
+            margin: 2rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: var(--card-background);
+            padding: 2rem;
+        }
+
+        .example-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .example-formulas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .example-formula {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .schema-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .schema-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .schema-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .schema-label::before {
+            content: '📊';
+            font-size: 1.2rem;
+        }
+
+        .schema-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .explanation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .explanation p {
+            color: #92400e;
+            font-weight: 500;
+        }
+
+        .key-takeaway {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border: 1px solid #10b981;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .key-takeaway h3 {
+            color: #047857;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .key-takeaway p {
+            color: #065f46;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .schema-comparison {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .example-formulas {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .definition-item {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .definition-term {
+                min-width: auto;
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a7f3d0 0%, transparent 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            animation: highlight 2s ease-out;
+        }
+
+        @keyframes highlight {
+            0% { background: linear-gradient(120deg, #fef3c7 0%, transparent 100%); }
+            50% { background: linear-gradient(120deg, #a7f3d0 0%, transparent 100%); }
+            100% { background: linear-gradient(120deg, transparent 0%, transparent 100%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Formula Schema</h1>
+            <p>Recognizing mathematically identical formulas through structural comparison</p>
+        </header>
+
+        <section class="section">
+            <h2>📋 Overview</h2>
+            <p>The app compares user input against answers by converting both into a common "formula schema" and then checking the schemas for structural equality, rather than comparing raw text.</p>
+        </section>
+
+        <section class="section">
+            <h2>🔍 What is a Formula Schema?</h2>
+            <div class="definition-list">
+                <div class="definition-item">
+                    <div class="definition-term">Structure</div>
+                    <div class="definition-desc">A schema is a nested list of <code>[operator, operand]</code> pairs.</div>
+                </div>
+                <div class="definition-item">
+                    <div class="definition-term">Operands</div>
+                    <div class="definition-desc">An operand can be a value (e.g., <code>4</code>, <code>12</code>) or another nested schema (for grouped/parenthesized expressions).</div>
+                </div>
+                <div class="definition-item">
+                    <div class="definition-term">Group Head</div>
+                    <div class="definition-desc">For multiplication/division groups, starts with <code>*</code>. For addition/subtraction groups, starts with <code>+</code>.</div>
+                </div>
+                <div class="definition-item">
+                    <div class="definition-term">Order-Insensitive</div>
+                    <div class="definition-desc">Sibling <code>[operator, operand]</code> pairs are compared without regard to order, capturing commutativity.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>⚖️ How Equality is Decided</h2>
+            <p>Two formulas are considered the same if their schemas are deeply equal with order ignored among sibling pairs. This lets the system recognize alternative but equivalent orderings as the same math.</p>
+        </section>
+
+        <section class="section">
+            <h2>🧮 Examples</h2>
+
+            <div class="example">
+                <div class="example-title">Example 1: Reordered Factors</div>
+                <div class="example-formulas">
+                    <span class="example-formula">4 / (7 - 5) * 12</span>
+                    <span>=</span>
+                    <span class="example-formula">12 * 4 / (7 - 5)</span>
+                </div>
+                <div class="schema-comparison">
+                    <div class="schema-item">
+                        <div class="schema-label">Schema for: 4 / (7 - 5) * 12</div>
+                        <div class="schema-code">[[*, 4], [/, [[+, 7], [-, 5]]], [*, 12]]</div>
+                    </div>
+                    <div class="schema-item">
+                        <div class="schema-label">Schema for: 12 * 4 / (7 - 5)</div>
+                        <div class="schema-code">[[*, 12], [*, 4], [/, [[+, 7], [-, 5]]]</div>
+                    </div>
+                </div>
+                <div class="explanation">
+                    <p>Both schemas contain the same three sibling pairs in the top multiplicative group: two <code>*</code> factors (<code>4</code> and <code>12</code>) and one division by the difference <code>(7 - 5)</code>. The order differs, but order is ignored during comparison, so they match.</p>
+                </div>
+            </div>
+
+            <div class="example">
+                <div class="example-title">Example 2: Commutative Addition</div>
+                <div class="example-formulas">
+                    <span class="example-formula">3 * (5 + 6 / 2)</span>
+                    <span>=</span>
+                    <span class="example-formula">(6 / 2 + 5) * 3</span>
+                </div>
+                <div class="schema-comparison">
+                    <div class="schema-item">
+                        <div class="schema-label">Schema for: 3 * (5 + 6 / 2)</div>
+                        <div class="schema-code">[[*, 3], [*, [[+, 5], [+, [[*, 6], [/, 2]]]]]]</div>
+                    </div>
+                    <div class="schema-item">
+                        <div class="schema-label">Schema for: (6 / 2 + 5) * 3</div>
+                        <div class="schema-code">[[*, [[+, [[*, 6], [/, 2]]], [+, 5]]], [*, 3]]</div>
+                    </div>
+                </div>
+                <div class="explanation">
+                    <p>Each schema has two multiplicative factors: the number <code>3</code> and the sum <code>(5 + 6/2)</code>. The inner sum lists its addends as sibling <code>+</code> pairs; their order can vary. Because comparison ignores sibling order, these schemas are considered equal.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section key-takeaway">
+            <h3>💡 Key Takeaway</h3>
+            <p>By comparing order-insensitive nested schemas of <code>[operator, operand]</code> pairs, the app accepts user inputs that are rearranged versions of the same mathematics.</p>
+        </section>
+    </div>
+
+    <script>
+        // Add intersection observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

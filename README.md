@@ -31,14 +31,14 @@ Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
 <table>
   <tr>
     <td align="center">
-      <img src="assets/duplicated_solutions.png" alt="simple permutation of cards and operations" width="400"/>
+      <img src="assets/duplicated_solutions.png" alt="simple permutations of cards and operations" width="400"/>
       <br>
-      <em>Simple permutation of cards and operations</em>
+      <em>Simple permutations of cards and operations</em>
     </td>
     <td align="center">
-      <img src="assets/clean_solution.png" alt="cleaned up solution" width="400"/>
+      <img src="assets/clean_solution.png" alt="deduplicated solution" width="400"/>
       <br>
-      <em>Cleaned up solution</em>
+      <em>Deduplicated solution</em>
     </td>
   </tr>
 </table>
@@ -46,7 +46,8 @@ Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
 - **Normalize equivalent expressions**: Treat mathematically identical solutions as the same, regardless of operand order for commutative operations (+ and ×)
 - **Filter invalid solutions**: Remove expressions that produce fractional or negative intermediate results during calculation
 - **Consolidate trivial operations**: Group together mathematically meaningless operations like multiplying or dividing by 1
-- **Handle input variations**: Recognize mathematically equivalent answers regardless of operation order or parentheses placement
+
+For more detail explaination on the formula schema, see: [Formula Schema Documentation](http://htmlpreview.github.io/?https://github.com/jkclee123/combine24/blob/main/docs/forula_schema.html)
 
 ## Local Development
 
