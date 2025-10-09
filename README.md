@@ -30,12 +30,12 @@ Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
 
 <table>
   <tr>
-    <td align="center">
+    <td align="center" valign="top">
       <img src="assets/duplicated_solutions.png" alt="simple permutations of cards and operations" width="400"/>
       <br>
       <em>Simple permutations of cards and operations</em>
     </td>
-    <td align="center">
+    <td align="center" valign="top">
       <img src="assets/clean_solution.png" alt="deduplicated solution" width="400"/>
       <br>
       <em>Deduplicated solution</em>
