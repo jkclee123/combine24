@@ -12,11 +12,13 @@ import 'package:responsive_grid/responsive_grid.dart';
 class HomeHandSection extends StatefulWidget {
   final FocusNode cardFocusNode;
   final ValueNotifier<String> cardKeyboardNotifier;
+  final ValueNotifier<String> formulaKeyboardNotifier;
 
   const HomeHandSection({
     super.key,
     required this.cardFocusNode,
     required this.cardKeyboardNotifier,
+    required this.formulaKeyboardNotifier,
   });
 
   @override
@@ -79,6 +81,7 @@ class _HomeHandSectionState extends State<HomeHandSection> {
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
+              widget.formulaKeyboardNotifier.value = Const.emptyString;
               context.read<HomeBloc>().add(HomePickCardEvent(buffer: widget.cardKeyboardNotifier.value));
               if (!widget.cardFocusNode.hasFocus) {
                 widget.cardFocusNode.requestFocus();

@@ -47,7 +47,7 @@ Live demo: [combine24.vercel.app](https://combine24.vercel.app/)
 - **Filter invalid solutions**: Remove expressions that produce fractional or negative intermediate results during calculation
 - **Consolidate trivial operations**: Group together mathematically meaningless operations like multiplying or dividing by 1
 
-For more detail explaination on the formula schema, see: [Formula Schema Documentation](http://htmlpreview.github.io/?https://github.com/jkclee123/combine24/blob/main/docs/forula_schema.html)
+For more detailed explaination on the formula schema, see: [Formula Schema Documentation](http://htmlpreview.github.io/?https://github.com/jkclee123/combine24/blob/main/docs/forula_schema.html)
 
 ## Local Development
 

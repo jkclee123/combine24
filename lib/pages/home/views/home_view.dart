@@ -63,6 +63,7 @@ class _HomeViewState extends State<HomeView> {
                     HomeHandSection(
                       cardFocusNode: cardFocusNode,
                       cardKeyboardNotifier: cardKeyboardNotifier,
+                      formulaKeyboardNotifier: formulaKeyboardNotifier,
                     ),
                     const Divider(),
                     HomeSolutionSection(
