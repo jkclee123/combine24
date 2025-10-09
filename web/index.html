@@ -22,8 +22,6 @@
   <meta name="google-site-verification" content="HxVMPzSeSmu5iillj6wIykv7tb4vIueRzq2ROBZTFLo" />
 
   <meta name="theme-color" content="#0F0D12">
-  <!-- Ensure proper viewport handling for iOS -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -99,9 +97,7 @@
       // Service workers not supported. Just drop the <script> tag.
       loadMainDartJs();
     }
-  </script>
-
-  <script>
+    
     // Dynamic theme adjustment for better mobile browser integration
     document.addEventListener('DOMContentLoaded', function() {
       window.addEventListener('message', function(event) {

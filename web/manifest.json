@@ -4,7 +4,7 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#141218",
-    "theme_color": "#FFC107",
+    "theme_color": "#0C0B0F",
     "description": "24點遊戲",
     "prefer_related_applications": false,
     "icons": [
